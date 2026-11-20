@@ -1,0 +1,106 @@
+'use client';
+
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getDashboardPathForRole, mockApi } from '@/services/mockApi';
+import {
+  AuthResponse,
+  AuthRole,
+  AuthUser,
+  CitizenRegistrationPayload,
+  OfficialRole,
+} from '@/types';
+
+interface AuthContextValue {
+  user: AuthUser | null;
+  isAuthenticated: boolean;
+  isInitialized: boolean;
+  loginCitizen: (phone: string, password: string) => Promise<AuthResponse>;
+  loginOfficial: (
+    identifier: string,
+    password: string,
+    role: OfficialRole
+  ) => Promise<AuthResponse>;
+  registerCitizen: (payload: CitizenRegistrationPayload) => Promise<AuthResponse>;
+  logout: () => void;
+  getDashboardPath: (role?: AuthRole) => string;
+}
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      const stored = mockApi.getStoredSession();
+      if (stored) {
+        setUser(stored);
+      }
+      setIsInitialized(true);
+    });
+  }, []);
+
+  const loginCitizen = async (phone: string, password: string): Promise<AuthResponse> => {
+    const res = await mockApi.loginCitizen(phone, password);
+    if (res.success && res.user) {
+      setUser(res.user);
+    }
+    return res;
+  };
+
+  const loginOfficial = async (
+    identifier: string,
+    password: string,
+    role: OfficialRole
+  ): Promise<AuthResponse> => {
+    const res = await mockApi.loginOfficial(identifier, password, role);
+    if (res.success && res.user) {
+      setUser(res.user);
+    }
+    return res;
+  };
+
+  const registerCitizen = async (
+    payload: CitizenRegistrationPayload
+  ): Promise<AuthResponse> => {
+    const res = await mockApi.registerCitizen(payload);
+    if (res.success && res.user) {
+      setUser(res.user);
+    }
+    return res;
+  };
+
+  const logout = () => {
+    mockApi.clearSession();
+    setUser(null);
+    router.push('/');
+  };
+
+  const getDashboardPath = (role?: AuthRole) => {
+    return getDashboardPathForRole(role ?? user?.role ?? 'citizen');
+  };
+
+  const value: AuthContextValue = {
+    user,
+    isAuthenticated: Boolean(user),
+    isInitialized,
+    loginCitizen,
+    loginOfficial,
+    registerCitizen,
+    logout,
+    getDashboardPath,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error('useAuth must be used inside AuthProvider');
+  }
+  return ctx;
+}

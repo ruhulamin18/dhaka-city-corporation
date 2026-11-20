@@ -1,0 +1,428 @@
+import {
+  Calculator,
+  CreditCard,
+  FileCheck2,
+  History,
+  Receipt,
+  RefreshCw,
+} from 'lucide-react';
+import { CitizenServiceDefinition } from '@/types/citizen-service';
+import { UPDATING_FEE_SCHEDULE } from './departments';
+
+export const TAXATION_SERVICES: CitizenServiceDefinition[] = [
+  {
+    id: 'holding-tax-assessment',
+    slug: 'holding-tax-assessment',
+    categorySlug: 'tax-revenue',
+    icon: Calculator,
+    title: { bn: 'হোল্ডিং ট্যাক্স মূল্যায়ন', en: 'Holding Tax Assessment' },
+    shortDescription: {
+      bn: 'ভবনের আয়তন, তলা ও ব্যবহারের ধরন অনুযায়ী আনুমানিক বার্ষিক হোল্ডিং ট্যাক্স হিসাব এবং নতুন মূল্যায়নের আবেদন।',
+      en: 'Estimate annual municipal holding tax by property area, floors, and usage, and submit an official assessment application.',
+    },
+    availability: 'active',
+    requiresAuthForAction: false,
+    interactionMode: 'tax-calculator',
+    primaryCtaLabel: { bn: 'হোল্ডিং ট্যাক্স হিসাব করুন', en: 'Calculate Holding Tax' },
+    keywords: ['holding tax', 'assessment', 'calculator', 'property tax', 'হোল্ডিং ট্যাক্স', 'মূল্যায়ন', 'কর হিসাব', 'ক্যালকুলেটর'],
+    overview: {
+      whatItIs: { bn: 'ঢাকা সিটি কর্পোরেশন এলাকার আবাসিক, বাণিজ্যিক বা মিশ্র ভবনের বার্ষিক মূল্যায়ন ও হোল্ডিং ট্যাক্স নির্ধারণ সেবা।', en: 'Official municipal valuation and tax estimation service for residential, mixed-use, commercial, and industrial properties.' },
+      whyNeeded: { bn: 'নতুন নির্মিত ভবন হোল্ডিং নম্বরভুক্ত করা, সঠিক বার্ষিক কর জানা এবং বকেয়া জরিমানা এড়াতে নিয়মিত মূল্যায়ন প্রয়োজন।', en: 'Required to register newly constructed properties for a holding number, estimate annual obligations, and stay compliant.' },
+      whoCanUse: { bn: 'যেকোনো নাগরিক আনুমানিক কর হিসাব করতে পারবেন; আনুষ্ঠানিক মূল্যায়ন আবেদনের জন্য নাগরিক অ্যাকাউন্ট লগইন প্রয়োজন।', en: 'Anyone can use the public Holding Tax Estimator without login; filing a formal assessment request requires Citizen Portal sign-in.' },
+      deliverable: { bn: 'তাৎক্ষণিক বার্ষিক ও ত্রৈমাসিক আনুমানিক কর বিভাজন এবং আনুষ্ঠানিক আবেদনের রেফারেন্স নম্বর।', en: 'Instant annual & quarterly tax breakdown (holding, conservancy, streetlight) plus formal application reference when filed.' },
+    },
+    eligibility: {
+      isOfficiallyVerified: true,
+      items: [
+        { bn: 'আনুমানিক হিসাব ক্যালকুলেটর সবার জন্য উন্মুক্ত।', en: 'The Holding Tax Estimator tool is publicly accessible without login.' },
+        { bn: 'নতুন হোল্ডিং নম্বর ও আনুষ্ঠানিক কর মূল্যায়নের জন্য জমির/ভবনের বৈধ মালিকানার দলিল প্রয়োজন।', en: 'Formal assessment and new holding assignment require valid property ownership documentation.' },
+      ],
+    },
+    requiredDocuments: [
+      { id: 'hta-doc-1', title: { bn: 'মালিকের জাতীয় পরিচয়পত্র (NID)', en: 'Property Owner National ID (NID)' }, required: true, verifiedSource: true },
+      { id: 'hta-doc-2', title: { bn: 'জমি বা ফ্ল্যাট মালিকানার দলিল / নামজারি খতিয়ান', en: 'Property Ownership Deed / Mutation Khatian' }, required: true, verifiedSource: true },
+      { id: 'hta-doc-3', title: { bn: 'অনুমোদিত ভবন নকশা (রাজউক প্ল্যান, প্রযোজ্য ক্ষেত্রে)', en: 'Approved Building Plan (RAJUK, if applicable)' }, required: false },
+    ],
+    steps: [
+      { stepNumber: 1, title: { bn: 'ভবনের তথ্য দিয়ে আনুমানিক কর হিসাব করুন', en: 'Estimate Tax with Property Details' }, description: { bn: 'ওয়ার্ড, সম্পত্তির ধরন, প্রতি তলার বর্গফুট ও তলার সংখ্যা দিয়ে তাৎক্ষণিক আনুমানিক হিসাব দেখুন।', en: 'Enter ward, property type, floor area in sq. ft., and number of floors for an instant estimate.' } },
+      { stepNumber: 2, title: { bn: 'আনুষ্ঠানিক মূল্যায়নের আবেদন (ঐচ্ছিক)', en: 'File Formal Assessment Request (Optional)' }, description: { bn: 'নতুন হোল্ডিং মূল্যায়ন দাখিল করতে নাগরিক অ্যাকাউন্টে লগইন করে মালিকানার তথ্য জমা দিন।', en: 'Log in to submit a formal holding assessment dossier to the Revenue Department.' } },
+    ],
+    fees: {
+      isVerified: true,
+      applicationFee: { bn: 'অনলাইন ক্যালকুলেটর বিনামূল্যে; আনুষ্ঠানিক কর মূল্যায়ন সরকারি হারে নির্ধারিত', en: 'Online estimator is free; official property tax follows municipal valuation schedules' },
+      processingTime: { bn: 'তাৎক্ষণিক হিসাব; আনুষ্ঠানিক মূল্যায়ন তথ্য হালনাগাদ করা হচ্ছে', en: 'Instant estimate; formal field valuation timeline is being updated' },
+      paymentMethods: { bn: 'তথ্য হালনাগাদ করা হচ্ছে।', en: 'Information is being updated.' },
+    },
+    faqs: [
+      { id: 'hta-faq-1', question: { bn: 'ক্যালকুলেটরের হিসাব কি চূড়ান্ত কর হিসেবে গণ্য হবে?', en: 'Is the online calculator estimate legally final?' }, answer: { bn: 'না, এটি নাগরিকদের সুবিধার্থে আনুমানিক হিসাব। চূড়ান্ত হোল্ডিং ট্যাক্স রাজস্ব বিভাগের সরেজমিন মূল্যায়ন অনুযায়ী নির্ধারিত হয়।', en: 'No. The online estimate is for citizen guidance; final binding tax is determined by the Revenue Department’s official valuation.' } },
+    ],
+    departmentId: 'revenue',
+    relatedSlugs: ['holding-tax-payment', 'tax-reassessment', 'tax-clearance-certificate'],
+    formFields: [
+      { name: 'holdingNumber', type: 'text', label: { bn: 'হোল্ডিং নম্বর (যদি থাকে)', en: 'Holding Number (if assigned)' }, placeholder: { bn: 'যেমন: 27-0412-B', en: 'e.g. 27-0412-B' } },
+      { name: 'ownerName', type: 'text', label: { bn: 'মালিকের নাম', en: 'Property Owner Name' }, required: true },
+      { name: 'wardNumber', type: 'ward', label: { bn: 'ওয়ার্ড নম্বর', en: 'Ward Number' }, required: true },
+      {
+        name: 'propertyType',
+        type: 'select',
+        label: { bn: 'ভবনের ব্যবহারের ধরন', en: 'Property Usage Type' },
+        required: true,
+        options: [
+          { value: 'residential', label: { bn: 'আবাসিক (Residential)', en: 'Residential' } },
+          { value: 'mixed', label: { bn: 'মিশ্র (আবাসিক ও বাণিজ্যিক)', en: 'Mixed Use' } },
+          { value: 'commercial', label: { bn: 'বাণিজ্যিক (Commercial)', en: 'Commercial' } },
+          { value: 'industrial', label: { bn: 'শিল্প (Industrial)', en: 'Industrial' } },
+        ],
+      },
+      { name: 'areaSqFt', type: 'number', label: { bn: 'প্রতি তলার আয়তন (বর্গফুট)', en: 'Area per Floor (Sq. Ft.)' }, placeholder: { bn: 'যেমন: 2400', en: 'e.g. 2400' }, required: true },
+      { name: 'floors', type: 'number', label: { bn: 'মোট তলার সংখ্যা', en: 'Number of Floors' }, placeholder: { bn: 'যেমন: 1', en: 'e.g. 1' }, required: true },
+      {
+        name: 'roadWidthCategory',
+        type: 'select',
+        label: { bn: 'সংলগ্ন সড়কের ধরন', en: 'Adjacent Road Category' },
+        required: true,
+        options: [
+          { value: 'main_road', label: { bn: 'প্রধান সড়ক সংলগ্ন', en: 'Main Road Frontage' } },
+          { value: 'lane', label: { bn: 'শাখা সড়ক / লেন', en: 'Internal Lane / Street' } },
+        ],
+      },
+    ],
+    backendIntegration: {
+      supportedInPortal: true,
+      existingHandler: 'mockApi.calculateHoldingTax',
+      apiEndpointContract: 'POST /api/v1/tax/holding-assessment',
+      missingBackendNote: {
+        bn: 'তাৎক্ষণিক কর ক্যালকুলেটর পোর্টালে চালু রয়েছে; আনুষ্ঠানিক হোল্ডিং রেজিস্ট্রেশন ও সরেজমিন সার্ভে সিঙ্ক প্রোডাকশন ব্যাকএন্ডের জন্য নির্ধারিত।',
+        en: 'Instant tax calculation is active in the portal; official holding registry creation and field survey sync require production backend APIs.',
+      },
+    },
+  },
+  {
+    id: 'holding-tax-payment',
+    slug: 'holding-tax-payment',
+    categorySlug: 'tax-revenue',
+    icon: CreditCard,
+    title: { bn: 'হোল্ডিং ট্যাক্স পরিশোধ', en: 'Holding Tax Payment' },
+    shortDescription: {
+      bn: 'নিবন্ধিত হোল্ডিং নম্বর অনুযায়ী বকেয়া ও চলতি অর্থবছরের হোল্ডিং ট্যাক্স তথ্য দেখুন এবং পরিশোধ প্রক্রিয়া জানুন।',
+      en: 'Review your registered holding tax status and learn about official municipal holding tax payment channels.',
+    },
+    availability: 'active',
+    requiresAuthForAction: true,
+    interactionMode: 'tax-payment',
+    primaryCtaLabel: { bn: 'হোল্ডিং ট্যাক্স বিবরণ দেখুন', en: 'View Holding Tax Dues' },
+    keywords: ['holding tax payment', 'pay tax', 'municipal tax', 'হোল্ডিং ট্যাক্স পরিশোধ', 'ট্যাক্স পেমেন্ট', 'কর পরিশোধ'],
+    overview: {
+      whatItIs: { bn: 'ঢাকা সিটি কর্পোরেশনের নিবন্ধিত হোল্ডিংসমূহের ত্রৈমাসিক বা বার্ষিক হোল্ডিং ট্যাক্স বিবরণ যাচাই ও পরিশোধের নির্ধারিত সেবা।', en: 'Official service portal for checking holding tax obligations and completing municipal property tax settlement.' },
+      whyNeeded: { bn: 'সময়মতো হোল্ডিং ট্যাক্স পরিশোধ করে ১০% আগাম রিবেট সুবিধা (প্রযোজ্য সময়সীমায়) গ্রহণ এবং ট্রেড লাইসেন্স বা নাগরিক সনদের জন্য হালনাগাদ রসিদ সংরক্ষণ করা যায়।', en: 'Timely settlement qualifies property owners for early-payment rebates (within declared deadlines) and keeps tax clearance ready for licensing and transfers.' },
+      whoCanUse: { bn: 'নিবন্ধিত হোল্ডিং নম্বরধারী ভবন ও ফ্ল্যাট মালিকগণ (ব্যক্তিগত কর তথ্য দেখতে লগইন আবশ্যক)।', en: 'Registered property and apartment owners with a DSCC holding number (Citizen Portal login required for private tax records).' },
+      deliverable: { bn: 'হোল্ডিং কর বিবরণী এবং লাইভ পেমেন্ট গেটওয়ে চালু থাকা সাপেক্ষে কিউআর-যাচাইযোগ্য ডিজিটাল পেমেন্ট রসিদ।', en: 'Authenticated holding tax statement and QR-verified digital payment receipt once live merchant payment gateway settlement is connected.' },
+    },
+    eligibility: {
+      isOfficiallyVerified: true,
+      items: [
+        { bn: 'ব্যক্তিগত হোল্ডিং কর ও পরিশোধের তথ্য দেখার জন্য নাগরিক অ্যাকাউন্টে লগইন করতে হবে।', en: 'Citizen Portal login is required to access private holding tax dues and payment records.' },
+        { bn: 'বৈধ ঢাকা সিটি কর্পোরেশন হোল্ডিং নম্বর থাকতে হবে।', en: 'A valid Dhaka City Corporation holding number is required.' },
+      ],
+    },
+    requiredDocuments: [
+      { id: 'htp-doc-1', title: { bn: 'হোল্ডিং নম্বর ও ওয়ার্ড নম্বর', en: 'Holding Number & Ward Number' }, required: true, verifiedSource: true },
+      { id: 'htp-doc-2', title: { bn: 'পূর্ববর্তী কর পরিশোধের রসিদ (যদি থাকে)', en: 'Previous Tax Payment Receipt (if available)' }, required: false },
+    ],
+    steps: [
+      { stepNumber: 1, title: { bn: 'নাগরিক অ্যাকাউন্টে লগইন করুন', en: 'Sign In to Citizen Account' }, description: { bn: 'আপনার ব্যক্তিগত হোল্ডিং তথ্য সুরক্ষিতভাবে দেখার জন্য লগইন করুন।', en: 'Authenticate to securely view holding records associated with your account.' } },
+      { stepNumber: 2, title: { bn: 'হোল্ডিং নম্বর ও অর্থবছর যাচাই করুন', en: 'Verify Holding Number & Fiscal Year' }, description: { bn: 'আপনার হোল্ডিং নম্বর নির্বাচন করে পরিশোধিত ও প্রদেয় করের বিবরণ নিশ্চিত করুন।', en: 'Confirm your holding number, ward, and fiscal year tax details.' } },
+      { stepNumber: 3, title: { bn: 'অনুমোদিত ব্যাংক বা গেটওয়েতে পরিশোধ করুন', en: 'Settle via Authorized Payment Channel' }, description: { bn: 'লাইভ অনলাইন গেটওয়ে সক্রিয় না থাকা পর্যন্ত অনুমোদিত নির্ধারিত ব্যাংক শাখা বা আঞ্চলিক রাজস্ব কাউন্টারে পরিশোধ করুন।', en: 'Until live merchant gateway APIs are connected, settle via authorized municipal bank counters or zonal revenue desks.' } },
+    ],
+    fees: {
+      isVerified: true,
+      applicationFee: { bn: 'মূল্যায়িত হোল্ডিং কর অনুযায়ী প্রযোজ্য (অনলাইন গেটওয়ে চার্জ: তথ্য হালনাগাদ করা হচ্ছে)', en: 'Per assessed holding valuation (online gateway charges: information is being updated)' },
+      processingTime: { bn: 'তাৎক্ষণিক রসিদ (লাইভ পেমেন্ট গেটওয়ে সংযোগ সাপেক্ষে)', en: 'Instant receipt (subject to live payment gateway integration)' },
+      paymentMethods: { bn: 'অনুমোদিত ব্যাংক কাউন্টার; অনলাইন মোবাইল ব্যাংকিং ও কার্ড গেটওয়ে ইন্টিগ্রেশন প্রক্রিয়াধীন।', en: 'Authorized municipal bank counters; live MFS/Card online gateway integration is pending production setup.' },
+    },
+    faqs: [
+      { id: 'htp-faq-1', question: { bn: 'বর্তমানে কি এই পোর্টাল থেকে সরাসরি টাকা কেটে হোল্ডিং ট্যাক্স পরিশোধ করা যাবে?', en: 'Can live money transactions be processed directly here right now?' }, answer: { bn: 'না। প্রকৃত পেমেন্ট গেটওয়ে (যেমন SSLCommerz/বিকাশ/নগদ মার্চেন্ট API) যুক্ত না হওয়া পর্যন্ত কোনো আর্থিক লেনদেন প্রক্রিয়াকরণ করা হয় না। আপনি লগইন করে আপনার হোল্ডিং কর বিবরণ ও পূর্ববর্তী রসিদ দেখতে পারবেন।', en: 'No. Real monetary checkout is disabled until an official payment gateway (SSLCommerz/bKash/Nagad merchant API) is integrated. You can sign in to view your holding tax records and existing receipts.' } },
+    ],
+    departmentId: 'revenue',
+    relatedSlugs: ['holding-tax-assessment', 'tax-payment-history', 'digital-payment-receipt'],
+    formFields: [
+      { name: 'holdingNumber', type: 'text', label: { bn: 'হোল্ডিং নম্বর', en: 'Holding Number' }, placeholder: { bn: 'যেমন: 27-0412-B', en: 'e.g. 27-0412-B' }, required: true },
+      { name: 'wardNumber', type: 'ward', label: { bn: 'ওয়ার্ড নম্বর', en: 'Ward Number' }, required: true },
+      {
+        name: 'fiscalYear',
+        type: 'select',
+        label: { bn: 'অর্থবছর', en: 'Fiscal Year' },
+        required: true,
+        options: [
+          { value: '2026-27', label: { bn: '২০২৬–২৭ অর্থবছর', en: 'FY 2026–27' } },
+          { value: '2025-26', label: { bn: '২০২৫–২৬ অর্থবছর', en: 'FY 2025–26' } },
+        ],
+      },
+    ],
+    backendIntegration: {
+      supportedInPortal: false,
+      existingHandler: 'mockApi.getTaxRecords',
+      apiEndpointContract: 'POST /api/v1/tax/holding-payments/initiate',
+      missingBackendNote: {
+        bn: 'লাইভ অর্থ পরিশোধের জন্য সরকারি অনুমোদিত পেমেন্ট গেটওয়ে (SSLCommerz / EkPay / bKash / Nagad) এবং রাজস্ব কোর ব্যাংকিং API সংযোগ প্রয়োজন।',
+        en: 'Live tax settlement requires an official government payment gateway (EkPay / SSLCommerz / bKash / Nagad) and core revenue ledger API integration.',
+      },
+    },
+  },
+  {
+    id: 'tax-reassessment',
+    slug: 'tax-reassessment',
+    categorySlug: 'tax-revenue',
+    icon: RefreshCw,
+    title: { bn: 'কর পুনর্মূল্যায়ন', en: 'Tax Reassessment' },
+    shortDescription: {
+      bn: 'নির্ধারিত হোল্ডিং ট্যাক্স আপত্তি, ভবন পরিবর্তন বা ব্যবহারের ধরন বদলালে কর পুনর্মূল্যায়নের অনলাইন আবেদন।',
+      en: 'Apply for reassessment of holding tax due to structural changes, usage reclassification, or valuation appeal.',
+    },
+    availability: 'active',
+    requiresAuthForAction: true,
+    interactionMode: 'application',
+    primaryCtaLabel: { bn: 'পুনর্মূল্যায়নের আবেদন করুন', en: 'Apply for Reassessment' },
+    keywords: ['tax reassessment', 'holding appeal', 'tax review', 'কর পুনর্মূল্যায়ন', 'হোল্ডিং আপত্তি', 'রাজস্ব'],
+    overview: {
+      whatItIs: { bn: 'পূর্বে নির্ধারিত হোল্ডিং ট্যাক্সের পরিমাণ পুনর্বিবেচনা, আপত্তি দাখিল বা ভবনের ব্যবহার পরিবর্তনজনিত পুনর্মূল্যায়নের আনুষ্ঠানিক সেবা।', en: 'Formal review and re-valuation workflow for properties experiencing valuation disputes, demolition, extension, or usage changes.' },
+      whyNeeded: { bn: 'ভবন বাণিজ্যিক থেকে আবাসিক হলে, আংশিক খালি থাকলে বা মূল্যায়নে অসঙ্গতি থাকলে ন্যায্য কর নির্ধারণের জন্য পুনর্মূল্যায়ন আবেদন করা হয়।', en: 'Ensures fair taxation when property usage changes (e.g., commercial to residential), structure changes, or an assessment discrepancy exists.' },
+      whoCanUse: { bn: 'ঢাকা সিটি কর্পোরেশনের নিবন্ধিত হোল্ডিং মালিক বা আইনগত প্রতিনিধি।', en: 'Registered property owners or legally authorized representatives with an active DSCC holding number.' },
+      deliverable: { bn: 'পুনর্মূল্যায়ন আবেদন ট্র্যাকিং নম্বর এবং রাজস্ব বিভাগের শুনানি/পরিদর্শন পরবর্তী সংশোধিত কর আদেশ।', en: 'Reassessment tracking reference and a revised valuation notice following Revenue Department review/inspection.' },
+    },
+    eligibility: {
+      isOfficiallyVerified: false,
+      items: [
+        { bn: 'বৈধ হোল্ডিং নম্বর ও পূর্ববর্তী মূল্যায়ন নোটিশ/রসিদ থাকতে হবে।', en: 'Must have an active holding number and reference to the existing assessment.' },
+        { bn: 'পুনর্মূল্যায়নের যৌক্তিক কারণ ও প্রমাণপত্র দাখিল করতে হবে (সরকারি যাচাইয়ের অপেক্ষায় রয়েছে)।', en: 'Supporting evidence justifying the reassessment must be attached (awaiting official verification).' },
+      ],
+    },
+    requiredDocuments: [
+      { id: 'tr-doc-1', title: { bn: 'বর্তমান হোল্ডিং ট্যাক্স বিল বা মূল্যায়ন নোটিশের কপি', en: 'Copy of Current Holding Tax Bill or Valuation Notice' }, required: true },
+      { id: 'tr-doc-2', title: { bn: 'মালিকের জাতীয় পরিচয়পত্র (NID)', en: 'Owner National ID (NID)' }, required: true },
+      { id: 'tr-doc-3', title: { bn: 'ভবনের পরিবর্তিত ব্যবহার/আয়তনের প্রমাণপত্র (ভাড়ার চুক্তিপত্র / নকশা / ছবি)', en: 'Evidence of Usage/Area Change (Lease / Plan / Photos)' }, required: true },
+    ],
+    steps: [
+      { stepNumber: 1, title: { bn: 'পুনর্মূল্যায়নের কারণ ও প্রমাণপত্র প্রস্তুত করুন', en: 'Prepare Reason & Evidence' }, description: { bn: 'বর্তমান হোল্ডিং নম্বর ও পুনর্মূল্যায়নের স্বপক্ষে প্রমাণপত্র স্ক্যান করে রাখুন।', en: 'Keep your holding number, current tax notice, and supporting proof ready in PDF/image format.' } },
+      { stepNumber: 2, title: { bn: 'লগইন করে আবেদন জমা দিন', en: 'Sign In & Submit Reassessment Request' }, description: { bn: 'নাগরিক অ্যাকাউন্টে লগইন করে বিস্তারিত কারণ ও নথি সংযুক্ত করে আবেদন দাখিল করুন।', en: 'Log in, complete the reassessment form with exact reasons, attach documents, and submit.' } },
+      { stepNumber: 3, title: { bn: 'রাজস্ব পরিদর্শন ও সিদ্ধান্ত', en: 'Revenue Inspection & Decision' }, description: { bn: 'সংশ্লিষ্ট আঞ্চলিক রাজস্ব কর্মকর্তার যাচাই শেষে সিদ্ধান্ত জানানো হবে।', en: 'Track your application while the Zonal Revenue Officer conducts review and inspection.' } },
+    ],
+    fees: UPDATING_FEE_SCHEDULE,
+    faqs: [
+      { id: 'tr-faq-1', question: { bn: 'পুনর্মূল্যায়ন আবেদন করলে কি সরেজমিন পরিদর্শন করা হয়?', en: 'Does reassessment require a physical inspection?' }, answer: { bn: 'হ্যাঁ, সাধারণত রাজস্ব বিভাগের দায়িত্বপ্রাপ্ত কর মূল্যায়ন কর্মকর্তা সরেজমিন যাচাই করে প্রতিবেদন দাখিল করেন।', en: 'Yes, Zonal Revenue assessment officers typically conduct an on-site verification before issuing a revised valuation.' } },
+    ],
+    departmentId: 'revenue',
+    relatedSlugs: ['holding-tax-assessment', 'holding-tax-payment', 'tax-clearance-certificate'],
+    formFields: [
+      { name: 'holdingNumber', type: 'text', label: { bn: 'হোল্ডিং নম্বর', en: 'Holding Number' }, placeholder: { bn: 'যেমন: 27-0412-B', en: 'e.g. 27-0412-B' }, required: true },
+      {
+        name: 'reassessmentReason',
+        type: 'select',
+        label: { bn: 'পুনর্মূল্যায়নের কারণ', en: 'Reason for Reassessment' },
+        required: true,
+        options: [
+          { value: 'usage_change', label: { bn: 'ভবনের ব্যবহার পরিবর্তন (বাণিজ্যিক ↔ আবাসিক)', en: 'Usage Change (Commercial ↔ Residential)' } },
+          { value: 'area_correction', label: { bn: 'আয়তন বা তলার তথ্যের সংশোধন', en: 'Area or Floor Count Correction' } },
+          { value: 'valuation_appeal', label: { bn: 'অতিরিক্ত মূল্যায়নের বিরুদ্ধে আপত্তি', en: 'Appeal Against Over-Valuation' } },
+          { value: 'vacancy_or_demolition', label: { bn: 'ভবন অপসারণ / খালি থাকা', en: 'Demolition or Prolonged Vacancy' } },
+        ],
+      },
+      { name: 'applicantName', type: 'text', label: { bn: 'মালিকের পূর্ণ নাম', en: 'Owner Full Name' }, required: true },
+      { name: 'nid', type: 'text', label: { bn: 'জাতীয় পরিচয়পত্র নম্বর (NID)', en: 'NID Number' }, pattern: 'nid', required: true },
+      { name: 'phone', type: 'tel', label: { bn: 'মোবাইল নম্বর', en: 'Mobile Number' }, pattern: 'bd_phone', required: true },
+      { name: 'wardNumber', type: 'ward', label: { bn: 'ওয়ার্ড নম্বর', en: 'Ward Number' }, required: true },
+      { name: 'detailsNote', type: 'textarea', label: { bn: 'পুনর্মূল্যায়নের বিস্তারিত যুক্তি ও বিবরণ', en: 'Detailed Grounds for Reassessment' }, required: true, fullWidth: true },
+      { name: 'evidenceFile', type: 'file', label: { bn: 'প্রমাণপত্র সংযুক্ত করুন', en: 'Attach Supporting Evidence' }, accept: '.pdf,.jpg,.jpeg,.png', maxFileSizeMb: 5, required: true, fullWidth: true },
+    ],
+    backendIntegration: {
+      supportedInPortal: true,
+      existingHandler: 'mockApi.submitApplication',
+      applicationType: 'citizen_certificate',
+      apiEndpointContract: 'POST /api/v1/tax/reassessments',
+      missingBackendNote: {
+        bn: 'আবেদনটি পোর্টালে ট্র্যাকিংসহ সংরক্ষিত হয়; আঞ্চলিক রাজস্ব শুনানি সময়সূচি ও মূল্যায়ন লেজার হালনাগাদের জন্য ব্যাকএন্ড API প্রয়োজন।',
+        en: 'Requests are logged with a tracking ID; revenue hearing scheduling and central tax ledger updates require production backend APIs.',
+      },
+    },
+  },
+  {
+    id: 'tax-clearance-certificate',
+    slug: 'tax-clearance-certificate',
+    categorySlug: 'tax-revenue',
+    icon: FileCheck2,
+    title: { bn: 'কর ছাড়পত্র', en: 'Tax Clearance Certificate' },
+    shortDescription: {
+      bn: 'বকেয়াশূন্য হোল্ডিং ট্যাক্সের সরকারি কর ছাড়পত্রের জন্য অনলাইন আবেদন ও যাচাইকরণ।',
+      en: 'Apply for an official Municipal Holding Tax Clearance Certificate confirming zero outstanding property tax dues.',
+    },
+    availability: 'active',
+    requiresAuthForAction: true,
+    interactionMode: 'application',
+    primaryCtaLabel: { bn: 'ছাড়পত্রের আবেদন করুন', en: 'Apply for Tax Clearance' },
+    keywords: ['tax clearance', 'no dues certificate', 'holding clearance', 'কর ছাড়পত্র', 'বকেয়াশূন্য সনদ', 'হোল্ডিং ট্যাক্স'],
+    overview: {
+      whatItIs: { bn: 'নির্দিষ্ট হোল্ডিংয়ের বিপরীতে কোনো বকেয়া পৌর কর নেই—তা প্রত্যয়নকারী সরকারি সনদ হলো কর ছাড়পত্র।', en: 'An official municipal certificate verifying that all holding tax obligations for a specific property are fully settled.' },
+      whyNeeded: { bn: 'সম্পত্তি ক্রয়-বিক্রয়, ব্যাংক মর্টগেজ, নামজারি, নতুন ট্রেড লাইসেন্স এবং সরকারি নথিপত্র যাচাইয়ের জন্য কর ছাড়পত্র প্রয়োজন হয়।', en: 'Required during property sales, bank mortgages, mutation, commercial license applications, and official audits.' },
+      whoCanUse: { bn: 'হালনাগাদ হোল্ডিং ট্যাক্স পরিশোধকারী নিবন্ধিত সম্পত্তির মালিকগণ।', en: 'Registered property owners whose holding tax payments are fully up to date.' },
+      deliverable: { bn: 'কর ছাড়পত্র আবেদনের রেফারেন্স নম্বর এবং অনুমোদনের পর কিউআর-যাচাইযোগ্য কর ছাড়পত্র সনদ।', en: 'Tracked application reference and a QR-verifiable Tax Clearance Certificate upon Revenue Wing approval.' },
+    },
+    eligibility: {
+      isOfficiallyVerified: true,
+      items: [
+        { bn: 'চলতি অর্থবছর পর্যন্ত সংশ্লিষ্ট হোল্ডিংয়ের সকল কর পরিশোধিত থাকতে হবে।', en: 'All holding taxes through the current fiscal year must be fully paid with zero arrears.' },
+        { bn: 'নাগরিক অ্যাকাউন্ট লগইন ও সর্বশেষ কর পরিশোধের রসিদ নম্বর প্রয়োজন।', en: 'Requires Citizen Portal sign-in and the latest tax payment receipt reference.' },
+      ],
+    },
+    requiredDocuments: [
+      { id: 'tcc-doc-1', title: { bn: 'সর্বশেষ হোল্ডিং ট্যাক্স পরিশোধের রসিদ', en: 'Latest Holding Tax Payment Receipt' }, required: true, verifiedSource: true },
+      { id: 'tcc-doc-2', title: { bn: 'মালিকের জাতীয় পরিচয়পত্র (NID)', en: 'Owner National ID (NID)' }, required: true, verifiedSource: true },
+    ],
+    steps: [
+      { stepNumber: 1, title: { bn: 'বকেয়া পরিশোধ নিশ্চিত করুন', en: 'Confirm Zero Tax Dues' }, description: { bn: 'সর্বশেষ অর্থবছরের হোল্ডিং ট্যাক্স পরিশোধের রসিদ নম্বর সংগ্রহ করুন।', en: 'Ensure your current fiscal year holding tax receipt ID is ready.' } },
+      { stepNumber: 2, title: { bn: 'লগইন করে ছাড়পত্র আবেদন দাখিল করুন', en: 'Sign In & Submit Clearance Request' }, description: { bn: 'হোল্ডিং নম্বর, রসিদ নম্বর ও প্রয়োজনীয় নথি আপলোড করে আবেদন জমা দিন।', en: 'Authenticate, enter holding and receipt numbers, upload proof, and submit.' } },
+      { stepNumber: 3, title: { bn: 'সনদ ডাউনলোড ও যাচাই করুন', en: 'Download & Verify Certificate' }, description: { bn: 'অনুমোদনের পর রেফারেন্স আইডি দিয়ে সনদটি যাচাই ও সংগ্রহ করুন।', en: 'Once issued, retrieve and verify your Tax Clearance Certificate using its reference ID.' } },
+    ],
+    fees: UPDATING_FEE_SCHEDULE,
+    faqs: [
+      { id: 'tcc-faq-1', question: { bn: 'বকেয়া কর থাকলে কি কর ছাড়পত্র পাওয়া যাবে?', en: 'Can I receive a Tax Clearance Certificate if arrears exist?' }, answer: { bn: 'না, সকল বকেয়া ও চলতি অর্থবছরের কর পরিশোধ সম্পন্ন হলেই কেবল কর ছাড়পত্র ইস্যু করা হয়।', en: 'No. All pending arrears and current fiscal year dues must be settled before clearance is granted.' } },
+    ],
+    departmentId: 'revenue',
+    relatedSlugs: ['holding-tax-payment', 'tax-payment-history', 'digital-payment-receipt'],
+    formFields: [
+      { name: 'holdingNumber', type: 'text', label: { bn: 'হোল্ডিং নম্বর', en: 'Holding Number' }, placeholder: { bn: 'যেমন: 27-0412-B', en: 'e.g. 27-0412-B' }, required: true },
+      { name: 'latestReceiptId', type: 'text', label: { bn: 'সর্বশেষ কর রসিদ নম্বর', en: 'Latest Tax Receipt Number' }, placeholder: { bn: 'যেমন: DSCC-TAX-2026-7731', en: 'e.g. DSCC-TAX-2026-7731' }, required: true },
+      { name: 'applicantName', type: 'text', label: { bn: 'মালিকের পূর্ণ নাম', en: 'Owner Full Name' }, required: true },
+      { name: 'nid', type: 'text', label: { bn: 'জাতীয় পরিচয়পত্র নম্বর (NID)', en: 'NID Number' }, pattern: 'nid', required: true },
+      { name: 'phone', type: 'tel', label: { bn: 'মোবাইল নম্বর', en: 'Mobile Number' }, pattern: 'bd_phone', required: true },
+      { name: 'wardNumber', type: 'ward', label: { bn: 'ওয়ার্ড নম্বর', en: 'Ward Number' }, required: true },
+      { name: 'purpose', type: 'text', label: { bn: 'ছাড়পত্রের প্রয়োজনীয়তা', en: 'Purpose of Certificate' }, placeholder: { bn: 'যেমন: সম্পত্তি হস্তান্তর / ব্যাংক ঋণ', en: 'e.g. Property transfer / Bank mortgage' }, required: true, fullWidth: true },
+      { name: 'receiptUpload', type: 'file', label: { bn: 'সর্বশেষ পরিশোধ রসিদের কপি', en: 'Upload Latest Payment Receipt Copy' }, accept: '.pdf,.jpg,.jpeg,.png', maxFileSizeMb: 5, required: true, fullWidth: true },
+    ],
+    backendIntegration: {
+      supportedInPortal: true,
+      existingHandler: 'mockApi.submitApplication',
+      applicationType: 'citizen_certificate',
+      apiEndpointContract: 'POST /api/v1/tax/clearance-certificates',
+      missingBackendNote: {
+        bn: 'আবেদনটি পোর্টালে সংরক্ষিত হয়; স্বয়ংক্রিয় লেজার বকেয়া যাচাইয়ের জন্য রাজস্ব ব্যাকএন্ড API সংযোগ প্রয়োজন।',
+        en: 'Requests are recorded in the portal; automated zero-dues ledger verification requires production Revenue API integration.',
+      },
+    },
+  },
+  {
+    id: 'tax-payment-history',
+    slug: 'tax-payment-history',
+    categorySlug: 'tax-revenue',
+    icon: History,
+    title: { bn: 'কর পরিশোধের ইতিহাস', en: 'Tax Payment History' },
+    shortDescription: {
+      bn: 'আপনার হোল্ডিং নম্বরের বিপরীতে অর্থবছরভিত্তিক পূর্ববর্তী কর পরিশোধের সম্পূর্ণ তালিকা ও রসিদ বিবরণ দেখুন।',
+      en: 'View your authenticated fiscal-year holding tax payment ledger, transaction IDs, and digital receipt references.',
+    },
+    availability: 'active',
+    requiresAuthForAction: true,
+    interactionMode: 'tax-history',
+    primaryCtaLabel: { bn: 'পরিশোধের ইতিহাস দেখুন', en: 'View Payment History' },
+    keywords: ['tax history', 'payment ledger', 'holding records', 'কর পরিশোধের ইতিহাস', 'পেমেন্ট ইতিহাস', 'ট্যাক্স রেকর্ড'],
+    overview: {
+      whatItIs: { bn: 'নিবন্ধিত নাগরিকদের হোল্ডিং ট্যাক্স পরিশোধের বছরভিত্তিক ব্যক্তিগত ও সুরক্ষিত রেকর্ড তালিকা।', en: 'A private, login-protected record of past holding tax payments, receipt IDs, payment channels, and fiscal years.' },
+      whyNeeded: { bn: 'আয়কর রিটার্ন, সম্পত্তি হিসাবরক্ষণ, বকেয়া নিরীক্ষা এবং পূর্ববর্তী রসিদ পুনরুদ্ধারের জন্য পরিশোধের ইতিহাস অত্যন্ত উপযোগী।', en: 'Useful for income tax filings, property accounting, audit verification, and quick retrieval of previous payment receipts.' },
+      whoCanUse: { bn: 'শুধুমাত্র লগইনকৃত নিবন্ধিত নাগরিক ও হোল্ডিং মালিকগণ (ব্যক্তিগত তথ্য সুরক্ষার স্বার্থে)।', en: 'Authenticated registered citizens and property owners only (private financial records are never exposed publicly).' },
+      deliverable: { bn: 'রসিদ নম্বর, হোল্ডিং নম্বর, অর্থবছর, পরিশোধিত অঙ্ক ও তারিখসহ সম্পূর্ণ পরিশোধ তালিকা।', en: 'Structured ledger showing receipt IDs, holding numbers, fiscal years, amounts paid, and transaction references.' },
+    },
+    eligibility: {
+      isOfficiallyVerified: true,
+      items: [
+        { bn: 'ব্যক্তিগত কর ইতিহাস দেখার জন্য নাগরিক অ্যাকাউন্টে লগইন বাধ্যতামূলক।', en: 'Citizen Portal authentication is strictly required to view personal tax history.' },
+      ],
+    },
+    requiredDocuments: [
+      { id: 'tph-doc-1', title: { bn: 'নিবন্ধিত নাগরিক অ্যাকাউন্ট (কোনো কাগজপত্র আপলোড প্রয়োজন নেই)', en: 'Registered Citizen Account (No file upload required)' }, required: true, verifiedSource: true },
+    ],
+    steps: [
+      { stepNumber: 1, title: { bn: 'নাগরিক অ্যাকাউন্টে লগইন করুন', en: 'Sign In to Citizen Account' }, description: { bn: 'সুরক্ষিতভাবে আপনার ব্যক্তিগত কর রেকর্ড দেখতে লগইন করুন।', en: 'Sign in with your Citizen credentials to access your private tax history.' } },
+      { stepNumber: 2, title: { bn: 'রসিদ ও ইতিহাস পর্যালোচনা করুন', en: 'Review Ledger & Receipts' }, description: { bn: 'হোল্ডিং নম্বর বা অর্থবছর অনুযায়ী রেকর্ড ফিল্টার করুন এবং প্রয়োজনে প্রিন্ট করুন।', en: 'Filter your records by holding number or fiscal year and print or verify receipts.' } },
+    ],
+    fees: {
+      isVerified: true,
+      applicationFee: { bn: 'বিনামূল্যে', en: 'Free of Charge' },
+      serviceCharge: { bn: 'প্রযোজ্য নয়', en: 'Not Applicable' },
+      processingTime: { bn: 'তাৎক্ষণিক', en: 'Instant' },
+      paymentMethods: { bn: 'প্রযোজ্য নয়', en: 'Not Applicable' },
+    },
+    faqs: [
+      { id: 'tph-faq-1', question: { bn: 'অন্য কেউ কি আমার কর পরিশোধের ইতিহাস দেখতে পারবে?', en: 'Can anyone else view my tax payment history?' }, answer: { bn: 'না। কর পরিশোধের ইতিহাস শুধুমাত্র লগইনকৃত সংশ্লিষ্ট নাগরিক অ্যাকাউন্ট থেকেই দেখা যায়।', en: 'No. Tax payment history is strictly auth-gated and accessible only after signing into your Citizen Account.' } },
+    ],
+    departmentId: 'revenue',
+    relatedSlugs: ['digital-payment-receipt', 'holding-tax-payment', 'tax-clearance-certificate'],
+    formFields: [],
+    backendIntegration: {
+      supportedInPortal: true,
+      existingHandler: 'mockApi.getTaxRecords',
+      apiEndpointContract: 'GET /api/v1/tax/history',
+      missingBackendNote: {
+        bn: 'বর্তমানে পোর্টালের সেশন রেকর্ড দেখানো হচ্ছে; বহু-বছরের সরকারি রাজস্ব লেজার সিঙ্কের জন্য ব্যাকএন্ড API প্রয়োজন।',
+        en: 'Displays portal-stored holding tax records; syncing multi-year legacy municipal ledgers requires production backend integration.',
+      },
+    },
+  },
+  {
+    id: 'digital-payment-receipt',
+    slug: 'digital-payment-receipt',
+    categorySlug: 'tax-revenue',
+    icon: Receipt,
+    title: { bn: 'ডিজিটাল পেমেন্ট রসিদ', en: 'Digital Payment Receipt' },
+    shortDescription: {
+      bn: 'রসিদ নম্বর দিয়ে আপনার পরিশোধিত হোল্ডিং ট্যাক্স বা সেবার ডিজিটাল পেমেন্ট রসিদ যাচাই ও প্রিন্ট করুন।',
+      en: 'Look up, verify, and print your official QR-verifiable Digital Payment Receipt using your receipt ID.',
+    },
+    availability: 'active',
+    requiresAuthForAction: false,
+    interactionMode: 'receipt-lookup',
+    primaryCtaLabel: { bn: 'রসিদ অনুসন্ধান ও ডাউনলোড করুন', en: 'Find & Download Receipt' },
+    keywords: ['digital payment receipt', 'tax receipt', 'invoice', 'print receipt', 'ডিজিটাল পেমেন্ট রসিদ', 'পেমেন্ট রসিদ', 'রসিদ ডাউনলোড'],
+    overview: {
+      whatItIs: { bn: 'ঢাকা সিটি কর্পোরেশনের অনুমোদিত সেবাসমূহে পরিশোধিত অর্থের কিউআর-যাচাইযোগ্য ডিজিটাল রসিদ অনুসন্ধান ও প্রিন্ট সেবা।', en: 'Digital receipt verification and printable voucher service for settled Dhaka City Corporation holding taxes and civic fees.' },
+      whyNeeded: { bn: 'ব্যাংক, কর নথি, ভাড়াটিয়া/মালিক রেকর্ড এবং দাপ্তরিক কাজে ডিজিটাল রসিদ প্রমাণপত্র হিসেবে ব্যবহৃত হয়।', en: 'Serves as official proof of payment for municipal audits, property records, licensing, and personal accounting.' },
+      whoCanUse: { bn: 'রসিদ নম্বরধারী যেকোনো নাগরিক রসিদের সত্যতা যাচাই ও প্রিন্ট করতে পারবেন।', en: 'Any citizen or verifying institution holding a valid DSCC receipt reference ID.' },
+      deliverable: { bn: 'কিউআর নিরাপত্তা হ্যাশ, পরিশোধিত টাকার পরিমাণ, তারিখ ও ইস্যুকারী কর্তৃপক্ষের বিবরণসহ প্রিন্টযোগ্য ডিজিটাল রসিদ।', en: 'Printable digital receipt showing verified status, amount paid, payment date, authority seal, and SHA-256 verification hash.' },
+    },
+    eligibility: {
+      isOfficiallyVerified: true,
+      items: [
+        { bn: 'বৈধ ডিজিটাল রসিদ নম্বর (যেমন: DSCC-TAX-2026-7731) থাকতে হবে।', en: 'Requires a valid digital receipt reference ID (e.g., DSCC-TAX-2026-7731).' },
+      ],
+    },
+    requiredDocuments: [
+      { id: 'dpr-doc-1', title: { bn: 'পেমেন্ট রসিদ নম্বর / রেফারেন্স আইডি', en: 'Payment Receipt Number / Reference ID' }, note: { bn: 'কোনো নথি আপলোডের প্রয়োজন নেই', en: 'No file upload required' }, required: true, verifiedSource: true },
+    ],
+    steps: [
+      { stepNumber: 1, title: { bn: 'রসিদ নম্বর লিখুন', en: 'Enter Receipt Reference ID' }, description: { bn: 'আপনার ডিজিটাল পেমেন্ট রসিদ নম্বর (যেমন: DSCC-TAX-2026-7731) নিচের ঘরে লিখুন।', en: 'Enter your receipt ID (e.g., DSCC-TAX-2026-7731) in the lookup form below.' } },
+      { stepNumber: 2, title: { bn: 'রসিদ যাচাই ও প্রিন্ট করুন', en: 'Verify & Print Receipt' }, description: { bn: 'যাচাইকৃত রসিদটি স্ক্রিনে দেখুন এবং প্রিন্ট বা পিডিএফ হিসেবে সংরক্ষণ করুন।', en: 'Review the verified digital voucher and print or save as PDF for your records.' } },
+    ],
+    fees: {
+      isVerified: true,
+      applicationFee: { bn: 'বিনামূল্যে', en: 'Free of Charge' },
+      serviceCharge: { bn: 'প্রযোজ্য নয়', en: 'Not Applicable' },
+      processingTime: { bn: 'তাৎক্ষণিক', en: 'Instant' },
+      paymentMethods: { bn: 'প্রযোজ্য নয়', en: 'Not Applicable' },
+    },
+    faqs: [
+      { id: 'dpr-faq-1', question: { bn: 'কোনো রসিদ নম্বর না জানা থাকলে কীভাবে খুঁজে পাব?', en: 'How can I find my receipt if I lost the receipt ID?' }, answer: { bn: 'আপনার নাগরিক অ্যাকাউন্টে লগইন করে "কর পরিশোধের ইতিহাস" পাতায় গেলে আপনার সকল পূর্ববর্তী রসিদ নম্বর দেখতে পাবেন।', en: 'Sign in to your Citizen Account and open the Tax Payment History page to view all your past receipt IDs.' } },
+    ],
+    departmentId: 'revenue',
+    relatedSlugs: ['tax-payment-history', 'holding-tax-payment', 'tax-clearance-certificate'],
+    formFields: [
+      { name: 'referenceId', type: 'text', label: { bn: 'ডিজিটাল রসিদ নম্বর', en: 'Digital Receipt Reference ID' }, placeholder: { bn: 'যেমন: DSCC-TAX-2026-7731', en: 'e.g. DSCC-TAX-2026-7731' }, required: true, fullWidth: true },
+    ],
+    backendIntegration: {
+      supportedInPortal: true,
+      existingHandler: 'mockApi.verifyDocumentById',
+      apiEndpointContract: 'GET /api/v1/tax/receipts/{receiptId}',
+      missingBackendNote: {
+        bn: 'পোর্টালের নিবন্ধিত রসিদ তাৎক্ষণিকভাবে যাচাই ও প্রিন্ট করা যায়; সার্ভার-স্বাক্ষরিত পিডিএফ চালানের জন্য ব্যাকএন্ড সংযোগ প্রয়োজন।',
+        en: 'Verifies and prints portal-recorded receipts; server-signed PDF challan generation requires production backend integration.',
+      },
+    },
+  },
+];

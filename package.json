@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev frontend",
+    "prebuild": "node scripts/verify-css.mjs",
     "build": "next build frontend",
     "start": "next start frontend",
-    "lint": "eslint frontend",
-    "clean": "rm -rf frontend/.next .next"
+    "lint": "eslint frontend && node scripts/verify-css.mjs",
+    "verify:css": "node scripts/verify-css.mjs",
+    "clean": "node -e \"try { require('fs').rmSync('frontend/.next', { recursive: true, force: true }); require('fs').rmSync('.next', { recursive: true, force: true }); } catch (e) {}\""
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

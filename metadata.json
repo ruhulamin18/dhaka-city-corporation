@@ -1,0 +1,6 @@
+{
+  "name": "Dhaka Smart City Corporation — Digital Citizen Service Platform",
+  "description": "Modern bilingual civic-tech portal and paperless citizen e-service platform for Dhaka Smart City Corporation with QR verification, geo-tagged complaints, GIS city map, open budget tracker, and RBAC operations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

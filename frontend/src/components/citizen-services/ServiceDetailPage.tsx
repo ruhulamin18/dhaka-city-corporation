@@ -33,6 +33,7 @@ import ApplicationForm from './ApplicationForm';
 import ApplicationTracking from './ApplicationTracking';
 import ServiceFAQ from './ServiceFAQ';
 import RelatedServices from './RelatedServices';
+import CitizenServiceHero from './CitizenServiceHero';
 
 interface ServiceDetailPageProps {
   categorySlug: string;
@@ -107,104 +108,102 @@ export default function ServiceDetailPage({
 
   return (
     <div className="min-h-screen pb-16">
-      {/* Civic Green Header Banner */}
-      <div className="bg-gradient-to-br from-[#006A4E] via-[#005A42] to-[#004633] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          {/* Breadcrumb */}
-          <nav
-            aria-label={language === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'}
-            className="mb-5 flex flex-wrap items-center gap-1.5 text-xs font-medium text-emerald-100/90"
+      {/* Civic Green Header Banner with Shared Background & Height Preservation */}
+      <CitizenServiceHero innerClassName="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+        {/* Breadcrumb */}
+        <nav
+          aria-label={language === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'}
+          className="mb-5 flex flex-wrap items-center gap-1.5 text-xs font-medium text-emerald-100/90"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 hover:text-white transition-colors"
           >
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 hover:text-white transition-colors"
-            >
-              <Home className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>{language === 'bn' ? 'হোম' : 'Home'}</span>
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
-            <Link
-              href="/citizen-services"
-              className="hover:text-white transition-colors"
-            >
-              {language === 'bn' ? 'নাগরিক সেবা' : 'Citizen Services'}
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
-            <Link
-              href={`/citizen-services/${category.slug}`}
-              className="hover:text-white transition-colors"
-            >
-              {pickText(category.shortTitle, language)}
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
-            <span className="font-semibold text-white">
-              {pickText(service.title, language)}
-            </span>
-          </nav>
+            <Home className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{language === 'bn' ? 'হোম' : 'Home'}</span>
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
+          <Link
+            href="/citizen-services"
+            className="hover:text-white transition-colors"
+          >
+            {language === 'bn' ? 'নাগরিক সেবা' : 'Citizen Services'}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
+          <Link
+            href={`/citizen-services/${category.slug}`}
+            className="hover:text-white transition-colors"
+          >
+            {pickText(category.shortTitle, language)}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
+          <span className="font-semibold text-white">
+            {pickText(service.title, language)}
+          </span>
+        </nav>
 
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-xs">
-                <ServiceIcon className="h-7 w-7" aria-hidden="true" />
-              </div>
-
-              <div>
-                <div className="mb-2 flex flex-wrap items-center gap-2">
-                  <span className="rounded-md bg-white/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-50">
-                    {pickText(category.title, language)}
-                  </span>
-                  {service.requiresAuthForAction ? (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-black/20 px-2.5 py-0.5 text-xs font-medium text-emerald-100">
-                      <Lock className="h-3 w-3" aria-hidden="true" />
-                      {language === 'bn'
-                        ? 'তথ্য সবার জন্য উন্মুক্ত · আবেদনে লগইন'
-                        : 'Public Info · Login to Apply'}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/20 px-2.5 py-0.5 text-xs font-medium text-emerald-50">
-                      <Globe2 className="h-3 w-3" aria-hidden="true" />
-                      {language === 'bn'
-                        ? 'লগইন ছাড়াই ব্যবহারযোগ্য'
-                        : 'Open Public Tool'}
-                    </span>
-                  )}
-                </div>
-
-                <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-                  {pickText(service.title, language)}
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-emerald-50/90 sm:text-base">
-                  {pickText(service.shortDescription, language)}
-                </p>
-              </div>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-black/20 text-white ring-1 ring-white/25 backdrop-blur-xs shadow-2xs">
+              <ServiceIcon className="h-7 w-7 text-emerald-300" aria-hidden="true" />
             </div>
 
-            <div className="flex shrink-0 flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={handlePrimaryAction}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#006A4E] shadow-sm hover:bg-[#ECFDF5] transition-colors cursor-pointer"
-              >
-                <span>{pickText(service.primaryCtaLabel, language)}</span>
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </button>
+            <div>
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <span className="rounded-md bg-black/25 backdrop-blur-xs border border-white/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-100 shadow-2xs">
+                  {pickText(category.title, language)}
+                </span>
+                {service.requiresAuthForAction ? (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-black/30 backdrop-blur-xs border border-white/20 px-2.5 py-0.5 text-xs font-medium text-emerald-200 shadow-2xs">
+                    <Lock className="h-3 w-3 text-emerald-400" aria-hidden="true" />
+                    {language === 'bn'
+                      ? 'তথ্য সবার জন্য উন্মুক্ত · আবেদনে লগইন'
+                      : 'Public Info · Login to Apply'}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-black/30 backdrop-blur-xs border border-emerald-400/40 px-2.5 py-0.5 text-xs font-medium text-emerald-300 shadow-2xs">
+                    <Globe2 className="h-3 w-3 text-emerald-400" aria-hidden="true" />
+                    {language === 'bn'
+                      ? 'লগইন ছাড়াই ব্যবহারযোগ্য'
+                      : 'Open Public Tool'}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-4xl drop-shadow-xs">
+                {pickText(service.title, language)}
+              </h1>
+              <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-emerald-50/95 sm:text-base lg:text-[1.0625rem] lg:leading-relaxed drop-shadow-2xs">
+                {pickText(service.shortDescription, language)}
+              </p>
             </div>
           </div>
 
-          {/* In-page Quick Navigation */}
-          <div className="mt-6 flex flex-wrap gap-2 border-t border-white/15 pt-4">
-            {quickNavLinks.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-emerald-50 hover:bg-white/20 transition-colors"
-              >
-                {pickText(item.label, language)}
-              </a>
-            ))}
+          <div className="flex shrink-0 flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={handlePrimaryAction}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#006A4E] shadow-md hover:bg-[#ECFDF5] hover:shadow-lg transition-all cursor-pointer"
+            >
+              <span>{pickText(service.primaryCtaLabel, language)}</span>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
           </div>
         </div>
-      </div>
+
+        {/* In-page Quick Navigation */}
+        <div className="mt-7 flex flex-wrap gap-2 border-t border-white/20 pt-5">
+          {quickNavLinks.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className="rounded-lg bg-black/20 backdrop-blur-xs border border-white/15 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-white/25 hover:text-white transition-all shadow-2xs"
+            >
+              {pickText(item.label, language)}
+            </a>
+          ))}
+        </div>
+      </CitizenServiceHero>
 
       {/* Main Content + Sticky Sidebar */}
       <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
@@ -226,16 +225,19 @@ export default function ServiceDetailPage({
             ) : (
               <section
                 id="service-action-panel"
-                className="rounded-2xl border border-[#006A4E]/30 bg-white p-6 shadow-sm"
+                className="relative overflow-hidden rounded-xl border border-[#006A4E]/40 bg-white p-6 shadow-xs"
               >
+                {/* Top Accent Indicator */}
+                <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-900">
+                    <h2 className="text-lg font-bold text-[#111827]">
                       {language === 'bn'
                         ? 'এই সেবার জন্য আবেদন শুরু করুন'
                         : 'Ready to Start This Service?'}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-[#4B5563]">
                       {service.requiresAuthForAction && !isAuthenticated
                         ? language === 'bn'
                           ? 'আবেদন জমা দিতে লগইন প্রয়োজন। লগইনের পর সরাসরি এই ফর্মে ফিরে আসবেন।'
@@ -248,7 +250,7 @@ export default function ServiceDetailPage({
                   <button
                     type="button"
                     onClick={handlePrimaryAction}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#006A4E] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#00523C] transition-colors cursor-pointer"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#006A4E] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#00523C] transition-colors cursor-pointer shadow-xs hover:shadow-sm"
                   >
                     <span>{pickText(service.primaryCtaLabel, language)}</span>
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -272,8 +274,11 @@ export default function ServiceDetailPage({
           <aside className="space-y-5 lg:col-span-4">
             <div className="sticky top-28 space-y-5">
               {/* Quick Action Summary Card */}
-              <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
-                <h2 className="text-base font-bold text-slate-900">
+              <div className="group relative overflow-hidden rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs transition-all duration-300 ease-out hover:border-[#006A4E] hover:shadow-md">
+                {/* Top Accent Indicator */}
+                <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
+                <h2 className="text-base font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-300">
                   {language === 'bn' ? 'এক নজরে সেবা' : 'Quick Service Summary'}
                 </h2>
 
@@ -322,7 +327,7 @@ export default function ServiceDetailPage({
                 <button
                   type="button"
                   onClick={handlePrimaryAction}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#006A4E] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#00523C] transition-colors cursor-pointer"
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#006A4E] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#00523C] transition-all cursor-pointer shadow-xs group-hover:shadow-sm"
                 >
                   <span>{pickText(service.primaryCtaLabel, language)}</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -330,10 +335,16 @@ export default function ServiceDetailPage({
               </div>
 
               {/* Responsible Department Contact Card */}
-              <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-xs">
+              <div className="group relative overflow-hidden rounded-xl border border-[#E2E8F0] bg-white p-5 shadow-xs transition-all duration-300 ease-out hover:border-[#006A4E] hover:shadow-md">
+                {/* Top Accent Indicator */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-1 bg-transparent group-hover:bg-[#006A4E] transition-colors duration-300"
+                />
+
                 <div className="mb-3 flex items-center gap-2 text-[#006A4E]">
-                  <Building2 className="h-5 w-5" aria-hidden="true" />
-                  <h2 className="text-base font-bold text-slate-900">
+                  <Building2 className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" aria-hidden="true" />
+                  <h2 className="text-base font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-300">
                     {language === 'bn'
                       ? 'সংশ্লিষ্ট বিভাগ ও যোগাযোগ'
                       : 'Department & Support'}
@@ -375,16 +386,16 @@ export default function ServiceDetailPage({
                   </li>
                 </ul>
 
-                <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3.5">
+                <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 group-hover:border-emerald-200/60 transition-colors duration-300 pt-3.5">
                   <Link
                     href={department.supportHref}
-                    className="inline-flex flex-1 items-center justify-center rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-xs font-semibold text-slate-700 hover:border-[#006A4E] hover:text-[#006A4E] transition-colors"
+                    className="inline-flex flex-1 items-center justify-center rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-xs font-semibold text-slate-700 hover:border-[#006A4E] hover:text-[#006A4E] hover:bg-white transition-colors shadow-2xs"
                   >
                     {language === 'bn' ? 'বিভাগীয় তথ্য' : 'Department Info'}
                   </Link>
                   <Link
                     href="/about/contact"
-                    className="inline-flex flex-1 items-center justify-center rounded-lg bg-[#ECFDF5] px-3 py-2 text-xs font-semibold text-[#006A4E] hover:bg-emerald-100 transition-colors"
+                    className="inline-flex flex-1 items-center justify-center rounded-lg bg-[#ECFDF5] px-3 py-2 text-xs font-semibold text-[#006A4E] hover:bg-emerald-100 transition-colors shadow-2xs"
                   >
                     {language === 'bn' ? 'জরুরি হেল্পডেস্ক' : 'Contact Helpdesk'}
                   </Link>

@@ -191,8 +191,12 @@ export default function ApplicationTracking({
   return (
     <section
       id="application-tracking"
-      className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-xs"
+      className="relative overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-xs"
     >
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#006A4E] to-emerald-400"
+      />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E]">
@@ -258,7 +262,7 @@ export default function ApplicationTracking({
           {visibleItems.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col gap-2 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+              className="group flex flex-col gap-2 rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 shadow-2xs transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#006A4E]/60 hover:bg-[#ECFDF5]/60 hover:shadow-xs sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -270,7 +274,7 @@ export default function ApplicationTracking({
                     {language === 'bn' ? `ওয়ার্ড ${item.wardNumber}` : `Ward ${item.wardNumber}`}
                   </span>
                 </div>
-                <p className="mt-0.5 text-sm font-semibold text-slate-800">{item.title}</p>
+                <p className="mt-0.5 text-sm font-semibold text-slate-800 transition-colors duration-300 group-hover:text-[#006A4E]">{item.title}</p>
                 <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
                   <Clock className="h-3 w-3" aria-hidden="true" />
                   <span>{item.date}</span>

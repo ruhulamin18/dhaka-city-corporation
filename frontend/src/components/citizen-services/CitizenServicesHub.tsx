@@ -20,6 +20,7 @@ import {
 import { ServiceCategorySlug, pickText } from '@/types/citizen-service';
 import ServiceCategoryCard from './ServiceCategoryCard';
 import ServiceCard from './ServiceCard';
+import CitizenServiceHero from './CitizenServiceHero';
 
 export default function CitizenServicesHub() {
   const { language } = useApp();
@@ -40,88 +41,86 @@ export default function CitizenServicesHub() {
 
   return (
     <div className="min-h-screen pb-16">
-      {/* Hero Banner */}
-      <div className="bg-gradient-to-br from-[#006A4E] via-[#005A42] to-[#004633] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-          <nav
-            aria-label={language === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'}
-            className="mb-4 flex items-center gap-1.5 text-xs font-medium text-emerald-100/90"
+      {/* Hero Banner with Shared Background & Height Preservation */}
+      <CitizenServiceHero innerClassName="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <nav
+          aria-label={language === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'}
+          className="mb-4 flex items-center gap-1.5 text-xs font-medium text-emerald-100/90"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 hover:text-white transition-colors"
           >
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 hover:text-white transition-colors"
-            >
-              <Home className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>{language === 'bn' ? 'হোম' : 'Home'}</span>
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
-            <span className="font-semibold text-white">
-              {language === 'bn' ? 'নাগরিক সেবা' : 'Citizen Services'}
-            </span>
-          </nav>
+            <Home className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{language === 'bn' ? 'হোম' : 'Home'}</span>
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
+          <span className="font-semibold text-white">
+            {language === 'bn' ? 'নাগরিক সেবা' : 'Citizen Services'}
+          </span>
+        </nav>
 
-          <div className="max-w-3xl">
-            <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              {language === 'bn'
-                ? 'ঢাকা সিটি কর্পোরেশন নাগরিক সেবা পোর্টাল'
-                : 'Dhaka City Corporation Citizen Services'}
-            </h1>
-            <p className="mt-3 text-sm leading-relaxed text-emerald-50/90 sm:text-base">
-              {language === 'bn'
-                ? '৪টি প্রধান বিভাগে ৩১টি সরকারি নাগরিক সেবার বিস্তারিত নির্দেশনা, প্রয়োজনীয় কাগজপত্র, যোগ্যতা ও অনলাইন আবেদন সুবিধা। সকল সেবার তথ্য লগইন ছাড়াই উন্মুক্ত।'
-                : 'Explore all 31 official municipal services across 4 core categories. Browse eligibility, required documents, process steps, and public tools freely without logging in.'}
-            </p>
-          </div>
+        <div className="max-w-3xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] drop-shadow-xs">
+            {language === 'bn'
+              ? 'ঢাকা সিটি কর্পোরেশন নাগরিক সেবা পোর্টাল'
+              : 'Dhaka City Corporation Citizen Services'}
+          </h1>
+          <p className="mt-3.5 text-sm leading-relaxed text-emerald-50/95 sm:text-base lg:text-[1.0625rem] lg:leading-relaxed drop-shadow-2xs">
+            {language === 'bn'
+              ? '৪টি প্রধান বিভাগে ৩১টি সরকারি নাগরিক সেবার বিস্তারিত নির্দেশনা, প্রয়োজনীয় কাগজপত্র, যোগ্যতা ও অনলাইন আবেদন সুবিধা। সকল সেবার তথ্য লগইন ছাড়াই উন্মুক্ত।'
+              : 'Explore all 31 official municipal services across 4 core categories. Browse eligibility, required documents, process steps, and public tools freely without logging in.'}
+          </p>
+        </div>
 
-          {/* Search Bar */}
-          <div className="mt-6 max-w-2xl">
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
-                aria-hidden="true"
-              />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={
-                  language === 'bn'
-                    ? 'সেবা খুঁজুন (যেমন: জন্ম নিবন্ধন, ট্রেড লাইসেন্স, হোল্ডিং ট্যাক্স, সড়ক মেরামত)...'
-                    : 'Search services (e.g., Birth Registration, Trade License, Holding Tax, Road Repair)...'
-                }
-                aria-label={language === 'bn' ? 'নাগরিক সেবা খুঁজুন' : 'Search citizen services'}
-                className="w-full rounded-xl border border-white/20 bg-white py-3.5 pl-12 pr-11 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-white focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery('')}
-                  aria-label={language === 'bn' ? 'অনুসন্ধান মুছুন' : 'Clear search'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
-                >
-                  <X className="h-4 w-4" aria-hidden="true" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Portal Summary Highlights */}
-          <div className="mt-6 flex flex-wrap gap-3 text-xs font-semibold">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-emerald-50">
-              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              {language === 'bn'
-                ? `মোট ${ALL_CITIZEN_SERVICES.length}টি নাগরিক সেবা`
-                : `${ALL_CITIZEN_SERVICES.length} Official Services`}
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-emerald-50">
-              <Globe2 className="h-3.5 w-3.5" aria-hidden="true" />
-              {language === 'bn'
-                ? `${publicToolCount}টি তাৎক্ষণিক উন্মুক্ত টুল ও তালিকা`
-                : `${publicToolCount} Instant Public Tools & Directories`}
-            </span>
+        {/* Search Bar */}
+        <div className="mt-7 max-w-2xl">
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={
+                language === 'bn'
+                  ? 'সেবা খুঁজুন (যেমন: জন্ম নিবন্ধন, ট্রেড লাইসেন্স, হোল্ডিং ট্যাক্স, সড়ক মেরামত)...'
+                  : 'Search services (e.g., Birth Registration, Trade License, Holding Tax, Road Repair)...'
+              }
+              aria-label={language === 'bn' ? 'নাগরিক সেবা খুঁজুন' : 'Search citizen services'}
+              className="w-full rounded-xl border border-white/20 bg-white py-3.5 pl-12 pr-11 text-sm text-slate-900 shadow-md placeholder:text-slate-400 focus:border-white focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                aria-label={language === 'bn' ? 'অনুসন্ধান মুছুন' : 'Clear search'}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            )}
           </div>
         </div>
-      </div>
+
+        {/* Portal Summary Highlights */}
+        <div className="mt-7 flex flex-wrap gap-3 text-xs font-semibold">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-black/25 backdrop-blur-xs border border-white/20 px-3 py-1.5 text-emerald-100 shadow-2xs">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" aria-hidden="true" />
+            {language === 'bn'
+              ? `মোট ${ALL_CITIZEN_SERVICES.length}টি নাগরিক সেবা`
+              : `${ALL_CITIZEN_SERVICES.length} Official Services`}
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-black/25 backdrop-blur-xs border border-white/20 px-3 py-1.5 text-emerald-100 shadow-2xs">
+            <Globe2 className="h-3.5 w-3.5 text-emerald-300" aria-hidden="true" />
+            {language === 'bn'
+              ? `${publicToolCount}টি তাৎক্ষণিক উন্মুক্ত টুল ও তালিকা`
+              : `${publicToolCount} Instant Public Tools & Directories`}
+          </span>
+        </div>
+      </CitizenServiceHero>
 
       <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8 space-y-10">
         {/* 4 Category Cards */}

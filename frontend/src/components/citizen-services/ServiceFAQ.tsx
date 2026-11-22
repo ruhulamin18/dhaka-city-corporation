@@ -18,17 +18,20 @@ export default function ServiceFAQ({ service }: ServiceFAQProps) {
   return (
     <section
       id="service-faq"
-      className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-xs"
+      className="relative overflow-hidden rounded-xl border border-[#E2E8F0] bg-white p-6 shadow-xs"
     >
+      {/* Top Accent Indicator */}
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
       <div className="mb-4 flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E]">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#ECFDF5] border border-emerald-200/80 text-[#006A4E] shadow-2xs">
           <HelpCircle className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-[#111827]">
             {language === 'bn' ? 'সচরাচর জিজ্ঞাসিত প্রশ্ন (FAQ)' : 'Frequently Asked Questions'}
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#4B5563]">
             {language === 'bn'
               ? 'এই সেবা সম্পর্কে সাধারণ প্রশ্নের উত্তর'
               : 'Quick answers to common citizen inquiries about this service'}
@@ -36,16 +39,19 @@ export default function ServiceFAQ({ service }: ServiceFAQProps) {
         </div>
       </div>
 
-      <div className="divide-y divide-slate-100 rounded-xl border border-[#E2E8F0]">
+      <div className="divide-y divide-slate-100 rounded-xl border border-[#E2E8F0] overflow-hidden shadow-2xs">
         {service.faqs.map((faq) => {
           const isOpen = openId === faq.id;
           return (
-            <div key={faq.id} className="bg-white first:rounded-t-xl last:rounded-b-xl">
+            <div
+              key={faq.id}
+              className="group/faq bg-white first:rounded-t-xl last:rounded-b-xl border-l-4 border-l-transparent hover:border-l-[#006A4E] hover:bg-[#ECFDF5]/50 transition-all duration-200"
+            >
               <button
                 type="button"
                 onClick={() => setOpenId(isOpen ? null : faq.id)}
                 aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-4 px-4 py-3.5 text-left text-sm font-semibold text-slate-900 hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+                className="flex w-full items-center justify-between gap-4 px-4 py-3.5 text-left text-sm font-semibold text-[#111827] group-hover/faq:text-[#006A4E] transition-colors cursor-pointer"
               >
                 <span>{pickText(faq.question, language)}</span>
                 <ChevronDown
@@ -56,7 +62,7 @@ export default function ServiceFAQ({ service }: ServiceFAQProps) {
                 />
               </button>
               {isOpen && (
-                <div className="border-t border-slate-100 bg-[#F8FAFC]/70 px-4 py-3.5 text-sm leading-relaxed text-slate-700">
+                <div className="border-t border-slate-100 bg-[#F8FAFC]/80 px-4 py-3.5 text-sm leading-relaxed text-[#4B5563]">
                   {pickText(faq.answer, language)}
                 </div>
               )}

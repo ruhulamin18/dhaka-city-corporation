@@ -12,6 +12,7 @@ import {
 } from '@/data/services';
 import { ServiceCategorySlug, pickText } from '@/types/citizen-service';
 import ServiceCard from './ServiceCard';
+import CitizenServiceHero from './CitizenServiceHero';
 
 interface CategoryServicesPageProps {
   categorySlug: ServiceCategorySlug;
@@ -42,86 +43,84 @@ export default function CategoryServicesPage({
 
   return (
     <div className="min-h-screen pb-16">
-      {/* Category Header Banner */}
-      <div className="bg-gradient-to-br from-[#006A4E] via-[#005A42] to-[#004633] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <nav
-            aria-label={language === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'}
-            className="mb-4 flex flex-wrap items-center gap-1.5 text-xs font-medium text-emerald-100/90"
+      {/* Category Header Banner with Shared Background & Height Preservation */}
+      <CitizenServiceHero innerClassName="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <nav
+          aria-label={language === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'}
+          className="mb-4 flex flex-wrap items-center gap-1.5 text-xs font-medium text-emerald-100/90"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 hover:text-white transition-colors"
           >
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 hover:text-white transition-colors"
-            >
-              <Home className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>{language === 'bn' ? 'হোম' : 'Home'}</span>
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
-            <Link
-              href="/citizen-services"
-              className="hover:text-white transition-colors"
-            >
-              {language === 'bn' ? 'নাগরিক সেবা' : 'Citizen Services'}
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
-            <span className="font-semibold text-white">
-              {pickText(category.title, language)}
-            </span>
-          </nav>
+            <Home className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{language === 'bn' ? 'হোম' : 'Home'}</span>
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
+          <Link
+            href="/citizen-services"
+            className="hover:text-white transition-colors"
+          >
+            {language === 'bn' ? 'নাগরিক সেবা' : 'Citizen Services'}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-emerald-200/70" aria-hidden="true" />
+          <span className="font-semibold text-white">
+            {pickText(category.title, language)}
+          </span>
+        </nav>
 
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25">
-                <Icon className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <div>
-                <span className="inline-block rounded-md bg-white/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-50">
-                  {language === 'bn'
-                    ? `বিভাগ ০${category.order} · ${allInCategory.length}টি সেবা`
-                    : `Category 0${category.order} · ${allInCategory.length} Services`}
-                </span>
-                <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-                  {pickText(category.title, language)}
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-emerald-50/90">
-                  {pickText(category.description, language)}
-                </p>
-              </div>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-black/20 text-white ring-1 ring-white/25 backdrop-blur-xs shadow-2xs">
+              <Icon className="h-7 w-7 text-emerald-300" aria-hidden="true" />
             </div>
-          </div>
-
-          {/* Within-category Search */}
-          <div className="mt-6 max-w-xl">
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                aria-hidden="true"
-              />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={
-                  language === 'bn'
-                    ? `${category.title.bn} বিভাগের মধ্যে সেবা খুঁজুন...`
-                    : `Search within ${category.title.en}...`
-                }
-                className="w-full rounded-xl border border-white/20 bg-white py-3 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery('')}
-                  aria-label={language === 'bn' ? 'মুছুন' : 'Clear search'}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
-                >
-                  <X className="h-4 w-4" aria-hidden="true" />
-                </button>
-              )}
+            <div>
+              <span className="inline-block rounded-md bg-black/25 backdrop-blur-xs border border-white/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-100 shadow-2xs">
+                {language === 'bn'
+                  ? `বিভাগ ০${category.order} · ${allInCategory.length}টি সেবা`
+                  : `Category 0${category.order} · ${allInCategory.length} Services`}
+              </span>
+              <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-4xl drop-shadow-xs">
+                {pickText(category.title, language)}
+              </h1>
+              <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-emerald-50/95 sm:text-base drop-shadow-2xs">
+                {pickText(category.description, language)}
+              </p>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Within-category Search */}
+        <div className="mt-7 max-w-xl">
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={
+                language === 'bn'
+                  ? `${category.title.bn} বিভাগের মধ্যে সেবা খুঁজুন...`
+                  : `Search within ${category.title.en}...`
+              }
+              className="w-full rounded-xl border border-white/20 bg-white py-3 pl-10 pr-10 text-sm text-slate-900 shadow-md placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                aria-label={language === 'bn' ? 'মুছুন' : 'Clear search'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        </div>
+      </CitizenServiceHero>
 
       {/* Services Grid */}
       <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8 space-y-12">
@@ -151,14 +150,18 @@ export default function CategoryServicesPage({
         </section>
 
         {/* Other Categories Navigation Strip */}
-        <section className="rounded-2xl border border-[#E2E8F0] bg-white p-6">
+        <section className="relative overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-xs">
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#006A4E] to-emerald-400"
+          />
           <div className="mb-4 flex items-center justify-between gap-2">
             <h2 className="text-lg font-bold text-slate-900">
               {language === 'bn' ? 'অন্যান্য সেবা বিভাগসমূহ' : 'Explore Other Categories'}
             </h2>
             <Link
               href="/citizen-services"
-              className="text-xs font-semibold text-[#006A4E] hover:text-[#00523C]"
+              className="text-xs font-semibold text-[#006A4E] hover:text-[#00523C] transition-colors"
             >
               {language === 'bn' ? 'সব ৩১টি সেবা দেখুন' : 'View all 31 services'}
             </Link>
@@ -171,14 +174,18 @@ export default function CategoryServicesPage({
                 <Link
                   key={cat.slug}
                   href={`/citizen-services/${cat.slug}`}
-                  className="group flex items-center justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 hover:border-[#006A4E]/50 hover:bg-white transition-all"
+                  className="group relative flex items-center justify-between overflow-hidden rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-2xs transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#006A4E] hover:bg-[#ECFDF5]/80 hover:shadow-md"
                 >
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 top-0 h-1 bg-transparent transition-colors duration-300 group-hover:bg-[#006A4E]"
+                  />
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E] group-hover:bg-[#006A4E] group-hover:text-white transition-colors">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#006A4E] group-hover:text-white">
                       <CatIcon className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-900 group-hover:text-[#006A4E] transition-colors">
+                      <p className="text-sm font-bold text-slate-900 transition-colors duration-300 group-hover:text-[#006A4E]">
                         {pickText(cat.title, language)}
                       </p>
                       <p className="text-xs text-slate-500">
@@ -186,7 +193,7 @@ export default function CategoryServicesPage({
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-[#006A4E] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  <ArrowRight className="h-4 w-4 text-[#006A4E] transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                 </Link>
               );
             })}

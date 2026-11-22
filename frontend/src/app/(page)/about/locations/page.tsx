@@ -38,7 +38,10 @@ export default function AboutLocationsPage() {
   return (
     <AboutPageLayout activeSlug="locations">
       {/* Featured Nagar Bhaban Headquarters Card + Live Satellite Preview */}
-      <section className="civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8">
+      <section className="relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8 shadow-xs">
+        {/* Top Accent Indicator */}
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
           <div className="lg:col-span-6 space-y-4">
             <div>
@@ -200,14 +203,14 @@ export default function AboutLocationsPage() {
                   <div className="flex flex-wrap items-center gap-2 pt-1">
                     <a
                       href={`tel:${office.phone.replace(/[^+\d]/g, '')}`}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold tabular-nums transition-colors"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold tabular-nums transition-all duration-200 shadow-2xs hover:shadow-xs"
                     >
                       <Phone className="w-3 h-3" aria-hidden="true" />
                       <span>{office.phone}</span>
                     </a>
                     <a
                       href={`mailto:${office.email}`}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#F8FAFC] hover:bg-[#ECFDF5] text-[#006A4E] border border-[#E2E8F0] font-semibold transition-colors"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#F8FAFC] group-hover:bg-white hover:bg-[#ECFDF5] text-[#006A4E] border border-[#E2E8F0] group-hover:border-[#006A4E]/30 font-semibold transition-all duration-200 shadow-2xs"
                     >
                       <Mail className="w-3 h-3" aria-hidden="true" />
                       <span>{language === 'bn' ? 'ইমেইল' : 'Email'}</span>
@@ -222,7 +225,7 @@ export default function AboutLocationsPage() {
                           lng: office.lng,
                         })
                       }
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#ECFDF5] hover:bg-emerald-100 text-[#006A4E] font-semibold transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#ECFDF5] group-hover:bg-white hover:bg-emerald-100 text-[#006A4E] border border-emerald-200/80 group-hover:border-[#006A4E]/40 font-semibold transition-all duration-200 cursor-pointer shadow-2xs"
                     >
                       <MapPin className="w-3 h-3" aria-hidden="true" />
                       <span>{language === 'bn' ? 'ম্যাপে দেখুন' : 'Show on Map'}</span>

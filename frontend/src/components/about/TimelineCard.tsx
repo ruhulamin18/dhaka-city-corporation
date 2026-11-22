@@ -41,12 +41,20 @@ export function TimelineCard({
       {/* Milestone Card */}
       <article
         onClick={onSelect}
-        className={`flex-1 mb-6 civic-card bg-white rounded-xl border p-5 sm:p-6 transition-colors ${
+        className={`group relative overflow-hidden flex-1 mb-6 civic-card rounded-xl border p-5 sm:p-6 shadow-xs transition-all duration-300 ease-out hover:bg-[#ECFDF5]/80 hover:border-[#006A4E] hover:-translate-y-1 hover:shadow-md ${
           isActive
-            ? 'border-[#006A4E] shadow-sm'
-            : 'border-[#E2E8F0] hover:border-[#006A4E]/50'
+            ? 'bg-[#ECFDF5]/50 border-[#006A4E] shadow-xs'
+            : 'bg-white border-[#E2E8F0]'
         } ${onSelect ? 'cursor-pointer' : ''}`}
       >
+        {/* Top Accent Indicator */}
+        <span
+          aria-hidden="true"
+          className={`absolute inset-x-0 top-0 h-1 transition-colors duration-300 ${
+            isActive ? 'bg-[#006A4E]' : 'bg-transparent group-hover:bg-[#006A4E]'
+          }`}
+        />
+
         <p className="text-xs font-semibold text-[#006A4E]">
           {pickLang(milestone.era, language)}
           <span className="mx-1.5 text-slate-300" aria-hidden="true">
@@ -54,13 +62,13 @@ export function TimelineCard({
           </span>
           <span className="tabular-nums">{pickLang(milestone.year, language)}</span>
         </p>
-        <h3 className="text-lg font-bold text-[#111827] mt-1">
+        <h3 className="text-lg font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-300 mt-1">
           {pickLang(milestone.title, language)}
         </h3>
         <p className="text-sm text-[#4B5563] leading-relaxed mt-2">
           {pickLang(milestone.description, language)}
         </p>
-        <p className="mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-[#006A4E]">
+        <p className="mt-3 pt-3 border-t border-slate-100 group-hover:border-emerald-200/60 transition-colors duration-300 text-xs font-medium text-[#006A4E]">
           {pickLang(milestone.impact, language)}
         </p>
       </article>

@@ -72,12 +72,20 @@ export default function AboutContactPage() {
               <a
                 key={item.id}
                 href={`tel:${item.code.replace(/[^+\d]/g, '')}`}
-                className={`civic-card rounded-xl border p-4 flex flex-col justify-between gap-2.5 transition-colors ${
+                className={`group relative overflow-hidden civic-card rounded-xl border p-4 flex flex-col justify-between gap-3 shadow-xs transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md ${
                   isCrimson
-                    ? 'bg-[#FEF2F2]/70 border-red-200 hover:border-[#C81E1E]'
-                    : 'bg-[#ECFDF5]/70 border-emerald-200 hover:border-[#006A4E]'
+                    ? 'bg-white border-[#E2E8F0] hover:bg-[#FEF2F2] hover:border-[#C81E1E]'
+                    : 'bg-white border-[#E2E8F0] hover:bg-[#ECFDF5]/80 hover:border-[#006A4E]'
                 }`}
               >
+                {/* Top Accent Indicator */}
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-x-0 top-0 h-1 bg-transparent transition-colors duration-300 ${
+                    isCrimson ? 'group-hover:bg-[#C81E1E]' : 'group-hover:bg-[#006A4E]'
+                  }`}
+                />
+
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className={`text-xs font-semibold ${
@@ -86,12 +94,15 @@ export default function AboutContactPage() {
                   >
                     {pickLang(item.availability, language)}
                   </span>
-                  <PhoneCall
-                    className={`w-4 h-4 shrink-0 ${
-                      isCrimson ? 'text-[#C81E1E]' : 'text-[#006A4E]'
+                  <div
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 shadow-2xs ${
+                      isCrimson
+                        ? 'bg-[#FEF2F2] border border-red-200 text-[#C81E1E] group-hover:bg-[#C81E1E] group-hover:text-white group-hover:border-[#C81E1E] group-hover:scale-105'
+                        : 'bg-[#ECFDF5] border border-emerald-200 text-[#006A4E] group-hover:bg-[#006A4E] group-hover:text-white group-hover:border-[#006A4E] group-hover:scale-105'
                     }`}
-                    aria-hidden="true"
-                  />
+                  >
+                    <PhoneCall className="w-3.5 h-3.5" aria-hidden="true" />
+                  </div>
                 </div>
                 <div>
                   <p
@@ -101,7 +112,11 @@ export default function AboutContactPage() {
                   >
                     {item.code}
                   </p>
-                  <p className="text-xs font-bold text-[#111827] mt-1">
+                  <p
+                    className={`text-xs font-bold text-[#111827] mt-1 transition-colors duration-300 ${
+                      isCrimson ? 'group-hover:text-[#C81E1E]' : 'group-hover:text-[#006A4E]'
+                    }`}
+                  >
                     {pickLang(item.title, language)}
                   </p>
                   <p className="text-[11px] text-[#4B5563] mt-0.5 leading-snug">
@@ -171,11 +186,11 @@ export default function AboutContactPage() {
               }
             />
           ) : (
-            <div className="civic-card bg-white rounded-xl border border-[#E2E8F0] divide-y divide-slate-100 overflow-hidden">
+            <div className="civic-card bg-white rounded-xl border border-[#E2E8F0] divide-y divide-slate-100 overflow-hidden shadow-xs">
               {filteredContacts.map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F8FAFC] transition-colors"
+                  className="group relative p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all duration-200 border-l-4 border-l-transparent hover:border-l-[#006A4E] hover:bg-[#ECFDF5]/60 hover:pl-5 sm:hover:pl-6"
                 >
                   <div className="space-y-0.5 min-w-0">
                     <p className="text-xs font-semibold text-[#006A4E]">
@@ -185,7 +200,7 @@ export default function AboutContactPage() {
                       </span>
                       {pickLang(item.roomOrFloor, language)}
                     </p>
-                    <h3 className="text-sm sm:text-base font-bold text-[#111827]">
+                    <h3 className="text-sm sm:text-base font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-200">
                       {pickLang(item.officeName, language)}
                     </h3>
                     <p className="text-xs text-[#4B5563]">{pickLang(item.officerTitle, language)}</p>
@@ -194,14 +209,14 @@ export default function AboutContactPage() {
                   <div className="flex flex-wrap sm:flex-col items-start sm:items-end gap-1.5 shrink-0 text-xs">
                     <a
                       href={`tel:${item.phone.replace(/[^+\d]/g, '')}`}
-                      className="inline-flex items-center gap-1.5 font-mono font-bold text-[#006A4E] hover:underline tabular-nums"
+                      className="inline-flex items-center gap-1.5 font-mono font-bold text-[#006A4E] px-2.5 py-1 rounded-md group-hover:bg-white group-hover:shadow-2xs transition-all duration-200 tabular-nums"
                     >
                       <Phone className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>{item.phone}</span>
                     </a>
                     <a
                       href={`mailto:${item.email}`}
-                      className="inline-flex items-center gap-1.5 text-[#4B5563] hover:text-[#006A4E]"
+                      className="inline-flex items-center gap-1.5 text-[#4B5563] group-hover:text-[#006A4E] px-2.5 py-1 rounded-md transition-colors duration-200"
                     >
                       <Mail className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>{item.email}</span>
@@ -215,7 +230,10 @@ export default function AboutContactPage() {
 
         {/* Send Us a Message Form */}
         <section aria-labelledby="send-message-heading" className="lg:col-span-5">
-          <div className="civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-5">
+          <div className="relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-5 shadow-xs">
+            {/* Top Accent Indicator */}
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
             <div>
               <p className="text-xs font-semibold text-[#006A4E]">
                 {language === 'bn' ? 'নাগরিক তথ্য ও মতামত ডেস্ক' : 'Citizen Inquiry & Feedback Desk'}

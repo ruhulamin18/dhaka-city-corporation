@@ -23,7 +23,7 @@ export function ServicesSection({ language }: ServicesSectionProps) {
               className="hidden sm:block w-10 h-0.5 bg-[#006A4E]/45 rounded-full"
               aria-hidden="true"
             />
-            <h2 className="text-2xl sm:text-[1.75rem] font-extrabold text-[#0B2545] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B2545] tracking-tight">
               {language === 'bn' ? 'জনপ্রিয় নাগরিক সেবাসমূহ' : 'Popular Citizen Services'}
             </h2>
             <span
@@ -31,7 +31,7 @@ export function ServicesSection({ language }: ServicesSectionProps) {
               aria-hidden="true"
             />
           </div>
-          <p className="mt-1.5 text-sm text-[#4B5563]">
+          <p className="mt-1.5 text-base text-[#4B5563]">
             {language === 'bn'
               ? 'অনলাইনে আপনার প্রয়োজনীয় সিটি কর্পোরেশন সেবা সহজেই গ্রহণ করুন'
               : 'Get your essential city corporation services online'}
@@ -65,10 +65,10 @@ export function ServicesSection({ language }: ServicesSectionProps) {
           {/* Left Banner: Smart City, Better Services */}
           <div className="lg:col-span-7 civic-card relative overflow-hidden bg-gradient-to-r from-[#EBF8F3] via-[#F3FBF8] to-[#ECFDF5] border border-emerald-200/80 rounded-2xl p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
             <div className="relative z-10 max-w-xs sm:max-w-sm text-center sm:text-left">
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#0B2545] tracking-tight">
+              <h3 className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold text-[#0B2545] tracking-tight">
                 {language === 'bn' ? 'স্মার্ট সিটি, উন্নত সেবা' : 'Smart City, Better Services'}
               </h3>
-              <p className="mt-1.5 text-sm text-[#4B5563] leading-relaxed">
+              <p className="mt-1.5 text-base text-[#4B5563] leading-relaxed">
                 {language === 'bn'
                   ? 'আধুনিক, স্বচ্ছ এবং নাগরিকবান্ধব সিটি কর্পোরেশন ডিজিটাল প্ল্যাটফর্ম।'
                   : 'A modern, transparent and citizen-friendly city corporation.'}
@@ -115,10 +115,10 @@ export function ServicesSection({ language }: ServicesSectionProps) {
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg sm:text-xl font-bold text-white leading-snug">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-snug">
                 {language === 'bn' ? 'সিটি ম্যাপ (GIS) দেখুন' : 'Explore City Map (GIS)'}
               </h3>
-              <p className="mt-1 text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+              <p className="mt-1 text-sm sm:text-base text-emerald-100/90 leading-relaxed">
                 {language === 'bn'
                   ? 'ওয়ার্ড, নাগরিক সুবিধা, উন্নয়ন প্রকল্প এবং সেবাকেন্দ্রের অবস্থান খুঁজুন।'
                   : 'Find wards, public facilities, projects and service locations.'}

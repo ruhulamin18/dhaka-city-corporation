@@ -14,7 +14,10 @@ export default function AboutMayorPage() {
   return (
     <AboutPageLayout activeSlug="mayor">
       {/* Executive Profile Header */}
-      <section className="civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8">
+      <section className="relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8 shadow-xs">
+        {/* Top Accent Indicator */}
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
           {/* Dignified Institutional Portrait Frame */}
           <div className="lg:col-span-4 flex justify-center">
@@ -120,8 +123,14 @@ export default function AboutMayorPage() {
 
       {/* Biography & Education */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-7 civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-3">
-          <h2 className="text-lg font-bold text-[#111827]">
+        <div className="lg:col-span-7 group relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-3 shadow-xs transition-all duration-300 ease-out hover:bg-[#ECFDF5]/80 hover:border-[#006A4E] hover:-translate-y-1 hover:shadow-md">
+          {/* Top Accent Indicator */}
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-1 bg-transparent group-hover:bg-[#006A4E] transition-colors duration-300"
+          />
+
+          <h2 className="text-lg font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-300">
             {language === 'bn' ? 'সংক্ষিপ্ত জীবনী ও প্রশাসনিক অভিজ্ঞতা' : 'Executive Biography'}
           </h2>
           <div className="space-y-3 text-sm text-[#4B5563] leading-relaxed">
@@ -131,12 +140,18 @@ export default function AboutMayorPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-5 civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-3">
-          <h2 className="text-lg font-bold text-[#111827] flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-[#006A4E]" aria-hidden="true" />
+        <div className="lg:col-span-5 group relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-3 shadow-xs transition-all duration-300 ease-out hover:bg-[#ECFDF5]/80 hover:border-[#006A4E] hover:-translate-y-1 hover:shadow-md">
+          {/* Top Accent Indicator */}
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-1 bg-transparent group-hover:bg-[#006A4E] transition-colors duration-300"
+          />
+
+          <h2 className="text-lg font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-300 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-[#006A4E] group-hover:scale-110 transition-transform duration-300" aria-hidden="true" />
             <span>{language === 'bn' ? 'শিক্ষাগত যোগ্যতা' : 'Academic Background'}</span>
           </h2>
-          <ul className="divide-y divide-slate-100 text-sm text-[#4B5563]">
+          <ul className="divide-y divide-slate-100 group-hover:divide-emerald-200/60 transition-colors duration-300 text-sm text-[#4B5563]">
             {MAYOR_PROFILE.education.map((edu, idx) => (
               <li key={idx} className="py-2.5 first:pt-0 last:pb-0">
                 {pickLang(edu, language)}

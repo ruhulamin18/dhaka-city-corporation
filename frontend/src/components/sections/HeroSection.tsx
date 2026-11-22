@@ -164,7 +164,7 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
           * Laptop/Desktop (lg+): lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[600px] matching navbar height cleanly
           * Mobile/Phone (< md): fixed h-[480px] sm:h-[520px] md:h-[560px] (never 100vh) for easy reach and scrolling
       */}
-      <section className="relative overflow-hidden w-full h-[480px] sm:h-[520px] md:h-[560px] lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[600px] flex flex-col justify-between">
+      <section className="relative overflow-hidden w-full h-[400px] sm:h-[440px] md:h-[480px] lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[520px] flex flex-col justify-between">
         {/* 1. Background Image Slider with CSS Crossfade & Bangladesh Civic Green Gradient Overlay */}
         <div
           className="absolute inset-0 pointer-events-none select-none overflow-hidden"
@@ -189,9 +189,10 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
             </div>
           ))}
 
-          {/* Consistent Dark Bangladesh Civic Green Gradient Overlay */}
+          {/* Deep Forest Green Gradient Overlay — dark left for text contrast, transparent right */}
           <div
-            className="absolute inset-0 bg-gradient-to-r from-[#006A4E]/85 via-[#003D2D]/75 to-[#111827]/75"
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(to right, rgba(2, 44, 34, 0.92) 0%, rgba(4, 60, 46, 0.78) 35%, rgba(6, 78, 59, 0.45) 65%, rgba(17, 24, 39, 0.18) 100%)' }}
             aria-hidden="true"
           />
         </div>
@@ -200,18 +201,24 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-6 lg:pt-8 flex-1 flex flex-col justify-around">
           {/* Top Block: Civic Badge, Bilingual Headline, Subtitle & Action CTAs */}
           <div className="w-full max-w-2xl text-left">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 text-[10px] sm:text-xs font-bold tracking-[0.12em] text-emerald-300 uppercase shadow-2xs">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 text-[10px] sm:text-xs font-bold tracking-[0.12em] text-emerald-300 uppercase shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
               {language === 'bn' ? 'স্মার্ট সিটি কর্পোরেশন' : 'Smart City Corporation'}
             </div>
 
-            <h1 className="mt-1.5 sm:mt-2.5 text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight text-balance drop-shadow-xs">
+            <h1
+              className="mt-1.5 sm:mt-2.5 text-2xl sm:text-3xl lg:text-[2.75rem] xl:text-5xl font-black text-[#FFFFFF] leading-tight tracking-tight text-balance"
+              style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}
+            >
               {language === 'bn'
                 ? 'পরিচ্ছন্ন, নিরাপদ ও স্মার্ট ঢাকার জন্য ডিজিটাল সেবা'
                 : 'Digital Services for a Cleaner, Safer and Smarter Dhaka'}
             </h1>
 
-            <p className="mt-1.5 sm:mt-2.5 text-xs sm:text-sm lg:text-base text-emerald-50/90 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none">
+            <p
+              className="mt-1.5 sm:mt-2.5 text-xs sm:text-sm lg:text-base text-[#E9ECEF] leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none"
+              style={{ textShadow: '0 1px 6px rgba(0,0,0,0.25)' }}
+            >
               {language === 'bn'
                 ? 'নাগরিক সেবা গ্রহণ, কর পরিশোধ, অনলাইন আবেদন এবং নগর সমস্যা রিপোর্ট করুন — সবকিছু এক প্ল্যাটফর্মে।'
                 : 'Access city services, pay taxes, apply online and report urban issues — all in one platform.'}
@@ -220,7 +227,7 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
             <div className="mt-3 sm:mt-4 flex flex-wrap items-center justify-start gap-2 sm:gap-3">
               <a
                 href="#services"
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-[#006A4E] hover:bg-[#00523C] text-white border border-emerald-400/40 font-semibold text-xs sm:text-sm rounded-lg shadow-sm transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#064E3B] border border-yellow-500/40 font-bold text-xs sm:text-sm rounded-lg shadow-md hover:shadow-lg transition-all whitespace-nowrap"
               >
                 <span>{language === 'bn' ? 'সেবাসমূহ দেখুন' : 'Explore Services'}</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
@@ -228,7 +235,7 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
               <button
                 type="button"
                 onClick={() => setHowItWorksOpen(true)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/25 font-semibold text-xs sm:text-sm rounded-lg shadow-xs backdrop-blur-xs transition-colors whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-white/5 hover:bg-white/15 text-white border border-white/40 font-semibold text-xs sm:text-sm rounded-lg shadow-xs backdrop-blur-sm transition-colors whitespace-nowrap cursor-pointer"
               >
                 <PlayCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300" aria-hidden="true" />
                 <span>{language === 'bn' ? 'কীভাবে কাজ করে' : 'How It Works'}</span>
@@ -243,7 +250,8 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                 onSubmit={handleHeroSearchSubmit}
                 role="search"
                 aria-label={language === 'bn' ? 'নাগরিক সেবা অনুসন্ধান' : 'Search municipal services'}
-                className="bg-white rounded-full border border-white/30 shadow-xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 backdrop-blur-xs"
+                className="bg-white rounded-full border border-white/30 p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 backdrop-blur-xs"
+                style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.15)' }}
               >
                 <div className="relative flex-1 flex items-center">
                   <Search
@@ -281,7 +289,7 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                 </div>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 sm:px-6 sm:py-2.5 bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold text-xs sm:text-sm rounded-full transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+                  className="px-4 py-1.5 sm:px-6 sm:py-2.5 bg-[#065F46] hover:bg-[#064E3B] text-white font-semibold text-xs sm:text-sm rounded-full transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-sm"
                 >
                   {language === 'bn' ? 'খুঁজুন' : 'Search'}
                 </button>
@@ -309,7 +317,16 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
 
           {/* Bottom Block: Dark Civic Green 4-Column Statistics Ribbon */}
           <div className="w-full relative z-20">
-            <div className="relative overflow-hidden bg-gradient-to-r from-[#004A36]/90 via-[#006A4E]/85 to-[#00553E]/90 backdrop-blur-md text-white rounded-xl sm:rounded-2xl border border-white/15 shadow-lg px-3.5 py-2.5 sm:px-6 sm:py-3.5 lg:px-8 lg:py-4">
+            <div
+              className="relative overflow-hidden text-white rounded-xl sm:rounded-2xl px-3.5 py-2.5 sm:px-6 sm:py-3.5 lg:px-8 lg:py-4"
+              style={{
+                background: 'rgba(6, 78, 59, 0.75)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.18)',
+              }}
+            >
               <div
                 aria-hidden="true"
                 className="civic-bg-layer absolute inset-y-0 right-0 w-1/2 bg-[url('/images/bg2.png')] bg-right-bottom bg-no-repeat bg-cover invert opacity-[0.10] pointer-events-none"

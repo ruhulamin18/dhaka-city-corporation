@@ -37,8 +37,8 @@ export function BrandSection({ compact = false, onNavigate }: BrandSectionProps)
         referrerPolicy="no-referrer"
         className={`w-auto object-contain transition-opacity group-hover:opacity-90 ${
           compact
-            ? 'h-12'
-            : 'h-12 md:h-[58px] lg:h-[64px] xl:h-[70px] 2xl:h-[74px]'
+            ? 'h-14'
+            : 'h-14 md:h-[66px] lg:h-[72px] xl:h-[78px] 2xl:h-[82px]'
         }`}
       />
     </Link>

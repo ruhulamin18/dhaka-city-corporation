@@ -47,13 +47,13 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
         <div className="lg:col-span-7">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-[#111827] flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#006A4E] flex items-center justify-center shrink-0">
                   <Bell className="w-4 h-4" aria-hidden="true" />
                 </span>
                 <span>{t.notices.title}</span>
               </h2>
-              <p className="mt-1 text-sm text-[#4B5563]">{t.notices.subtitle}</p>
+              <p className="mt-1 text-base text-[#4B5563]">{t.notices.subtitle}</p>
             </div>
           </div>
 
@@ -125,13 +125,13 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
         {/* Interactive Ward Directory (5 columns) */}
         <div className="lg:col-span-5">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[#111827] flex items-center gap-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] flex items-center gap-2">
               <span className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#006A4E] flex items-center justify-center shrink-0">
                 <Building2 className="w-4 h-4" aria-hidden="true" />
               </span>
               <span>{t.wardDirectory.title}</span>
             </h2>
-            <p className="mt-1 text-sm text-[#4B5563]">{t.wardDirectory.subtitle}</p>
+            <p className="mt-1 text-base text-[#4B5563]">{t.wardDirectory.subtitle}</p>
           </div>
 
           <div className="civic-card bg-[#F8FAFC]/95 rounded-xl border border-[#E2E8F0] p-6 space-y-5">

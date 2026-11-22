@@ -85,7 +85,10 @@ export default function AboutCitizenCharterPage() {
       ) : (
         <>
           {/* Desktop Table View */}
-          <div className="hidden lg:block civic-card bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
+          <div className="hidden lg:block relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] overflow-hidden shadow-xs">
+            {/* Top Accent Indicator */}
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead className="bg-[#F8FAFC] text-xs font-semibold text-[#4B5563] border-b border-[#E2E8F0]">
@@ -100,12 +103,12 @@ export default function AboutCitizenCharterPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-[#F8FAFC]/80 transition-colors align-top">
+                    <tr key={item.id} className="group/row hover:bg-[#ECFDF5]/60 transition-colors align-top">
                       <td className="px-5 py-4 max-w-[230px]">
                         <p className="text-xs font-semibold text-[#006A4E]">
                           {pickLang(item.departmentName, language)}
                         </p>
-                        <p className="font-bold text-[#111827] mt-0.5 leading-snug">
+                        <p className="font-bold text-[#111827] group-hover/row:text-[#006A4E] transition-colors mt-0.5 leading-snug">
                           {pickLang(item.serviceName, language)}
                         </p>
                       </td>
@@ -124,7 +127,7 @@ export default function AboutCitizenCharterPage() {
                       <td className="px-5 py-4 text-right whitespace-nowrap">
                         <Link
                           href={item.applyHref}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#006A4E] hover:bg-[#00523C] text-white text-xs font-semibold transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#006A4E] hover:bg-[#00523C] text-white text-xs font-semibold transition-colors shadow-2xs hover:shadow-xs"
                         >
                           <span>{language === 'bn' ? 'আবেদন করুন' : 'Apply Now'}</span>
                           <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -142,18 +145,24 @@ export default function AboutCitizenCharterPage() {
             {filteredItems.map((item) => (
               <article
                 key={item.id}
-                className="civic-card bg-white rounded-xl border border-[#E2E8F0] p-5 space-y-3.5"
+                className="group relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-5 space-y-3.5 shadow-xs transition-all duration-300 ease-out hover:bg-[#ECFDF5]/80 hover:border-[#006A4E] hover:-translate-y-1 hover:shadow-md"
               >
+                {/* Top Accent Indicator */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-1 bg-transparent group-hover:bg-[#006A4E] transition-colors duration-300"
+                />
+
                 <div>
                   <p className="text-xs font-semibold text-[#006A4E]">
                     {pickLang(item.departmentName, language)}
                   </p>
-                  <h2 className="text-base font-bold text-[#111827] mt-0.5">
+                  <h2 className="text-base font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors duration-300 mt-0.5">
                     {pickLang(item.serviceName, language)}
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs pt-2 border-t border-slate-100">
+                <div className="grid grid-cols-2 gap-3 text-xs pt-2 border-t border-slate-100 group-hover:border-emerald-200/60 transition-colors duration-300">
                   <div>
                     <span className="text-[#4B5563] block">
                       {language === 'bn' ? 'সরকারি ফি' : 'Official Fee'}
@@ -173,7 +182,7 @@ export default function AboutCitizenCharterPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 text-xs text-[#4B5563] pt-2 border-t border-slate-100">
+                <div className="space-y-2 text-xs text-[#4B5563] pt-2 border-t border-slate-100 group-hover:border-emerald-200/60 transition-colors duration-300">
                   <div className="flex items-start gap-2">
                     <FileText className="w-3.5 h-3.5 text-[#006A4E] shrink-0 mt-0.5" aria-hidden="true" />
                     <span>
@@ -196,7 +205,7 @@ export default function AboutCitizenCharterPage() {
 
                 <Link
                   href={item.applyHref}
-                  className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#006A4E] hover:bg-[#00523C] text-white text-xs font-semibold transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#006A4E] hover:bg-[#00523C] text-white text-xs font-semibold transition-all duration-200 shadow-2xs hover:shadow-xs"
                 >
                   <span>{language === 'bn' ? 'আবেদন করুন' : 'Apply Now'}</span>
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />

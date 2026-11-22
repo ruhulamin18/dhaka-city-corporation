@@ -14,7 +14,10 @@ export default function AboutHistoryPage() {
   return (
     <AboutPageLayout activeSlug="history">
       {/* Historical Narrative Card */}
-      <section className="civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8 space-y-4">
+      <section className="relative overflow-hidden civic-card bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8 space-y-4 shadow-xs">
+        {/* Top Accent Indicator */}
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#006A4E]" />
+
         <p className="text-xs font-semibold text-[#006A4E]">
           {language === 'bn' ? '১৬০+ বছরের পৌর ঐতিহ্য' : '160+ Years of Municipal Heritage'}
         </p>
@@ -41,10 +44,10 @@ export default function AboutHistoryPage() {
                 type="button"
                 aria-pressed={active}
                 onClick={() => setSelectedId(item.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold tabular-nums transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold tabular-nums transition-all duration-200 cursor-pointer ${
                   active
-                    ? 'bg-[#006A4E] text-white'
-                    : 'bg-[#F8FAFC] text-[#4B5563] border border-[#E2E8F0] hover:border-[#006A4E] hover:text-[#006A4E]'
+                    ? 'bg-[#006A4E] text-white shadow-xs scale-105'
+                    : 'bg-[#F8FAFC] text-[#4B5563] border border-[#E2E8F0] hover:border-[#006A4E] hover:text-[#006A4E] hover:bg-white'
                 }`}
               >
                 {pickLang(item.year, language)}

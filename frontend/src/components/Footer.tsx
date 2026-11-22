@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Building2, Mail, PhoneCall } from 'lucide-react';
+import { Building2, Github, Mail, PhoneCall } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 export function Footer() {
@@ -228,16 +228,11 @@ export function Footer() {
         </div>
 
         {/* Bottom Copyright & Policy Links Bar */}
-        <div className="mt-10 pt-5 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-emerald-100/90 pr-0 sm:pr-14">
-          <p>
-            {isBn
-              ? '© ২০২৬ ঢাকা সিটি কর্পোরেশন — স্মার্ট নাগরিক সেবা ও ডিজিটাল প্ল্যাটফর্ম।'
-              : '© 2026 Dhaka Smart City Corporation — Digital Citizen Service Platform.'}
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+        <div className="mt-10 pt-5 border-t border-white/20 flex flex-col gap-3 pr-0 sm:pr-14">
+          {/* Policy Links */}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 text-xs text-emerald-100/90">
             <Link
-              href="/#services"
+              href="/about/citizen-charter"
               className="hover:text-white hover:underline underline-offset-2 transition-colors"
             >
               {isBn ? 'নাগরিক সেবা সনদ' : 'Citizen Charter'}
@@ -246,7 +241,7 @@ export function Footer() {
               •
             </span>
             <Link
-              href="/transparency"
+              href="/privacy-policy"
               className="hover:text-white hover:underline underline-offset-2 transition-colors"
             >
               {isBn ? 'তথ্য গোপনীয়তা নীতি' : 'Privacy Policy'}
@@ -255,11 +250,36 @@ export function Footer() {
               •
             </span>
             <Link
-              href="/#notices"
+              href="/accessibility"
               className="hover:text-white hover:underline underline-offset-2 transition-colors"
             >
               {isBn ? 'প্রবেশগম্যতা' : 'Accessibility'}
             </Link>
+          </div>
+
+          {/* Copyright & Developer Credit Bar */}
+          <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-emerald-100/80">
+            <p className="text-center sm:text-left">
+              {isBn
+                ? '© ২০২৬ ঢাকা সিটি কর্পোরেশন — স্মার্ট নাগরিক সেবা ও ডিজিটাল প্ল্যাটফর্ম।'
+                : '© 2026 Dhaka Smart City Corporation — Digital Citizen Service Platform.'}
+            </p>
+
+            <div className="flex items-center gap-1.5 text-center sm:text-right">
+              <span>
+                {isBn ? 'ডিজাইন ও ডেভেলপমেন্ট: ' : 'Designed & Developed by '}
+              </span>
+              <a
+                href="https://github.com/ruhulamin18"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Md. Ruhul Amin GitHub Profile"
+                className="font-semibold text-white hover:text-emerald-300 underline-offset-4 hover:underline transition-colors inline-flex items-center gap-1"
+              >
+                <Github className="w-3.5 h-3.5 text-emerald-200 shrink-0" aria-hidden="true" />
+                <span>{isBn ? 'মোঃ রুহুল আমিন' : 'Md. Ruhul Amin'}</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>

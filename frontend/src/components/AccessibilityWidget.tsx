@@ -41,6 +41,12 @@ const MIN_FONT = 85;
 const MAX_FONT = 130;
 const FONT_STEP = 5;
 
+export function openAccessibilityDrawer() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('dscc:open-accessibility'));
+  }
+}
+
 export function AccessibilityWidget() {
   const { language } = useApp();
   const [open, setOpen] = useState(false);
@@ -48,6 +54,27 @@ export function AccessibilityWidget() {
   const [hydrated, setHydrated] = useState(false);
 
   const guideBarRef = useRef<HTMLDivElement | null>(null);
+
+  // Global event listeners to open/toggle accessibility drawer from anywhere
+  useEffect(() => {
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const handleToggle = () => setOpen((prev) => !prev);
+
+    window.addEventListener('dscc:open-accessibility', handleOpen);
+    window.addEventListener('dscc:close-accessibility', handleClose);
+    window.addEventListener('dscc:toggle-accessibility', handleToggle);
+
+    if (typeof window !== 'undefined' && window.location.hash === '#accessibility-tools') {
+      setOpen(true);
+    }
+
+    return () => {
+      window.removeEventListener('dscc:open-accessibility', handleOpen);
+      window.removeEventListener('dscc:close-accessibility', handleClose);
+      window.removeEventListener('dscc:toggle-accessibility', handleToggle);
+    };
+  }, []);
 
   // Hydrate persisted preferences safely after mount
   useEffect(() => {

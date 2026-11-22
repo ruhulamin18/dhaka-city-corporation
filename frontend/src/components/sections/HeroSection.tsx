@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,11 +14,57 @@ export interface HeroSectionProps {
   notices: NoticeItem[];
 }
 
+const HERO_IMAGES = [
+  {
+    src: '/images/hero1.png',
+    alt: 'Dhaka Smart City Digital Governance - Slide 1',
+  },
+  {
+    src: '/images/hero2.png',
+    alt: 'Dhaka Smart City Digital Governance - Slide 2',
+  },
+  {
+    src: '/images/hero3.png',
+    alt: 'Dhaka Smart City Digital Governance - Slide 3',
+  },
+  {
+    src: '/images/hero4.png',
+    alt: 'Dhaka Smart City Digital Governance - Slide 4',
+  },
+];
+
 export function HeroSection({ language, wards, notices }: HeroSectionProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
   const [howItWorksOpen, setHowItWorksOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 5-second auto-transition timer
+  const startTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    timerRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
+    startTimer();
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [startTimer]);
+
+  const handleDotClick = (index: number) => {
+    setCurrentSlide(index);
+    startTimer(); // Reset the 5-second timer on manual dot click
+  };
 
   // Close "How It Works" modal on Escape key
   useEffect(() => {
@@ -112,160 +158,206 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
 
   return (
     <>
-      {/* 1. CIVIC HERO SECTION — Full-bleed /images/hero.png with Left-Aligned Content Across Desktop & Mobile */}
-      <section className="relative overflow-hidden bg-[#EDF9F4] border-b border-[#E2E8F0] min-h-[340px] sm:min-h-[390px] lg:min-h-[430px] xl:min-h-[460px] flex items-center">
-        <Image
-          src="/images/hero.png"
-          alt="Ahsan Manzil and Dhaka Smart City Corporation Banner"
-          fill
-          priority
-          sizes="100vw"
-          referrerPolicy="no-referrer"
-          className="object-cover object-[72%_center] sm:object-[62%_center] lg:object-center pointer-events-none select-none"
-        />
-
-        {/* Mobile & Tablet Left-Side Readability Scrim */}
+      {/* 
+        HOMEPAGE HERO SECTION
+        - Responsive Height:
+          * Laptop/Desktop (lg+): lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[600px] matching navbar height cleanly
+          * Mobile/Phone (< md): fixed h-[480px] sm:h-[520px] md:h-[560px] (never 100vh) for easy reach and scrolling
+      */}
+      <section className="relative overflow-hidden w-full h-[480px] sm:h-[520px] md:h-[560px] lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[600px] flex flex-col justify-between">
+        {/* 1. Background Image Slider with CSS Crossfade & Bangladesh Civic Green Gradient Overlay */}
         <div
+          className="absolute inset-0 pointer-events-none select-none overflow-hidden"
           aria-hidden="true"
-          className="lg:hidden absolute inset-0 bg-gradient-to-r from-[#EFFAF6]/95 via-[#EFFAF6]/82 to-[#EFFAF6]/15 pointer-events-none"
-        />
+        >
+          {HERO_IMAGES.map((img, idx) => (
+            <div
+              key={img.src}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                idx === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                priority={idx === 0}
+                sizes="100vw"
+                referrerPolicy="no-referrer"
+                className="object-cover object-center select-none"
+              />
+            </div>
+          ))}
 
-        {/* Subtle Bottom Fade for Smooth Overlap with Floating Search Bar */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/75 to-transparent pointer-events-none"
-        />
+          {/* Consistent Dark Bangladesh Civic Green Gradient Overlay */}
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-[#006A4E]/85 via-[#003D2D]/75 to-[#111827]/75"
+            aria-hidden="true"
+          />
+        </div>
 
-        {/* Left-Aligned Hero Typography & Actions */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24">
-          <div className="w-[88%] sm:w-[70%] md:w-[58%] lg:w-[49%] max-w-xl text-left">
-            <p className="text-[11px] sm:text-sm font-bold tracking-[0.14em] text-[#006A4E] uppercase">
+        {/* 2. Static Foreground Content: Headline, Global Search & Statistics */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-6 lg:pt-8 flex-1 flex flex-col justify-around">
+          {/* Top Block: Civic Badge, Bilingual Headline, Subtitle & Action CTAs */}
+          <div className="w-full max-w-2xl text-left">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 text-[10px] sm:text-xs font-bold tracking-[0.12em] text-emerald-300 uppercase shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
               {language === 'bn' ? 'স্মার্ট সিটি কর্পোরেশন' : 'Smart City Corporation'}
-            </p>
-            <h1 className="mt-2 sm:mt-2.5 text-2xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-[#0B2545] leading-[1.15] tracking-tight text-balance">
+            </div>
+
+            <h1 className="mt-1.5 sm:mt-2.5 text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight text-balance drop-shadow-xs">
               {language === 'bn'
                 ? 'পরিচ্ছন্ন, নিরাপদ ও স্মার্ট ঢাকার জন্য ডিজিটাল সেবা'
                 : 'Digital Services for a Cleaner, Safer and Smarter Dhaka'}
             </h1>
-            <p className="mt-3 sm:mt-4 text-xs sm:text-base text-[#374151] lg:text-[#4B5563] leading-relaxed max-w-md lg:max-w-lg">
+
+            <p className="mt-1.5 sm:mt-2.5 text-xs sm:text-sm lg:text-base text-emerald-50/90 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none">
               {language === 'bn'
                 ? 'নাগরিক সেবা গ্রহণ, কর পরিশোধ, অনলাইন আবেদন এবং নগর সমস্যা রিপোর্ট করুন — সবকিছু এক প্ল্যাটফর্মে।'
                 : 'Access city services, pay taxes, apply online and report urban issues — all in one platform.'}
             </p>
 
-            <div className="mt-5 sm:mt-7 flex flex-wrap items-center justify-start gap-2.5 sm:gap-3">
+            <div className="mt-3 sm:mt-4 flex flex-wrap items-center justify-start gap-2 sm:gap-3">
               <a
                 href="#services"
-                className="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold text-xs sm:text-sm rounded-lg shadow-sm transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-[#006A4E] hover:bg-[#00523C] text-white border border-emerald-400/40 font-semibold text-xs sm:text-sm rounded-lg shadow-sm transition-colors whitespace-nowrap"
               >
                 <span>{language === 'bn' ? 'সেবাসমূহ দেখুন' : 'Explore Services'}</span>
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
               </a>
               <button
                 type="button"
                 onClick={() => setHowItWorksOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-white/95 hover:bg-[#ECFDF5] text-[#006A4E] border border-[#006A4E]/40 font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition-colors whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/25 font-semibold text-xs sm:text-sm rounded-lg shadow-xs backdrop-blur-xs transition-colors whitespace-nowrap cursor-pointer"
               >
-                <PlayCircle className="w-4 h-4" aria-hidden="true" />
+                <PlayCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300" aria-hidden="true" />
                 <span>{language === 'bn' ? 'কীভাবে কাজ করে' : 'How It Works'}</span>
               </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 2. FLOATING PILL SEARCH BAR (Overlapping Hero Bottom) */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-8 relative z-30">
-        <div className="relative">
-          <form
-            onSubmit={handleHeroSearchSubmit}
-            role="search"
-            aria-label={language === 'bn' ? 'নাগরিক সেবা অনুসন্ধান' : 'Search municipal services'}
-            className="bg-white rounded-full border border-[#E2E8F0] shadow-lg p-1.5 sm:p-2 flex items-center gap-2"
-          >
-            <div className="relative flex-1 flex items-center">
-              <Search
-                className="w-5 h-5 text-[#4B5563] ml-3.5 shrink-0 pointer-events-none"
-                aria-hidden="true"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setTimeout(() => setSearchFocused(false), 180)}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label={
-                  language === 'bn'
-                    ? 'সেবা, ওয়ার্ড, নোটিশ বা ট্র্যাকিং আইডি খুঁজুন'
-                    : 'Search services, wards, notices, or tracking IDs'
-                }
-                placeholder={
-                  language === 'bn'
-                    ? 'সেবা খুঁজুন (যেমন: জন্ম সনদ, ট্রেড লাইসেন্স, হোল্ডিং ট্যাক্স)'
-                    : 'Search for services (e.g. Birth Certificate, Trade License, Holding Tax)'
-                }
-                className="w-full pl-3 pr-3 py-2 text-sm text-[#111827] placeholder:text-slate-400 bg-transparent focus:outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-6 py-2.5 bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold text-sm rounded-full transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
-            >
-              {language === 'bn' ? 'খুঁজুন' : 'Search'}
-            </button>
-          </form>
-
-          {searchFocused && smartSearchResults.length > 0 && (
-            <div className="absolute left-2 right-2 mt-2 bg-white text-[#111827] rounded-2xl border border-[#E2E8F0] shadow-2xl z-40 overflow-hidden">
-              {smartSearchResults.map((res) => (
-                <Link
-                  key={res.id}
-                  href={res.href}
-                  className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-[#ECFDF5] border-b last:border-b-0 border-slate-100"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-[#111827]">{res.label}</p>
-                    <p className="text-xs text-[#4B5563]">{res.meta}</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-[#006A4E] shrink-0" aria-hidden="true" />
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 3. DARK CIVIC GREEN 4-COLUMN STATS RIBBON */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 relative z-20">
-        <div className="relative overflow-hidden bg-gradient-to-r from-[#004A36] via-[#006A4E] to-[#00553E] text-white rounded-2xl shadow-md px-6 py-5 sm:px-8 sm:py-6">
-          <div
-            aria-hidden="true"
-            className="civic-bg-layer absolute inset-y-0 right-0 w-1/2 bg-[url('/images/bg2.png')] bg-right-bottom bg-no-repeat bg-cover invert opacity-[0.12] pointer-events-none"
-          />
-
-          <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-6 lg:gap-0 lg:divide-x lg:divide-white/20">
-            {HERO_STATS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3.5 lg:px-6 first:lg:pl-0 last:lg:pr-0"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-emerald-200" aria-hidden="true" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl sm:text-2xl font-bold text-white tabular-nums leading-tight">
-                      {language === 'bn' ? item.valueBn : item.valueEn}
-                    </p>
-                    <p className="text-xs text-emerald-100/90 mt-0.5 truncate">
-                      {language === 'bn' ? item.labelBn : item.labelEn}
-                    </p>
-                  </div>
+          {/* Middle Block: Global Floating Pill Service Search Bar */}
+          <div className="w-full max-w-3xl mx-auto relative z-30 my-2 sm:my-3">
+            <div className="relative">
+              <form
+                onSubmit={handleHeroSearchSubmit}
+                role="search"
+                aria-label={language === 'bn' ? 'নাগরিক সেবা অনুসন্ধান' : 'Search municipal services'}
+                className="bg-white rounded-full border border-white/30 shadow-xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 backdrop-blur-xs"
+              >
+                <div className="relative flex-1 flex items-center">
+                  <Search
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-[#4B5563] ml-3 sm:ml-3.5 shrink-0 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onFocus={() => setSearchFocused(true)}
+                    onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    aria-label={
+                      language === 'bn'
+                        ? 'সেবা, ওয়ার্ড, নোটিশ বা ট্র্যাকিং আইডি খুঁজুন'
+                        : 'Search services, wards, notices, or tracking IDs'
+                    }
+                    placeholder={
+                      language === 'bn'
+                        ? 'সেবা খুঁজুন (যেমন: জন্ম সনদ, ট্রেড লাইসেন্স, হোল্ডিং ট্যাক্স)'
+                        : 'Search for services (e.g. Birth Certificate, Trade License, Holding Tax)'
+                    }
+                    className="w-full pl-2 sm:pl-3 pr-2 sm:pr-3 py-1 sm:py-1.5 text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 bg-transparent focus:outline-none"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="p-1 mr-1 text-slate-400 hover:text-slate-600 rounded-full cursor-pointer"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
-              );
-            })}
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 sm:px-6 sm:py-2.5 bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold text-xs sm:text-sm rounded-full transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+                >
+                  {language === 'bn' ? 'খুঁজুন' : 'Search'}
+                </button>
+              </form>
+
+              {searchFocused && smartSearchResults.length > 0 && (
+                <div className="absolute left-2 right-2 mt-2 bg-white text-[#111827] rounded-2xl border border-[#E2E8F0] shadow-2xl z-40 max-h-52 sm:max-h-64 overflow-y-auto">
+                  {smartSearchResults.map((res) => (
+                    <Link
+                      key={res.id}
+                      href={res.href}
+                      className="flex items-center justify-between gap-4 px-4 py-2.5 sm:px-5 sm:py-3 hover:bg-[#ECFDF5] border-b last:border-b-0 border-slate-100 transition-colors"
+                    >
+                      <div>
+                        <p className="text-xs sm:text-sm font-semibold text-[#111827]">{res.label}</p>
+                        <p className="text-[11px] sm:text-xs text-[#4B5563]">{res.meta}</p>
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#006A4E] shrink-0" aria-hidden="true" />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Bottom Block: Dark Civic Green 4-Column Statistics Ribbon */}
+          <div className="w-full relative z-20">
+            <div className="relative overflow-hidden bg-gradient-to-r from-[#004A36]/90 via-[#006A4E]/85 to-[#00553E]/90 backdrop-blur-md text-white rounded-xl sm:rounded-2xl border border-white/15 shadow-lg px-3.5 py-2.5 sm:px-6 sm:py-3.5 lg:px-8 lg:py-4">
+              <div
+                aria-hidden="true"
+                className="civic-bg-layer absolute inset-y-0 right-0 w-1/2 bg-[url('/images/bg2.png')] bg-right-bottom bg-no-repeat bg-cover invert opacity-[0.10] pointer-events-none"
+              />
+
+              <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-y-2 gap-x-3 sm:gap-y-3 sm:gap-x-6 lg:gap-0 lg:divide-x lg:divide-white/20">
+                {HERO_STATS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-2 sm:gap-3.5 lg:px-6 first:lg:pl-0 last:lg:pr-0"
+                    >
+                      <div className="w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-emerald-200" aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-lg lg:text-2xl font-bold text-white tabular-nums leading-tight">
+                          {language === 'bn' ? item.valueBn : item.valueEn}
+                        </p>
+                        <p className="text-[10px] sm:text-xs text-emerald-100/90 mt-0.5 truncate">
+                          {language === 'bn' ? item.labelBn : item.labelEn}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Clickable Pagination Indicator Dots (Bottom Center) */}
+        <div className="relative z-20 flex items-center justify-center gap-2 pb-2.5 sm:pb-3.5">
+          {HERO_IMAGES.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleDotClick(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+              aria-current={idx === currentSlide ? 'true' : undefined}
+              className={`transition-all duration-300 rounded-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                idx === currentSlide
+                  ? 'w-7 sm:w-8 h-2 bg-emerald-400 shadow-sm'
+                  : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+              }`}
+            />
+          ))}
         </div>
       </section>
 

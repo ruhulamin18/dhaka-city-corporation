@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { QRCodeSVG } from 'qrcode.react';
 import { useApp } from '@/context/AppContext';
 import { PaymentReceipt } from '@/types/payment';
+import { buildQrRecordPayload, QR_CONFIG } from '@/config/qr-config';
 import {
   Printer,
   ShieldCheck,
@@ -20,6 +22,18 @@ interface PaymentReceiptViewProps {
 
 export const PaymentReceiptView: React.FC<PaymentReceiptViewProps> = ({ receipt }) => {
   const { language } = useApp();
+
+  const qrPayload = buildQrRecordPayload({
+    status: 'VERIFIED',
+    id: receipt.receiptNumber,
+    type: language === 'bn' ? receipt.serviceName.bn : receipt.serviceName.en,
+    name: receipt.payerName,
+    ward: receipt.wardNumber,
+    date: receipt.paidAt,
+    authority: language === 'bn' ? QR_CONFIG.AUTHORITY_NAME_BN : QR_CONFIG.AUTHORITY_NAME_EN,
+    feePaid: receipt.breakdown.total,
+    hash: receipt.verificationReference,
+  });
 
   const handlePrint = () => {
     window.print();
@@ -207,11 +221,17 @@ export const PaymentReceiptView: React.FC<PaymentReceiptViewProps> = ({ receipt 
         {/* Verification QR & Seals */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-200 items-center relative z-10 text-xs">
           <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-slate-100 border-2 border-slate-300 rounded-lg p-1.5 flex flex-col items-center justify-center shrink-0 text-center font-mono text-[9px] text-slate-600">
-              <div className="w-12 h-12 bg-slate-900 rounded flex items-center justify-center text-white font-bold text-[8px]">
-                QR CODE
-              </div>
-              <span className="mt-0.5 truncate max-w-[70px]">{receipt.receiptNumber}</span>
+            <div className="bg-white border-2 border-emerald-300 rounded-lg p-1.5 flex flex-col items-center justify-center shrink-0 text-center font-mono text-[9px] text-slate-600 shadow-xs">
+              <QRCodeSVG
+                value={qrPayload}
+                size={76}
+                level="M"
+                fgColor="#006A4E"
+                bgColor="#FFFFFF"
+              />
+              <span className="mt-1 font-mono text-[9px] text-[#006A4E] font-bold truncate max-w-[80px]">
+                {receipt.receiptNumber}
+              </span>
             </div>
             <div>
               <p className="font-bold text-slate-900">

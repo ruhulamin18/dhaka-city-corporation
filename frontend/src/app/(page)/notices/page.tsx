@@ -121,8 +121,10 @@ export default function NoticesPage() {
             <NoticeCard
               key={notice.id}
               notice={notice}
+              language={language}
+              urgentLabel={language === 'bn' ? 'জরুরি' : 'Urgent'}
               isExpanded={expandedNoticeId === notice.id}
-              onToggle={() =>
+              onToggleExpand={() =>
                 setExpandedNoticeId((prev) => (prev === notice.id ? null : notice.id))
               }
             />

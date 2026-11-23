@@ -67,7 +67,7 @@ export type ApplicationType =
   | 'citizen_certificate'
   | 'road_digging';
 
-export type ApplicationStatus = 'pending' | 'approved' | 'rejected';
+export type ApplicationStatus = 'pending' | 'under_review' | 'approved' | 'rejected';
 
 export type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'card';
 

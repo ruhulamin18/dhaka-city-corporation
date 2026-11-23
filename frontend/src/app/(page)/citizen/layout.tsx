@@ -29,6 +29,19 @@ import {
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 
+interface CitizenNavItem {
+  href: string;
+  label: { bn: string; en: string };
+  icon: React.ComponentType<{ className?: string }>;
+  exact?: boolean;
+  badge?: { bn: string; en: string };
+}
+
+interface CitizenNavSection {
+  group: { bn: string; en: string };
+  items: CitizenNavItem[];
+}
+
 export default function CitizenPortalLayout({
   children,
 }: {
@@ -62,7 +75,7 @@ export default function CitizenPortalLayout({
   const citizenName = user?.nameEn || 'Md. Ruhul Amin';
   const citizenWard = user?.wardNumber || 27;
 
-  const NAV_SECTIONS = [
+  const NAV_SECTIONS: CitizenNavSection[] = [
     {
       group: { bn: 'প্রধান মেনু', en: 'Main Menu' },
       items: [

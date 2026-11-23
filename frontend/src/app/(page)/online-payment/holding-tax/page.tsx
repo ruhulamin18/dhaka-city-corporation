@@ -37,10 +37,23 @@ function HoldingTaxContent() {
 
   // Bill & Checkout states
   const [bill, setBill] = useState<BillLookupRecord | null>(null);
-  const [payerName, setPayerName] = useState(user?.name || '');
+  const [payerName, setPayerName] = useState(
+    user ? (language === 'bn' ? user.nameBn || user.nameEn : user.nameEn || user.nameBn) : ''
+  );
   const [payerPhone, setPayerPhone] = useState(user?.phone || '');
   const [selectedMethod, setSelectedMethod] = useState<PaymentProviderMethod>('bkash');
   const [isInitiating, setIsInitiating] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      if (!payerName) {
+        setPayerName(language === 'bn' ? user.nameBn || user.nameEn : user.nameEn || user.nameBn);
+      }
+      if (!payerPhone && user.phone) {
+        setPayerPhone(user.phone);
+      }
+    }
+  }, [user, language, payerName, payerPhone]);
 
   // Gateway Modal & Completion states
   const [activeTransaction, setActiveTransaction] = useState<PaymentTransaction | null>(null);

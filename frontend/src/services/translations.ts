@@ -194,6 +194,7 @@ export interface TranslationDictionary {
     close: string;
     loading: string;
     approved: string;
+    under_review: string;
     pending: string;
     rejected: string;
     confirmed: string;
@@ -433,6 +434,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       close: 'Close',
       loading: 'Loading civic records...',
       approved: 'Approved',
+      under_review: 'Under Review',
       pending: 'Pending',
       rejected: 'Rejected',
       confirmed: 'Confirmed',
@@ -671,6 +673,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       close: 'বন্ধ করুন',
       loading: 'তথ্য লোড হচ্ছে...',
       approved: 'অনুমোদিত',
+      under_review: 'পুনঃযাচাইাধীন',
       pending: 'অপেক্ষমাণ',
       rejected: 'বাতিল',
       confirmed: 'নিশ্চিতকৃত',

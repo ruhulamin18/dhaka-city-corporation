@@ -129,7 +129,7 @@ function GisAdvancedMarker({
         >
           <div className="p-1 space-y-1.5 text-xs text-[#4B5563]">
             <p className="text-[11px] leading-snug">
-              {language === 'bn' ? marker.descriptionBn : marker.descriptionEn}
+              {language === 'bn' ? marker.detailsBn : marker.detailsEn}
             </p>
             <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100 font-mono">
               <span>Ward {marker.wardNumber}</span>
@@ -238,12 +238,12 @@ export function InteractiveCityMap({
       if (mode !== 'picker' || !onPickLocation || !e.detail.latLng) return;
       const lat = e.detail.latLng.lat;
       const lng = e.detail.latLng.lng;
-      const ward = findNearestWard(lat, lng);
+      const ward = findNearestWard(lat, lng, wards);
       const x = Math.round(((lng - 90.34) / (90.46 - 90.34)) * 100);
       const y = Math.round(((23.86 - lat) / (23.86 - 23.7)) * 100);
       onPickLocation({ x, y, lat, lng, wardNumber: ward });
     },
-    [mode, onPickLocation]
+    [mode, onPickLocation, wards]
   );
 
   const handleLocateMe = useCallback(() => {
@@ -254,7 +254,7 @@ export function InteractiveCityMap({
         setLocating(false);
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
-        const ward = findNearestWard(lat, lng);
+        const ward = findNearestWard(lat, lng, wards);
         const x = Math.round(((lng - 90.34) / (90.46 - 90.34)) * 100);
         const y = Math.round(((23.86 - lat) / (23.86 - 23.7)) * 100);
         onPickLocation?.({ x, y, lat, lng, wardNumber: ward });
@@ -262,7 +262,7 @@ export function InteractiveCityMap({
       () => setLocating(false),
       { enableHighAccuracy: true, timeout: 8000 }
     );
-  }, [onPickLocation]);
+  }, [onPickLocation, wards]);
 
   const handleSelectMarker = useCallback(
     (m: GisMarker) => {

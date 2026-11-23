@@ -4,6 +4,7 @@ import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { CheckCircle2, Landmark, Printer, ShieldCheck, X } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { buildQrRecordPayload, QR_CONFIG } from '@/config/qr-config';
 
 export interface QrCertificateData {
   referenceId: string;
@@ -30,7 +31,17 @@ export function QrCertificateModal({ open, data, onClose }: QrCertificateModalPr
 
   if (!open || !data) return null;
 
-  const verifyUrl = `https://dscc.smartcity.gov.bd/verify?id=${encodeURIComponent(data.referenceId)}`;
+  const qrPayload = buildQrRecordPayload({
+    status: data.status,
+    id: data.referenceId,
+    type: language === 'bn' ? data.titleBn : data.titleEn,
+    name: data.ownerName,
+    ward: data.wardNumber,
+    date: data.issuedAt,
+    authority: language === 'bn' ? QR_CONFIG.AUTHORITY_NAME_BN : QR_CONFIG.AUTHORITY_NAME_EN,
+    feePaid: data.amountBdt,
+    hash: data.qrHash,
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
@@ -129,7 +140,7 @@ export function QrCertificateModal({ open, data, onClose }: QrCertificateModalPr
 
             <div className="flex flex-col items-center justify-center bg-white border border-[#E2E8F0] rounded-lg p-3">
               <QRCodeSVG
-                value={verifyUrl}
+                value={qrPayload}
                 size={112}
                 level="M"
                 fgColor="#006A4E"

@@ -144,7 +144,7 @@ export const PaymentLayout: React.FC<PaymentLayoutProps> = ({
                 <p className="text-[11px] text-emerald-200">
                   {language === 'bn' ? 'পেমেন্ট হেল্পলাইন (টোল ফ্রি)' : 'Payment Helpline (Toll Free)'}
                 </p>
-                <p className="text-lg font-bold tracking-wide text-white">16106 / 09612-316106</p>
+                <p className="text-lg font-bold tracking-wide text-white tabular-nums">16106 / 09612-316106</p>
               </div>
             </div>
           </div>
@@ -165,10 +165,10 @@ export const PaymentLayout: React.FC<PaymentLayoutProps> = ({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs md:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                    className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs md:text-sm font-medium whitespace-nowrap transition-colors duration-150 ${
                       isActive
-                        ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-400/50'
-                        : 'text-emerald-200 hover:text-white hover:bg-emerald-800/50'
+                        ? 'bg-[#006A4E] text-white shadow-xs'
+                        : 'text-emerald-100 hover:text-white hover:bg-emerald-800/40'
                     }`}
                   >
                     <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-emerald-300'}`} />
@@ -186,8 +186,8 @@ export const PaymentLayout: React.FC<PaymentLayoutProps> = ({
         {children}
       </main>
 
-      {/* Security & Regulatory Footer Bar */}
-      <footer className="border-t border-slate-200 bg-white/80 backdrop-blur py-6 mt-12 text-slate-600">
+      {/* Security & Regulatory Trust Bar */}
+      <section aria-label="Security & Regulatory Trust Bar" className="border-t border-slate-200 bg-white/80 backdrop-blur py-5 mt-10 text-slate-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
             <div className="flex items-center space-x-3 text-emerald-800">
@@ -210,7 +210,7 @@ export const PaymentLayout: React.FC<PaymentLayoutProps> = ({
             </div>
           </div>
         </div>
-      </footer>
+      </section>
     </div>
   );
 };

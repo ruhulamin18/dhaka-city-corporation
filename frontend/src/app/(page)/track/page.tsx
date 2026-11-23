@@ -126,27 +126,29 @@ function TrackContent() {
   }, [initialId, language]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Page Header */}
-      <div className="text-center mb-8">
+      <div>
         <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#006A4E] bg-[#ECFDF5] border border-emerald-200 px-3 py-1 rounded-full mb-3">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>{language === 'bn' ? 'উন্মুক্ত নাগরিক ট্র্যাকার' : 'Public Status Tracker'}</span>
+          <span>
+            {language === 'bn' ? 'উন্মুক্ত নাগরিক ট্র্যাকার' : 'Public Status Tracker'}
+          </span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B2545] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#111827] tracking-tight">
           {language === 'bn'
             ? 'আবেদন ও অভিযোগের বর্তমান অবস্থা জানুন'
             : 'Track Application & Civic Grievance Status'}
         </h1>
-        <p className="mt-2 text-sm text-[#4B5563] max-w-xl mx-auto">
+        <p className="mt-2 text-sm sm:text-base text-[#4B5563] max-w-2xl leading-relaxed">
           {language === 'bn'
-            ? 'কোনো প্রকার লগইন ছাড়াই আপনার আবেদনের রেফারেন্স নম্বর বা অভিযোগের ট্র্যাকিং আইডি দিয়ে সর্বশেষ অগ্রগতি যাচাই করুন।'
+            ? 'কোনো প্রকার লগইন ছাড়াই আপনার আবেদনের রেফারেন্স নম্বর বা অভিযোগের ট্র্যাকিং আইডি দিয়ে সর্বশেষ অগ্রগতি ও স্ট্যাটাস যাচাই করুন।'
             : 'Check the real-time public status of any submitted application or civic report without logging in.'}
         </p>
       </div>
 
       {/* Search Input Box */}
-      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-sm mb-8">
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 sm:p-7 shadow-xs">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -165,13 +167,13 @@ function TrackContent() {
                   ? 'উদা: DSCC-TL-2026-4108 অথবা CMP-2026-8801'
                   : 'e.g. DSCC-TL-2026-4108 or CMP-2026-8801'
               }
-              className="w-full pl-10 pr-4 py-3 text-sm bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006A4E] focus:bg-white transition"
+              className="w-full pl-10 pr-4 py-3 text-sm font-mono bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]/20 focus:border-[#006A4E] transition-colors"
             />
           </div>
           <button
             type="submit"
             disabled={loading || !queryId.trim()}
-            className="px-6 py-3 bg-[#006A4E] text-white text-sm font-semibold rounded-xl hover:bg-[#00523C] transition shadow-xs disabled:opacity-50 flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-[#006A4E] text-white text-sm font-semibold rounded-xl hover:bg-[#00523C] transition-colors shadow-xs disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shrink-0"
           >
             {loading ? (
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -183,31 +185,40 @@ function TrackContent() {
         </form>
 
         {/* Sample IDs */}
-        <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-          <span>{language === 'bn' ? 'নমুনা আইডি দিয়ে দেখুন:' : 'Try sample IDs:'}</span>
-          {sampleIds.map((sample) => (
-            <button
-              key={sample}
-              type="button"
-              onClick={() => {
-                setQueryId(sample);
-                handleTrack(sample);
-              }}
-              className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-mono text-[11px] hover:bg-[#ECFDF5] hover:text-[#006A4E] transition border border-slate-200"
-            >
-              {sample}
-            </button>
-          ))}
+        <div className="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-[#4B5563] font-medium mr-1">
+            {language === 'bn' ? 'নমুনা আইডি দিয়ে দেখুন:' : 'Try sample IDs:'}
+          </span>
+          {sampleIds.map((sample) => {
+            const isSelected = queryId.trim().toUpperCase() === sample;
+            return (
+              <button
+                key={sample}
+                type="button"
+                onClick={() => {
+                  setQueryId(sample);
+                  handleTrack(sample);
+                }}
+                className={`px-3 py-1.5 rounded-lg font-mono text-xs border transition-colors cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#006A4E] text-white border-[#006A4E]'
+                    : 'bg-[#ECFDF5] text-[#006A4E] border-emerald-200 hover:bg-[#006A4E] hover:text-white'
+                }`}
+              >
+                {sample}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Error State */}
       {errorMsg && (
-        <div className="p-5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 text-rose-800 text-sm mb-6">
+        <div className="p-5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3 text-rose-800 text-sm">
           <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-          <div>
+          <div className="space-y-1">
             <div className="font-semibold">{errorMsg}</div>
-            <p className="text-xs text-rose-700 mt-1">
+            <p className="text-xs text-rose-700 leading-relaxed">
               {language === 'bn'
                 ? 'আইডি নম্বরটি সঠিকভাবে প্রবেশ করিয়েছেন কিনা অনুগ্রহ করে যাচাই করুন।'
                 : 'Please verify the ID format and ensure all characters are correct.'}
@@ -218,21 +229,21 @@ function TrackContent() {
 
       {/* Result 1: Service Application Status */}
       {appResult && (
-        <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+        <div className="bg-white rounded-2xl border border-emerald-200 shadow-xs p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
             <div>
-              <span className="font-mono text-xs font-bold text-[#006A4E] bg-[#ECFDF5] px-2.5 py-1 rounded-md">
+              <span className="font-mono text-xs font-bold text-[#006A4E] bg-[#ECFDF5] border border-emerald-200 px-3 py-1 rounded-full">
                 {appResult.referenceId}
               </span>
-              <h2 className="text-xl font-bold text-slate-900 mt-2">
+              <h2 className="text-xl font-bold text-[#111827] mt-2.5">
                 {language === 'bn' ? appResult.documentTypeBn : appResult.documentTypeEn}
               </h2>
             </div>
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider self-start sm:self-auto ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto border ${
                 appResult.status === 'VERIFIED'
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-amber-100 text-amber-800'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : 'bg-amber-50 text-amber-800 border-amber-200'
               }`}
             >
               {appResult.status}
@@ -240,62 +251,68 @@ function TrackContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block">
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs text-[#4B5563] font-medium block">
                 {language === 'bn' ? 'আবেদনকারী / স্বত্বাধিকারী' : 'Applicant / Owner'}
               </span>
-              <span className="font-semibold text-slate-800 mt-0.5 block">{appResult.ownerName}</span>
+              <span className="font-semibold text-slate-900 block">{appResult.ownerName}</span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block">
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs text-[#4B5563] font-medium block">
                 {language === 'bn' ? 'ওয়ার্ড ও সংশ্লিষ্ট কর্তৃপক্ষ' : 'Ward & Authority'}
               </span>
-              <span className="font-semibold text-slate-800 mt-0.5 block">
+              <span className="font-semibold text-slate-900 block">
                 Ward {appResult.wardNumber} · {language === 'bn' ? appResult.authorityBn : appResult.authorityEn}
               </span>
             </div>
           </div>
 
-          {/* Workflow Stage */}
+          {/* Workflow Stage Responsive Pipeline */}
           <div className="pt-2">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-3">
+            <span className="text-xs font-bold text-[#4B5563] uppercase tracking-wider block mb-3">
               {language === 'bn' ? 'সেবা অগ্রগতি পর্যায়' : 'Service Progress Pipeline'}
             </span>
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold">
-                ✓ {language === 'bn' ? 'আবেদন গৃহীত' : 'Submitted'}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 text-center text-xs">
+              <div className="p-3 rounded-xl bg-[#ECFDF5] border border-emerald-200 text-[#006A4E] font-semibold flex items-center justify-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#006A4E]" />
+                <span>{language === 'bn' ? 'আবেদন গৃহীত' : 'Submitted'}</span>
               </div>
-              <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold">
-                ✓ {language === 'bn' ? 'যাচাই সম্পন্ন' : 'Verified'}
+              <div className="p-3 rounded-xl bg-[#ECFDF5] border border-emerald-200 text-[#006A4E] font-semibold flex items-center justify-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#006A4E]" />
+                <span>{language === 'bn' ? 'যাচাই সম্পন্ন' : 'Verified'}</span>
               </div>
               <div
-                className={`p-3 rounded-lg font-semibold border ${
+                className={`p-3 rounded-xl font-semibold border flex items-center justify-center gap-1.5 ${
                   appResult.status === 'VERIFIED'
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                    ? 'bg-[#ECFDF5] border-emerald-200 text-[#006A4E]'
                     : 'bg-amber-50 border-amber-200 text-amber-800'
                 }`}
               >
-                {appResult.status === 'VERIFIED'
-                  ? language === 'bn'
-                    ? '✓ সনদ অনুমোদিত'
-                    : '✓ Approved'
-                  : language === 'bn'
-                  ? '⌛ প্রক্রিয়াকরণ চলছে'
-                  : '⌛ Under Review'}
+                {appResult.status === 'VERIFIED' ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-[#006A4E]" />
+                    <span>{language === 'bn' ? 'সনদ অনুমোদিত' : 'Approved'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Clock className="w-4 h-4 text-amber-600" />
+                    <span>{language === 'bn' ? 'প্রক্রিয়াকরণ চলছে' : 'Under Review'}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="p-4 bg-[#ECFDF5] border border-emerald-200 rounded-xl flex items-center justify-between">
-            <span className="text-xs text-[#006A4E] font-medium">
+          <div className="p-4 bg-[#ECFDF5] border border-emerald-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span className="text-xs text-[#006A4E] font-medium leading-relaxed">
               {language === 'bn'
                 ? 'পূর্ণাঙ্গ সার্টিফিকেট ডাউনলোড বা আবেদন সংক্রান্ত বিস্তারিত দেখতে নাগরিক পোর্টালে লগইন করুন।'
                 : 'Log in to the Citizen Portal to download the official certificate or view private notices.'}
             </span>
             <Link
               href="/login"
-              className="text-xs font-bold text-[#006A4E] hover:underline shrink-0 inline-flex items-center gap-1"
+              className="text-xs font-bold text-[#006A4E] hover:underline shrink-0 inline-flex items-center gap-1 whitespace-nowrap"
             >
               <span>{language === 'bn' ? 'লগইন করুন' : 'Login'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -306,51 +323,51 @@ function TrackContent() {
 
       {/* Result 2: Civic Complaint Status */}
       {complaintResult && (
-        <div className="bg-white rounded-2xl border border-amber-200 shadow-sm p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+        <div className="bg-white rounded-2xl border border-amber-200 shadow-xs p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
             <div>
-              <span className="font-mono text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md">
+              <span className="font-mono text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
                 {complaintResult.trackingId}
               </span>
-              <h2 className="text-xl font-bold text-slate-900 mt-2">
+              <h2 className="text-xl font-bold text-[#111827] mt-2.5">
                 {complaintResult.title}
               </h2>
             </div>
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider self-start sm:self-auto ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto border ${
                 complaintResult.status === 'resolved'
-                  ? 'bg-emerald-100 text-emerald-800'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                   : complaintResult.status === 'in_progress'
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-amber-100 text-amber-800'
+                  ? 'bg-blue-50 text-blue-800 border-blue-200'
+                  : 'bg-amber-50 text-amber-800 border-amber-200'
               }`}
             >
-              {complaintResult.status.replace('_', ' ')}
+              {complaintResult.status.replace('_', ' ').toUpperCase()}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block">
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs text-[#4B5563] font-medium block">
                 {language === 'bn' ? 'স্থান ও ওয়ার্ড' : 'Location & Ward'}
               </span>
-              <span className="font-semibold text-slate-800 mt-0.5 block">
+              <span className="font-semibold text-slate-900 block">
                 Ward {complaintResult.wardNumber} · {complaintResult.locationLabel}
               </span>
             </div>
 
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block">
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs text-[#4B5563] font-medium block">
                 {language === 'bn' ? 'দায়িত্বপ্রাপ্ত বিভাগ' : 'Assigned Department'}
               </span>
-              <span className="font-semibold text-slate-800 mt-0.5 block">
+              <span className="font-semibold text-slate-900 block">
                 {language === 'bn' ? complaintResult.departmentBn : complaintResult.departmentEn}
               </span>
             </div>
           </div>
 
           {complaintResult.resolutionNote && (
-            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900">
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 leading-relaxed">
               <span className="font-bold block mb-1">
                 {language === 'bn' ? 'ফিল্ড টিমের সমাধানের বিবরণ:' : 'Field Inspection & Resolution Note:'}
               </span>

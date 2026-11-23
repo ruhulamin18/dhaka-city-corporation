@@ -77,16 +77,16 @@ function DownloadReceiptContent() {
     >
       <div className="space-y-8">
         {/* Search Bar */}
-        <div className="print:hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+        <div className="print:hidden bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-6 sm:p-8">
           <div className="max-w-2xl mx-auto space-y-4">
             <div className="text-center space-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-[#ECFDF5] text-[#006A4E] border border-emerald-200 flex items-center justify-center mx-auto mb-2">
                 <Download className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">
+              <h3 className="text-xl font-bold text-[#111827]">
                 {language === 'bn' ? 'সরকারি রসিদ অনুসন্ধান' : 'Find Official Payment Receipt'}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-500">
+              <p className="text-xs sm:text-sm text-[#4B5563]">
                 {language === 'bn'
                   ? 'আপনার এসএমএস বা লেনদেনে প্রাপ্ত রসিদ নম্বর (যেমন: DSCC-RCP-2026-XXXX) বা ট্রানজেকশন রেফারেন্স লিখুন।'
                   : 'Enter receipt number (e.g. DSCC-RCP-2026-XXXX) or transaction ID from your confirmation SMS.'}
@@ -95,13 +95,13 @@ function DownloadReceiptContent() {
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={receiptNumber}
                   onChange={(e) => setReceiptNumber(e.target.value)}
                   placeholder="DSCC-RCP-2026-10492"
-                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full pl-10 pr-3.5 py-3 rounded-xl border border-[#E2E8F0] text-sm font-mono bg-[#F8FAFC] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]/20 focus:border-[#006A4E] transition-colors"
                   required
                 />
               </div>
@@ -109,7 +109,7 @@ function DownloadReceiptContent() {
                 type="button"
                 onClick={() => handleSearch()}
                 disabled={isSearching || !receiptNumber.trim()}
-                className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md flex items-center justify-center space-x-1.5 cursor-pointer disabled:bg-slate-300"
+                className="px-6 py-3 rounded-xl bg-[#006A4E] hover:bg-[#00523C] text-white font-semibold text-sm shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors shrink-0"
               >
                 {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                 <span>{language === 'bn' ? 'রশিদ খুঁজুন' : 'Search Receipt'}</span>
@@ -123,7 +123,7 @@ function DownloadReceiptContent() {
               </div>
             )}
 
-            <div className="text-center text-xs text-slate-500 pt-1">
+            <div className="text-center text-xs text-[#4B5563] pt-1 flex flex-wrap items-center justify-center gap-2">
               <span>{language === 'bn' ? 'নমুনা রসিদ:' : 'Sample Receipts:'} </span>
               <button
                 type="button"
@@ -131,20 +131,20 @@ function DownloadReceiptContent() {
                   setReceiptNumber('DSCC-RCP-2026-10492');
                   handleSearch('DSCC-RCP-2026-10492');
                 }}
-                className="font-mono text-emerald-700 underline"
+                className="font-mono text-[#006A4E] hover:underline cursor-pointer"
               >
-                DSCC-RCP-2026-10492 (হোল্ডিং ট্যাক্স)
+                DSCC-RCP-2026-10492 ({language === 'bn' ? 'হোল্ডিং ট্যাক্স' : 'Holding Tax'})
               </button>
-              <span> • </span>
+              <span>•</span>
               <button
                 type="button"
                 onClick={() => {
                   setReceiptNumber('DSCC-RCP-2026-38291');
                   handleSearch('DSCC-RCP-2026-38291');
                 }}
-                className="font-mono text-emerald-700 underline"
+                className="font-mono text-[#006A4E] hover:underline cursor-pointer"
               >
-                DSCC-RCP-2026-38291 (ট্রেড লাইসেন্স)
+                DSCC-RCP-2026-38291 ({language === 'bn' ? 'ট্রেড লাইসেন্স' : 'Trade License'})
               </button>
             </div>
           </div>

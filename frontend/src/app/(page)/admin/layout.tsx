@@ -27,6 +27,19 @@ import {
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 
+interface AdminNavItem {
+  href: string;
+  label: { bn: string; en: string };
+  icon: React.ComponentType<{ className?: string }>;
+  exact?: boolean;
+  badge?: { bn: string; en: string };
+}
+
+interface AdminNavSection {
+  group: { bn: string; en: string };
+  items: AdminNavItem[];
+}
+
 export default function AdminPortalLayout({
   children,
 }: {
@@ -64,7 +77,7 @@ export default function AdminPortalLayout({
       ? { bn: `ওয়ার্ড কর্মকর্তা (ওয়ার্ড ${user.wardNumber})`, en: `Ward Officer (Ward ${user.wardNumber})` }
       : { bn: 'বিভাগীয় কর্মকর্তা (রাজস্ব ও প্রকৌশল)', en: 'Department Officer (Revenue & Eng.)' };
 
-  const ADMIN_SECTIONS = [
+  const ADMIN_SECTIONS: AdminNavSection[] = [
     {
       group: { bn: 'কমান্ড ও মনিটরিং', en: 'Executive & Overview' },
       items: [

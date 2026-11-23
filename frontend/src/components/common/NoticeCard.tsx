@@ -60,15 +60,15 @@ export function NoticeCard({
   }
 
   return (
-    <article className="p-5 hover:bg-[#F8FAFC] transition-colors">
+    <article className="p-5 hover:bg-slate-50/70 transition-colors">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-[#4B5563]">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
             {categoryLabel && <span className="font-semibold text-[#006A4E]">{categoryLabel}</span>}
             {categoryLabel && <span aria-hidden="true">·</span>}
             <span className="tabular-nums">{notice.publishedAt}</span>
             <span aria-hidden="true">·</span>
-            <span className="font-mono">{notice.referenceCode}</span>
+            <span className="font-mono text-[11px]">{notice.referenceCode}</span>
           </div>
           <h3 className="text-base font-bold text-[#111827]">{title}</h3>
         </div>
@@ -76,7 +76,7 @@ export function NoticeCard({
       </div>
 
       {isExpanded && (
-        <p className="mt-3 text-sm text-[#4B5563] leading-relaxed bg-[#ECFDF5]/60 p-3.5 rounded-lg border border-emerald-200/80">
+        <p className="mt-3 text-sm text-slate-700 leading-relaxed bg-emerald-50/40 p-3.5 rounded-lg border border-emerald-200/60">
           {summary}
         </p>
       )}

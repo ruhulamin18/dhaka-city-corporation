@@ -160,12 +160,11 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
     <>
       {/* 
         HOMEPAGE HERO SECTION
-        - Responsive Height:
-          * Laptop/Desktop (lg+): lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[600px] matching navbar height cleanly
-          * Mobile/Phone (< md): fixed h-[480px] sm:h-[520px] md:h-[560px] (never 100vh) for easy reach and scrolling
+        - Unslop calibrated height & spacing across mobile, tablet, and desktop
+        - Stable responsive rhythm with high-contrast civic scenery overlay
       */}
-      <section className="relative overflow-hidden w-full h-[400px] sm:h-[440px] md:h-[480px] lg:h-[calc(100vh-116px)] xl:h-[calc(100vh-122px)] 2xl:h-[calc(100vh-126px)] lg:min-h-[520px] flex flex-col justify-between">
-        {/* 1. Background Image Slider with CSS Crossfade & Bangladesh Civic Green Gradient Overlay */}
+      <section className="relative overflow-hidden w-full min-h-[520px] sm:min-h-[560px] lg:min-h-[600px] xl:min-h-[640px] flex flex-col justify-between">
+        {/* 1. Background Image Slider with CSS Crossfade & Calm Civic Green Vignette Scrim */}
         <div
           className="absolute inset-0 pointer-events-none select-none overflow-hidden"
           aria-hidden="true"
@@ -189,73 +188,65 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
             </div>
           ))}
 
-          {/* Deep Forest Green Gradient Overlay — dark left for text contrast, transparent right */}
+          {/* Deep Bangladesh Civic Green Scrim — high readability without muddy gradient transitions */}
           <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to right, rgba(2, 44, 34, 0.92) 0%, rgba(4, 60, 46, 0.78) 35%, rgba(6, 78, 59, 0.45) 65%, rgba(17, 24, 39, 0.18) 100%)' }}
+            className="absolute inset-0 bg-gradient-to-r from-[#022c22]/95 via-[#022c22]/85 to-[#064e3b]/55"
             aria-hidden="true"
           />
         </div>
 
         {/* 2. Static Foreground Content: Headline, Global Search & Statistics */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-6 lg:pt-8 flex-1 flex flex-col justify-around">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12 flex-1 flex flex-col justify-between gap-6 sm:gap-8">
           {/* Top Block: Civic Badge, Bilingual Headline, Subtitle & Action CTAs */}
           <div className="w-full max-w-2xl text-left">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 text-[10px] sm:text-xs font-bold tracking-[0.12em] text-emerald-300 uppercase shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-              {language === 'bn' ? 'স্মার্ট সিটি কর্পোরেশন' : 'Smart City Corporation'}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/15 text-xs font-medium text-emerald-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+              <span>{language === 'bn' ? 'ঢাকা স্মার্ট সিটি কর্পোরেশন' : 'Dhaka Smart City Corporation'}</span>
             </div>
 
-            <h1
-              className="mt-1.5 sm:mt-2.5 text-2xl sm:text-3xl lg:text-[2.75rem] xl:text-5xl font-black text-[#FFFFFF] leading-tight tracking-tight text-balance"
-              style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}
-            >
+            <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.14] tracking-tight text-balance">
               {language === 'bn'
                 ? 'পরিচ্ছন্ন, নিরাপদ ও স্মার্ট ঢাকার জন্য ডিজিটাল সেবা'
                 : 'Digital Services for a Cleaner, Safer and Smarter Dhaka'}
             </h1>
 
-            <p
-              className="mt-1.5 sm:mt-2.5 text-xs sm:text-sm lg:text-base text-[#E9ECEF] leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none"
-              style={{ textShadow: '0 1px 6px rgba(0,0,0,0.25)' }}
-            >
+            <p className="mt-3 text-sm sm:text-base text-emerald-100/90 leading-relaxed max-w-xl">
               {language === 'bn'
                 ? 'নাগরিক সেবা গ্রহণ, কর পরিশোধ, অনলাইন আবেদন এবং নগর সমস্যা রিপোর্ট করুন — সবকিছু এক প্ল্যাটফর্মে।'
                 : 'Access city services, pay taxes, apply online and report urban issues — all in one platform.'}
             </p>
 
-            <div className="mt-3 sm:mt-4 flex flex-wrap items-center justify-start gap-2 sm:gap-3">
+            <div className="mt-5 flex flex-wrap items-center justify-start gap-3">
               <a
                 href="#services"
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-[#FBBF24] hover:bg-[#F59E0B] text-[#064E3B] border border-yellow-500/40 font-bold text-xs sm:text-sm rounded-lg shadow-md hover:shadow-lg transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-emerald-50 text-[#006A4E] font-semibold text-sm rounded-lg shadow-sm transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <span>{language === 'bn' ? 'সেবাসমূহ দেখুন' : 'Explore Services'}</span>
-                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
               <button
                 type="button"
                 onClick={() => setHowItWorksOpen(true)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 bg-white/5 hover:bg-white/15 text-white border border-white/40 font-semibold text-xs sm:text-sm rounded-lg shadow-xs backdrop-blur-sm transition-colors whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/15 text-white border border-white/20 font-medium text-sm rounded-lg transition-colors whitespace-nowrap cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                <PlayCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300" aria-hidden="true" />
+                <PlayCircle className="w-4 h-4 text-emerald-300" aria-hidden="true" />
                 <span>{language === 'bn' ? 'কীভাবে কাজ করে' : 'How It Works'}</span>
               </button>
             </div>
           </div>
 
-          {/* Middle Block: Global Floating Pill Service Search Bar */}
-          <div className="w-full max-w-3xl mx-auto relative z-30 my-2 sm:my-3">
+          {/* Middle Block: Global Civic Search Bar */}
+          <div className="w-full max-w-2xl relative z-30">
             <div className="relative">
               <form
                 onSubmit={handleHeroSearchSubmit}
                 role="search"
                 aria-label={language === 'bn' ? 'নাগরিক সেবা অনুসন্ধান' : 'Search municipal services'}
-                className="bg-white rounded-full border border-white/30 p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 backdrop-blur-xs"
-                style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.15)' }}
+                className="bg-white rounded-xl border border-white/20 p-1.5 sm:p-2 flex items-center gap-2 shadow-lg"
               >
                 <div className="relative flex-1 flex items-center">
                   <Search
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-[#4B5563] ml-3 sm:ml-3.5 shrink-0 pointer-events-none"
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 ml-3 shrink-0 pointer-events-none"
                     aria-hidden="true"
                   />
                   <input
@@ -272,42 +263,42 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                     placeholder={
                       language === 'bn'
                         ? 'সেবা খুঁজুন (যেমন: জন্ম সনদ, ট্রেড লাইসেন্স, হোল্ডিং ট্যাক্স)'
-                        : 'Search for services (e.g. Birth Certificate, Trade License, Holding Tax)'
+                        : 'Search services, wards, notices, tracking IDs...'
                     }
-                    className="w-full pl-2 sm:pl-3 pr-2 sm:pr-3 py-1 sm:py-1.5 text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 bg-transparent focus:outline-none"
+                    className="w-full pl-2.5 pr-2 py-1.5 text-sm text-[#111827] placeholder:text-slate-400 bg-transparent focus:outline-none"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       onClick={() => setSearchQuery('')}
-                      className="p-1 mr-1 text-slate-400 hover:text-slate-600 rounded-full cursor-pointer"
+                      className="p-1 mr-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors"
                       aria-label="Clear search"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   )}
                 </div>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 sm:px-6 sm:py-2.5 bg-[#065F46] hover:bg-[#064E3B] text-white font-semibold text-xs sm:text-sm rounded-full transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-sm"
+                  className="px-5 py-2 bg-[#006A4E] hover:bg-[#00523C] text-white font-medium text-sm rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
                 >
                   {language === 'bn' ? 'খুঁজুন' : 'Search'}
                 </button>
               </form>
 
               {searchFocused && smartSearchResults.length > 0 && (
-                <div className="absolute left-2 right-2 mt-2 bg-white text-[#111827] rounded-2xl border border-[#E2E8F0] shadow-2xl z-40 max-h-52 sm:max-h-64 overflow-y-auto">
+                <div className="absolute left-0 right-0 mt-2 bg-white text-[#111827] rounded-xl border border-[#E2E8F0] shadow-xl z-40 max-h-56 sm:max-h-64 overflow-y-auto divide-y divide-slate-100">
                   {smartSearchResults.map((res) => (
                     <Link
                       key={res.id}
                       href={res.href}
-                      className="flex items-center justify-between gap-4 px-4 py-2.5 sm:px-5 sm:py-3 hover:bg-[#ECFDF5] border-b last:border-b-0 border-slate-100 transition-colors"
+                      className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-emerald-50/50 transition-colors"
                     >
                       <div>
-                        <p className="text-xs sm:text-sm font-semibold text-[#111827]">{res.label}</p>
-                        <p className="text-[11px] sm:text-xs text-[#4B5563]">{res.meta}</p>
+                        <p className="text-sm font-semibold text-[#111827]">{res.label}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{res.meta}</p>
                       </div>
-                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#006A4E] shrink-0" aria-hidden="true" />
+                      <ArrowRight className="w-4 h-4 text-[#006A4E] shrink-0" aria-hidden="true" />
                     </Link>
                   ))}
                 </div>
@@ -317,37 +308,23 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
 
           {/* Bottom Block: Dark Civic Green 4-Column Statistics Ribbon */}
           <div className="w-full relative z-20">
-            <div
-              className="relative overflow-hidden text-white rounded-xl sm:rounded-2xl px-3.5 py-2.5 sm:px-6 sm:py-3.5 lg:px-8 lg:py-4"
-              style={{
-                background: 'rgba(6, 78, 59, 0.75)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.18)',
-              }}
-            >
-              <div
-                aria-hidden="true"
-                className="civic-bg-layer absolute inset-y-0 right-0 w-1/2 bg-[url('/images/bg2.png')] bg-right-bottom bg-no-repeat bg-cover invert opacity-[0.10] pointer-events-none"
-              />
-
-              <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-y-2 gap-x-3 sm:gap-y-3 sm:gap-x-6 lg:gap-0 lg:divide-x lg:divide-white/20">
+            <div className="relative overflow-hidden text-white rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 lg:px-8 lg:py-5 bg-[#00382B]/80 backdrop-blur-sm border border-white/15 shadow-sm">
+              <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-y-3 gap-x-4 sm:gap-6 lg:gap-0 lg:divide-x lg:divide-white/15">
                 {HERO_STATS.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.id}
-                      className="flex items-center gap-2 sm:gap-3.5 lg:px-6 first:lg:pl-0 last:lg:pr-0"
+                      className="flex items-center gap-3 sm:gap-3.5 lg:px-6 first:lg:pl-0 last:lg:pr-0"
                     >
-                      <div className="w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
-                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-emerald-200" aria-hidden="true" />
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200" aria-hidden="true" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm sm:text-lg lg:text-2xl font-bold text-white tabular-nums leading-tight">
+                        <p className="text-base sm:text-lg lg:text-2xl font-bold text-white tabular-nums leading-tight">
                           {language === 'bn' ? item.valueBn : item.valueEn}
                         </p>
-                        <p className="text-[10px] sm:text-xs text-emerald-100/90 mt-0.5 truncate">
+                        <p className="text-xs text-emerald-200/90 mt-0.5 truncate">
                           {language === 'bn' ? item.labelBn : item.labelEn}
                         </p>
                       </div>
@@ -360,7 +337,7 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
         </div>
 
         {/* 3. Clickable Pagination Indicator Dots (Bottom Center) */}
-        <div className="relative z-20 flex items-center justify-center gap-2 pb-2.5 sm:pb-3.5">
+        <div className="relative z-20 flex items-center justify-center gap-2 pb-3 sm:pb-4">
           {HERO_IMAGES.map((_, idx) => (
             <button
               key={idx}
@@ -368,10 +345,10 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
               onClick={() => handleDotClick(idx)}
               aria-label={`Go to slide ${idx + 1}`}
               aria-current={idx === currentSlide ? 'true' : undefined}
-              className={`transition-all duration-300 rounded-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+              className={`transition-all duration-200 rounded-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 idx === currentSlide
-                  ? 'w-7 sm:w-8 h-2 bg-emerald-400 shadow-sm'
-                  : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+                  ? 'w-6 h-1.5 bg-emerald-400'
+                  : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
               }`}
             />
           ))}
@@ -419,16 +396,16 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                 return (
                   <div
                     key={item.step}
-                    className="flex items-start gap-3.5 p-3.5 rounded-xl bg-[#ECFDF5]/60 border border-emerald-200/70"
+                    className="flex items-start gap-3.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80"
                   >
                     <div className="w-9 h-9 rounded-lg bg-[#006A4E] text-white flex items-center justify-center shrink-0">
                       <Icon className="w-4 h-4" aria-hidden="true" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-[#111827]">
+                      <p className="text-sm font-semibold text-[#111827]">
                         {item.step}. {language === 'bn' ? item.titleBn : item.titleEn}
                       </p>
-                      <p className="text-xs text-[#4B5563] mt-0.5 leading-relaxed">
+                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
                         {language === 'bn' ? item.descBn : item.descEn}
                       </p>
                     </div>
@@ -440,14 +417,14 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                 <button
                   type="button"
                   onClick={() => setHowItWorksOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-[#4B5563] bg-slate-100 hover:bg-slate-200 rounded-lg cursor-pointer"
+                  className="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg cursor-pointer transition-colors"
                 >
                   {language === 'bn' ? 'বন্ধ করুন' : 'Close'}
                 </button>
                 <Link
                   href="/dashboard/citizen"
                   onClick={() => setHowItWorksOpen(false)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#006A4E] hover:bg-[#00523C] rounded-lg"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-[#006A4E] hover:bg-[#00523C] rounded-lg transition-colors"
                 >
                   <span>{language === 'bn' ? 'নাগরিক পোর্টালে যান' : 'Go to Citizen Portal'}</span>
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />

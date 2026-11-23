@@ -41,19 +41,19 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
   const activeWard = wards.find((w) => w.wardNumber === selectedWardNum) ?? wards[0];
 
   return (
-    <section id="notices" className="bg-white/30 border-t border-[#E2E8F0]/80 py-14">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+    <section id="notices" className="bg-white/80 backdrop-blur-xs border-t border-slate-200 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
         {/* Dynamic Notice Board (7 columns) */}
         <div className="lg:col-span-7">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#006A4E] flex items-center justify-center shrink-0">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-lg bg-emerald-50 text-[#006A4E] flex items-center justify-center shrink-0">
                   <Bell className="w-4 h-4" aria-hidden="true" />
                 </span>
                 <span>{t.notices.title}</span>
               </h2>
-              <p className="mt-1 text-base text-[#4B5563]">{t.notices.subtitle}</p>
+              <p className="mt-1.5 text-sm sm:text-base text-slate-600">{t.notices.subtitle}</p>
             </div>
           </div>
 
@@ -70,14 +70,14 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
                 onChange={(e) => setNoticeQuery(e.target.value)}
                 aria-label={t.notices.searchPlaceholder}
                 placeholder={t.notices.searchPlaceholder}
-                className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E] text-[#111827] placeholder:text-slate-400"
               />
             </div>
 
             <div
               role="group"
               aria-label={language === 'bn' ? 'নোটিশ ক্যাটাগরি ফিল্টার' : 'Filter notices by category'}
-              className="flex flex-wrap gap-1.5 bg-[#F8FAFC] border border-[#E2E8F0] p-1 rounded-lg"
+              className="flex flex-wrap gap-1 bg-slate-100/80 border border-slate-200 p-1 rounded-lg"
             >
               {NOTICE_CATEGORIES_ORDER.map((cat) => (
                 <button
@@ -87,8 +87,8 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
                   onClick={() => setNoticeCategory(cat)}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                     noticeCategory === cat
-                      ? 'bg-[#006A4E] text-white shadow-xs font-semibold'
-                      : 'text-[#4B5563] hover:text-[#111827]'
+                      ? 'bg-[#006A4E] text-white shadow-2xs font-semibold'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {cat === 'all' ? t.notices.allCategories : t.notices.categories[cat]}
@@ -101,7 +101,7 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
           {filteredNotices.length === 0 ? (
             <EmptyState message={t.notices.empty} />
           ) : (
-            <div className="divide-y divide-[#E2E8F0] border border-[#E2E8F0] rounded-xl bg-white overflow-hidden">
+            <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl bg-white overflow-hidden shadow-2xs">
               {filteredNotices.map((notice) => {
                 const isExpanded = expandedNoticeId === notice.id;
                 return (
@@ -125,16 +125,16 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
         {/* Interactive Ward Directory (5 columns) */}
         <div className="lg:col-span-5">
           <div className="mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#006A4E] flex items-center justify-center shrink-0">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-lg bg-emerald-50 text-[#006A4E] flex items-center justify-center shrink-0">
                 <Building2 className="w-4 h-4" aria-hidden="true" />
               </span>
               <span>{t.wardDirectory.title}</span>
             </h2>
-            <p className="mt-1 text-base text-[#4B5563]">{t.wardDirectory.subtitle}</p>
+            <p className="mt-1.5 text-sm sm:text-base text-slate-600">{t.wardDirectory.subtitle}</p>
           </div>
 
-          <div className="civic-card bg-[#F8FAFC]/95 rounded-xl border border-[#E2E8F0] p-6 space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5 shadow-2xs">
             <div>
               <p
                 id="ward-selector-label"
@@ -156,7 +156,7 @@ export function NoticeAndWardSection({ notices, wards }: NoticeAndWardSectionPro
                     className={`py-2 px-2 rounded-lg text-xs font-semibold border transition-colors tabular-nums cursor-pointer ${
                       selectedWardNum === w.wardNumber
                         ? 'bg-[#006A4E] text-white border-[#006A4E]'
-                        : 'bg-white text-[#4B5563] border-[#E2E8F0] hover:border-[#006A4E] hover:text-[#006A4E]'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-[#006A4E] hover:text-[#006A4E]'
                     }`}
                   >
                     {t.common.ward} {w.wardNumber}

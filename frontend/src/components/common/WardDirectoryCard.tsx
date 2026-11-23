@@ -29,7 +29,7 @@ export function WardDirectoryCard({ ward, language, labels }: WardDirectoryCardP
   const center = getWardCenter(ward.wardNumber);
 
   return (
-    <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 space-y-4">
+    <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4 shadow-2xs">
       <div className="border-b border-slate-100 pb-3">
         <p className="text-xs font-semibold text-[#006A4E]">{zoneName}</p>
         <h3 className="text-lg font-bold text-[#111827] mt-0.5">
@@ -50,26 +50,26 @@ export function WardDirectoryCard({ ward, language, labels }: WardDirectoryCardP
 
       <div className="space-y-3 text-sm">
         <div className="flex items-start gap-3">
-          <span className="w-7 h-7 rounded-lg bg-[#ECFDF5] text-[#006A4E] flex items-center justify-center shrink-0">
+          <span className="w-7 h-7 rounded-lg bg-emerald-50 text-[#006A4E] flex items-center justify-center shrink-0">
             <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-xs text-[#4B5563]">{labels.councillor}</p>
+            <p className="text-xs text-slate-500">{labels.councillor}</p>
             <p className="font-semibold text-[#111827]">
               {language === 'bn' ? ward.councillorBn : ward.councillorEn}
             </p>
-            <p className="text-xs font-mono text-[#4B5563] tabular-nums">
+            <p className="text-xs font-mono text-slate-500 tabular-nums">
               {ward.councillorPhone}
             </p>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
-          <span className="w-7 h-7 rounded-lg bg-[#FEF2F2] text-[#C81E1E] flex items-center justify-center shrink-0">
+          <span className="w-7 h-7 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
             <Phone className="w-3.5 h-3.5" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-xs text-[#4B5563]">{labels.emergency}</p>
+            <p className="text-xs text-slate-500">{labels.emergency}</p>
             <p className="font-semibold font-mono text-[#111827] tabular-nums">
               {ward.emergencyPhone}
             </p>
@@ -77,11 +77,11 @@ export function WardDirectoryCard({ ward, language, labels }: WardDirectoryCardP
         </div>
 
         <div className="flex items-start gap-3">
-          <span className="w-7 h-7 rounded-lg bg-[#ECFDF5] text-[#006A4E] flex items-center justify-center shrink-0">
+          <span className="w-7 h-7 rounded-lg bg-emerald-50 text-[#006A4E] flex items-center justify-center shrink-0">
             <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-xs text-[#4B5563]">{labels.wasteSchedule}</p>
+            <p className="text-xs text-slate-500">{labels.wasteSchedule}</p>
             <p className="font-medium text-[#111827]">
               {language === 'bn' ? ward.wasteScheduleBn : ward.wasteScheduleEn}
             </p>
@@ -89,11 +89,11 @@ export function WardDirectoryCard({ ward, language, labels }: WardDirectoryCardP
         </div>
 
         <div className="flex items-start gap-3">
-          <span className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+          <span className="w-7 h-7 rounded-lg bg-emerald-50 text-[#006A4E] flex items-center justify-center shrink-0">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-xs text-[#4B5563]">{labels.foggingSchedule}</p>
+            <p className="text-xs text-slate-500">{labels.foggingSchedule}</p>
             <p className="font-medium text-[#111827]">
               {language === 'bn' ? ward.foggingScheduleBn : ward.foggingScheduleEn}
             </p>
@@ -103,13 +103,13 @@ export function WardDirectoryCard({ ward, language, labels }: WardDirectoryCardP
 
       <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs">
         <div>
-          <span className="text-[#4B5563] block">{labels.population}</span>
+          <span className="text-slate-500 block">{labels.population}</span>
           <span className="font-bold text-[#111827] tabular-nums">
             {ward.population.toLocaleString()}
           </span>
         </div>
         <div>
-          <span className="text-[#4B5563] block">{labels.area}</span>
+          <span className="text-slate-500 block">{labels.area}</span>
           <span className="font-bold text-[#111827] tabular-nums">
             {ward.areaSqKm} sq.km
           </span>
@@ -119,13 +119,13 @@ export function WardDirectoryCard({ ward, language, labels }: WardDirectoryCardP
       <div className="pt-2 flex gap-2">
         <Link
           href={`/city-map?ward=${ward.wardNumber}`}
-          className="flex-1 text-center px-3 py-2 text-xs font-semibold text-white bg-[#006A4E] hover:bg-[#00523C] rounded-lg transition-colors"
+          className="flex-1 text-center px-3 py-2 text-xs font-medium text-white bg-[#006A4E] hover:bg-[#00523C] rounded-lg transition-colors"
         >
           {labels.viewOnMap}
         </Link>
         <Link
           href={`/complaints?tab=submit&ward=${ward.wardNumber}`}
-          className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-[#006A4E] bg-[#ECFDF5] hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors"
+          className="inline-flex items-center gap-1 px-3 py-2 text-xs font-medium text-[#006A4E] bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/80 rounded-lg transition-colors"
         >
           <ShieldAlert className="w-3.5 h-3.5" aria-hidden="true" />
           <span>{labels.complaints}</span>

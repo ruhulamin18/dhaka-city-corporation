@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   Sparkles,
   User,
-  Users,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
@@ -247,7 +246,7 @@ function AdminLoginForm() {
   return (
     <div className="w-full max-w-md mx-auto animate-in fade-in slide-in-from-bottom-3 duration-300">
       {/* Centered Authoritative Civic Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-slate-300/80">
         {/* Dark Slate / Emerald Official Header */}
         <div className="bg-slate-900 text-white px-7 py-6 relative">
           <div className="flex items-center justify-between mb-1">
@@ -259,7 +258,7 @@ function AdminLoginForm() {
                   : 'Dhaka Smart City Corporation'}
               </span>
             </div>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               <ShieldCheck className="w-3 h-3" />
               <span>
                 {language === 'bn' ? 'অফিশিয়াল পোর্টাল' : 'Official Portal'}
@@ -276,16 +275,16 @@ function AdminLoginForm() {
           </p>
         </div>
 
-        {/* Role Selector Tabs */}
+        {/* Role Selector Tabs with Interactive Lift */}
         <div className="px-6 sm:px-7 pt-5 pb-1">
           <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200">
             <button
               type="button"
               onClick={() => handleRoleTabSelect('admin')}
-              className={`py-2 px-2 text-[11px] font-bold rounded-lg transition-all cursor-pointer truncate ${
+              className={`py-2 px-2 text-[11px] font-bold rounded-lg transition-all duration-200 cursor-pointer truncate ${
                 selectedRoleKey === 'admin'
                   ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 hover:-translate-y-0.5'
               }`}
               title={language === 'bn' ? 'মেয়র সচিবালয় / সুপার অ্যাডমিন' : 'Super Admin'}
             >
@@ -295,10 +294,10 @@ function AdminLoginForm() {
             <button
               type="button"
               onClick={() => handleRoleTabSelect('ward_officer')}
-              className={`py-2 px-2 text-[11px] font-bold rounded-lg transition-all cursor-pointer truncate ${
+              className={`py-2 px-2 text-[11px] font-bold rounded-lg transition-all duration-200 cursor-pointer truncate ${
                 selectedRoleKey === 'ward_officer'
                   ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 hover:-translate-y-0.5'
               }`}
               title={language === 'bn' ? 'ওয়ার্ড নির্বাহী কর্মকর্তা' : 'Ward Officer'}
             >
@@ -308,10 +307,10 @@ function AdminLoginForm() {
             <button
               type="button"
               onClick={() => handleRoleTabSelect('dept_officer')}
-              className={`py-2 px-2 text-[11px] font-bold rounded-lg transition-all cursor-pointer truncate ${
+              className={`py-2 px-2 text-[11px] font-bold rounded-lg transition-all duration-200 cursor-pointer truncate ${
                 selectedRoleKey === 'dept_officer'
                   ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 hover:-translate-y-0.5'
               }`}
               title={language === 'bn' ? 'বিভাগীয় কর্মকর্তা' : 'Dept Officer'}
             >
@@ -362,7 +361,7 @@ function AdminLoginForm() {
                   placeholder="admin@dscc.gov.bd"
                   autoComplete="username"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all font-mono text-xs sm:text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white font-mono text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all duration-200"
                 />
               </div>
             </div>
@@ -390,12 +389,12 @@ function AdminLoginForm() {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
-                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all duration-200"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -419,15 +418,15 @@ function AdminLoginForm() {
 
             {/* Action Bar: Demo Popover Button (Left) + Sign In Button (Right) */}
             <div className="pt-2 flex items-center gap-2.5 relative">
-              {/* Demo Accounts Popover Anchor */}
+              {/* Demo Accounts Popover Anchor with Hover Lift */}
               <div className="relative" ref={demoMenuRef}>
                 <button
                   type="button"
                   onClick={() => setIsDemoMenuOpen((prev) => !prev)}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs hover:shadow-xs focus-visible:outline-2 focus-visible:outline-slate-900 ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer shrink-0 shadow-2xs hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-slate-900 ${
                     isDemoMenuOpen
                       ? 'bg-slate-900 text-white'
-                      : 'text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300'
+                      : 'text-slate-700 bg-slate-100 hover:bg-slate-200 hover:border-slate-400 border border-slate-300'
                   }`}
                   title={
                     language === 'bn'
@@ -439,14 +438,14 @@ function AdminLoginForm() {
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                   <span>{language === 'bn' ? 'ডেমো অ্যাকাউন্ট' : 'Demo Roles'}</span>
-                  <ChevronDown className="w-3 h-3 ml-0.5 opacity-70" />
+                  <ChevronDown className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${isDemoMenuOpen ? 'rotate-180' : 'opacity-70'}`} />
                 </button>
 
-                {/* Popover Listing ONLY the 3 Official Profiles */}
+                {/* Popover Listing ONLY the 3 Official Profiles with Interactive Cards */}
                 {isDemoMenuOpen && (
-                  <div className="absolute left-0 bottom-full mb-2 w-72 sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 origin-bottom-left">
+                  <div className="absolute left-0 bottom-full mb-2 w-76 sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-bottom-left">
                     <div className="px-2.5 py-1.5 border-b border-slate-100">
-                      <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                      <p className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">
                         {language === 'bn'
                           ? 'অফিশিয়াল ডেমো প্রোফাইল নির্বাচন'
                           : 'Select Official Demo Profile'}
@@ -458,23 +457,23 @@ function AdminLoginForm() {
                       </p>
                     </div>
 
-                    <div className="space-y-1 mt-1.5">
+                    <div className="space-y-1.5 mt-2">
                       {OFFICIAL_PROFILES.map((preset) => (
                         <button
                           key={preset.key}
                           type="button"
                           onClick={() => handleSelectOfficialDemo(preset.key)}
-                          className="w-full text-left p-2 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all cursor-pointer group"
+                          className="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-emerald-300 hover:bg-[#ECFDF5] hover:-translate-y-0.5 hover:shadow-2xs transition-all duration-200 cursor-pointer group"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-700">
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-[#006A4E] transition-colors">
                               {language === 'bn' ? preset.labelBn : preset.labelEn}
                             </span>
-                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 group-hover:bg-[#D1FAE5] text-slate-600 group-hover:text-[#006A4E] border border-slate-200 group-hover:border-emerald-200 shrink-0 transition-colors">
                               {language === 'bn' ? preset.badgeBn : preset.badgeEn}
                             </span>
                           </div>
-                          <p className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
+                          <p className="text-[10px] text-slate-500 group-hover:text-slate-600 font-mono mt-0.5 truncate transition-colors">
                             {language === 'bn' ? preset.subBn : preset.subEn}
                           </p>
                         </button>
@@ -484,11 +483,11 @@ function AdminLoginForm() {
                 )}
               </div>
 
-              {/* Official Sign In Button */}
+              {/* Official Sign In Button with Subtle Lift */}
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-60 transition-all shadow-xs cursor-pointer focus-visible:outline-2 focus-visible:outline-slate-900"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 disabled:opacity-60 transition-all duration-300 shadow-xs cursor-pointer focus-visible:outline-2 focus-visible:outline-slate-900"
               >
                 {submitting ? (
                   <>
@@ -506,21 +505,21 @@ function AdminLoginForm() {
           </form>
         </div>
 
-        {/* Footer Card: Link Back to Citizen Portal */}
-        <div className="bg-slate-50 border-t border-slate-200/80 px-6 py-3.5 flex items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-slate-600">
+        {/* Footer Card: Interactive Link Back to Citizen Portal */}
+        <Link
+          href="/login"
+          className="bg-slate-50 hover:bg-[#ECFDF5] border-t border-slate-200/80 px-6 py-3.5 flex items-center justify-between gap-3 text-xs transition-all duration-300 group cursor-pointer"
+        >
+          <div className="flex items-center gap-2 text-slate-600 group-hover:text-slate-800 transition-colors">
             <User className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="font-medium">
               {language === 'bn' ? 'সাধারণ নাগরিক?' : 'General Citizen?'}
             </span>
           </div>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1 font-bold text-[#006A4E] hover:text-[#00523C] hover:underline shrink-0"
-          >
+          <span className="inline-flex items-center gap-1 font-bold text-[#006A4E] group-hover:text-[#00523C] group-hover:translate-x-1 transition-all duration-300 shrink-0">
             <span>{language === 'bn' ? 'নাগরিক পোর্টালে যান →' : 'Go to Citizen Portal →'}</span>
-          </Link>
-        </div>
+          </span>
+        </Link>
       </div>
     </div>
   );

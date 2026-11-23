@@ -25,6 +25,7 @@ export function SecurityCodeField({
 }: SecurityCodeFieldProps) {
   const { language } = useApp();
   const [code, setCode] = useState<string>('');
+  const [isSpinning, setIsSpinning] = useState(false);
 
   // SSR/Hydration safe: only generate random code strictly inside useEffect on mount or refreshNonce updates
   useEffect(() => {
@@ -36,14 +37,18 @@ export function SecurityCodeField({
   }, [refreshNonce, onCodeChange]);
 
   const handleManualRefresh = () => {
+    setIsSpinning(true);
     const next = generateRandomSixDigitCode();
     setCode(next);
     onCodeChange(next);
     onChange('');
+    setTimeout(() => {
+      setIsSpinning(false);
+    }, 600);
   };
 
   return (
-    <div className="space-y-2.5 pt-1">
+    <div className="space-y-2 pt-1">
       <div className="flex items-center justify-between">
         <label
           htmlFor="security-code-input"
@@ -57,7 +62,7 @@ export function SecurityCodeField({
           </span>
         </label>
         <span className="text-[11px] text-[#4B5563]">
-          {language === 'bn' ? 'কপি করা নিষিদ্ধ' : 'Type manually'}
+          {language === 'bn' ? 'টাইপ করুন' : 'Type manually'}
         </span>
       </div>
 
@@ -68,12 +73,12 @@ export function SecurityCodeField({
           onCut={(e) => e.preventDefault()}
           onContextMenu={(e) => e.preventDefault()}
           aria-live="polite"
-          className="relative flex-1 h-12 rounded-lg border border-emerald-200 bg-[#ECFDF5] overflow-hidden flex items-center justify-center select-none"
+          className="relative flex-1 h-12 rounded-xl border border-emerald-300 bg-[#ECFDF5] overflow-hidden flex items-center justify-center select-none shadow-2xs"
         >
           {/* Subtle diagonal security lines */}
           <svg
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full pointer-events-none opacity-45"
+            className="absolute inset-0 w-full h-full pointer-events-none opacity-40"
           >
             <defs>
               <pattern
@@ -91,7 +96,7 @@ export function SecurityCodeField({
             <line x1="12%" y1="26%" x2="88%" y2="74%" stroke="#C81E1E" strokeWidth="1" opacity="0.22" />
           </svg>
 
-          <span className="relative z-10 font-mono text-xl font-bold tracking-[0.38em] text-[#006A4E] pl-[0.38em] tabular-nums">
+          <span className="relative z-10 font-mono text-xl font-bold tracking-[0.38em] text-[#006A4E] pl-[0.38em] tabular-nums select-none">
             {code || '••••••'}
           </span>
         </div>
@@ -101,9 +106,14 @@ export function SecurityCodeField({
           onClick={handleManualRefresh}
           title={language === 'bn' ? 'নতুন কোড তৈরি করুন' : 'Generate new security code'}
           aria-label={language === 'bn' ? 'নতুন কোড তৈরি করুন' : 'Generate new security code'}
-          className="h-12 w-12 rounded-lg border border-slate-300 bg-white hover:bg-[#ECFDF5] hover:border-[#006A4E] text-[#006A4E] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+          className="h-12 w-12 rounded-xl border border-slate-300 bg-white hover:bg-[#ECFDF5] hover:border-[#006A4E] text-[#006A4E] flex items-center justify-center transition-all shrink-0 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
         >
-          <RefreshCw className="w-4 h-4" aria-hidden="true" />
+          <RefreshCw
+            className={`w-4 h-4 transition-transform duration-500 ${
+              isSpinning ? 'rotate-180 text-[#00523C]' : ''
+            }`}
+            aria-hidden="true"
+          />
         </button>
       </div>
 
@@ -116,11 +126,11 @@ export function SecurityCodeField({
         maxLength={6}
         value={value}
         onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
-        placeholder={language === 'bn' ? 'উপরের ৬ ডিজিটের সংখ্যাটি লিখুন' : 'Enter the 6 digits shown above'}
-        className={`w-full px-3.5 py-2.5 text-sm font-mono tracking-[0.25em] border rounded-lg focus:outline-none focus:ring-2 tabular-nums ${
+        placeholder={language === 'bn' ? 'উপরের ৬ ডিজিটের কোডটি লিখুন' : 'Enter the 6 digits shown above'}
+        className={`w-full px-3.5 py-2.5 text-sm font-mono tracking-[0.25em] border rounded-xl focus:outline-none focus:ring-2 tabular-nums transition-all ${
           error
             ? 'border-[#C81E1E] bg-[#FEF2F2]/60 focus:ring-[#C81E1E]'
-            : 'border-slate-300 bg-white focus:ring-[#006A4E]'
+            : 'border-slate-300 bg-white focus:ring-[#006A4E] focus:border-transparent'
         }`}
       />
 

@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { StatusPage } from '@/components/status/StatusPage';
 

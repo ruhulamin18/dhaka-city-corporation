@@ -124,7 +124,7 @@ export function GoogleMapsProvider({
       <span>
         Google Maps Platform quota reached. If you are the app owner, visit{' '}
         <a
-          href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
+          href="https://developers.google.com/maps/documentation/javascript/error-messages#over-quota-map-errors"
           target="_blank"
           rel="noopener noreferrer"
           className="underline font-semibold text-amber-950 hover:text-amber-800"

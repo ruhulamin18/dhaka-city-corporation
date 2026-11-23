@@ -154,7 +154,7 @@ function CitizenLoginForm() {
   return (
     <div className="w-full max-w-md mx-auto animate-in fade-in slide-in-from-bottom-3 duration-300">
       {/* Centered Glassmorphic/White Civic Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-slate-300/80">
         {/* Deep Civic Green Header */}
         <div className="bg-[#006A4E] text-white px-7 py-6 relative">
           <div className="flex items-center gap-2 text-emerald-200 text-xs font-semibold mb-1 tracking-wide">
@@ -220,7 +220,7 @@ function CitizenLoginForm() {
                   placeholder="01816648095"
                   autoComplete="tel"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006A4E] focus:border-transparent transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006A4E] focus:border-transparent transition-all duration-200"
                 />
               </div>
             </div>
@@ -237,7 +237,7 @@ function CitizenLoginForm() {
                 </label>
                 <Link
                   href="/reset-password"
-                  className="text-xs font-semibold text-[#006A4E] hover:underline"
+                  className="text-xs font-semibold text-[#006A4E] hover:text-[#00523C] hover:underline transition-colors"
                 >
                   {language === 'bn' ? 'পাসওয়ার্ড ভুলে গেছেন?' : 'Forgot Password?'}
                 </Link>
@@ -251,12 +251,12 @@ function CitizenLoginForm() {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
-                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006A4E] focus:border-transparent transition-all"
+                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-[#111827] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006A4E] focus:border-transparent transition-all duration-200"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -280,11 +280,11 @@ function CitizenLoginForm() {
 
             {/* Action Bar: Demo Access Button (Left) + Sign In Button (Right) */}
             <div className="pt-2 flex items-center gap-2.5">
-              {/* Compact Demo Access Button */}
+              {/* Interactive Demo Access Button with Lift and Mint Hover */}
               <button
                 type="button"
                 onClick={handleAutofillCitizenDemo}
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#006A4E] bg-[#ECFDF5] hover:bg-emerald-100 border border-emerald-300 transition-all cursor-pointer shrink-0 shadow-2xs hover:shadow-xs focus-visible:outline-2 focus-visible:outline-[#006A4E]"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#006A4E] bg-[#ECFDF5] hover:bg-[#D1FAE5] border border-emerald-300 hover:border-[#006A4E] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer shrink-0 shadow-2xs hover:shadow-xs active:translate-y-0 focus-visible:outline-2 focus-visible:outline-[#006A4E]"
                 title={
                   language === 'bn'
                     ? 'ডেমো টেস্ট তথ্য এক-ক্লিকে পূরণ করুন'
@@ -295,11 +295,11 @@ function CitizenLoginForm() {
                 <span>{language === 'bn' ? 'ডেমো পূরণ' : 'Demo Fill'}</span>
               </button>
 
-              {/* Citizen Sign In Button */}
+              {/* Citizen Sign In Button with Subtle Lift */}
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-[#006A4E] hover:bg-[#00523C] disabled:opacity-60 transition-all shadow-xs cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E]"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-[#006A4E] hover:bg-[#00523C] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 disabled:opacity-60 transition-all duration-300 shadow-xs cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E]"
               >
                 {submitting ? (
                   <>
@@ -324,7 +324,7 @@ function CitizenLoginForm() {
               </span>
               <Link
                 href="/register"
-                className="font-bold text-[#006A4E] hover:underline"
+                className="font-bold text-[#006A4E] hover:text-[#00523C] hover:underline transition-colors"
               >
                 {language === 'bn' ? 'নাগরিক নিবন্ধন করুন' : 'Create Citizen Account'}
               </Link>
@@ -332,23 +332,23 @@ function CitizenLoginForm() {
           </form>
         </div>
 
-        {/* Footer Card: Link to Official / Admin Portal */}
-        <div className="bg-slate-50 border-t border-slate-200/80 px-6 py-3.5 flex items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-slate-600">
-            <Building2 className="w-4 h-4 text-slate-500 shrink-0" />
+        {/* Footer Card: Interactive Link to Official / Admin Portal */}
+        <Link
+          href="/admin/login"
+          className="bg-slate-50 hover:bg-[#ECFDF5] border-t border-slate-200/80 px-6 py-3.5 flex items-center justify-between gap-3 text-xs transition-all duration-300 group cursor-pointer"
+        >
+          <div className="flex items-center gap-2 text-slate-600 group-hover:text-slate-800 transition-colors">
+            <Building2 className="w-4 h-4 text-slate-500 group-hover:text-[#006A4E] transition-colors shrink-0" />
             <span className="font-medium">
               {language === 'bn'
                 ? 'সিটি কর্পোরেশন কর্মকর্তা বা অ্যাডমিন?'
                 : 'Municipal Officer or Administrator?'}
             </span>
           </div>
-          <Link
-            href="/admin/login"
-            className="inline-flex items-center gap-1 font-bold text-[#006A4E] hover:text-[#00523C] hover:underline shrink-0"
-          >
+          <span className="inline-flex items-center gap-1 font-bold text-[#006A4E] group-hover:text-[#00523C] group-hover:translate-x-1 transition-all duration-300 shrink-0">
             <span>{language === 'bn' ? 'অ্যাডমিন পোর্টাল →' : 'Admin Portal →'}</span>
-          </Link>
-        </div>
+          </span>
+        </Link>
       </div>
     </div>
   );

@@ -57,7 +57,7 @@ export function LoginButton({
   const dashboardHref = user ? getDashboardPath(user.role) : '/login';
   const roleBadge = user ? ROLE_BADGE_MAP[user.role] : null;
 
-  // Click-outside listener
+  // Click-outside and Escape key listener
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -110,7 +110,7 @@ export function LoginButton({
           <Link
             href={dashboardHref}
             onClick={onNavigate}
-            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#006A4E] hover:bg-[#00523C] transition-colors shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E]"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#006A4E] hover:bg-[#00523C] hover:shadow-xs transition-all shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E]"
           >
             <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
             <span>{language === 'bn' ? 'আমার ড্যাশবোর্ড' : 'My Dashboard'}</span>
@@ -140,10 +140,10 @@ export function LoginButton({
           <Link
             href="/login"
             onClick={onNavigate}
-            className="flex items-center justify-between p-3 rounded-xl border border-emerald-200 bg-[#ECFDF5]/70 hover:bg-[#ECFDF5] transition-all shadow-2xs group"
+            className="flex items-center justify-between p-3 rounded-xl border border-emerald-200 bg-[#ECFDF5]/70 hover:bg-[#ECFDF5] hover:border-[#006A4E] hover:-translate-y-0.5 transition-all duration-300 shadow-2xs group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#006A4E] text-white flex items-center justify-center shrink-0 shadow-2xs">
+              <div className="w-9 h-9 rounded-lg bg-[#006A4E] text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                 <User className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -155,17 +155,17 @@ export function LoginButton({
                 </div>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-[#006A4E] group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-4 h-4 text-[#006A4E] group-hover:translate-x-1 transition-transform" />
           </Link>
 
           {/* Admin Portal Mobile Link */}
           <Link
             href="/admin/login"
             onClick={onNavigate}
-            className="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-all shadow-2xs group"
+            className="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-white hover:bg-[#ECFDF5]/50 hover:border-[#006A4E]/60 hover:-translate-y-0.5 transition-all duration-300 shadow-2xs group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-2xs">
+              <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
               </div>
               <div className="text-left">
@@ -177,7 +177,7 @@ export function LoginButton({
                 </div>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#006A4E] group-hover:translate-x-1 transition-all" />
           </Link>
         </div>
       </div>
@@ -194,7 +194,7 @@ export function LoginButton({
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-10 h-10 rounded-full border-2 border-[#006A4E] bg-[#ECFDF5] text-[#006A4E] hover:ring-3 hover:ring-emerald-100 flex items-center justify-center font-bold text-sm shadow-xs transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E]"
+          className="w-10 h-10 rounded-full border-2 border-[#006A4E] bg-[#ECFDF5] text-[#006A4E] hover:ring-3 hover:ring-emerald-200 hover:border-[#00523C] flex items-center justify-center font-bold text-sm shadow-xs hover:shadow-sm transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E]"
           aria-expanded={isOpen}
           aria-haspopup="true"
           aria-label={
@@ -210,7 +210,7 @@ export function LoginButton({
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className={`w-10 h-10 rounded-full border border-[#CBD5E1] bg-slate-50 hover:bg-[#ECFDF5] hover:border-[#006A4E] text-[#111827] hover:text-[#006A4E] flex items-center justify-center shadow-2xs transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E] ${
+          className={`w-10 h-10 rounded-full border border-[#CBD5E1] bg-slate-50 hover:bg-[#ECFDF5] hover:border-[#006A4E] text-[#111827] hover:text-[#006A4E] flex items-center justify-center shadow-2xs hover:shadow-xs hover:scale-105 transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E] ${
             isOpen ? 'ring-2 ring-emerald-200 border-[#006A4E] bg-[#ECFDF5] text-[#006A4E]' : ''
           }`}
           aria-expanded={isOpen}
@@ -231,12 +231,12 @@ export function LoginButton({
         <div
           role="menu"
           aria-orientation="vertical"
-          className="absolute right-0 top-full mt-2 w-76 sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150 origin-top-right focus:outline-none"
+          className="absolute right-0 top-full mt-2 w-76 sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200 origin-top-right focus:outline-none"
         >
           {isAuthenticated && user && roleBadge ? (
             /* Authenticated Dropdown Body */
             <div className="space-y-2">
-              <div className="px-3 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+              <div className="px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-bold text-[#111827] truncate">
                     {language === 'bn' ? user.nameBn : user.nameEn}
@@ -258,7 +258,7 @@ export function LoginButton({
                   setIsOpen(false);
                   onNavigate?.();
                 }}
-                className="flex items-center gap-3 w-full p-2.5 rounded-xl text-xs font-bold text-white bg-[#006A4E] hover:bg-[#00523C] transition-colors shadow-2xs"
+                className="flex items-center gap-3 w-full p-2.5 rounded-xl text-xs font-bold text-white bg-[#006A4E] hover:bg-[#00523C] hover:shadow-xs transition-all shadow-2xs"
               >
                 <LayoutDashboard className="w-4 h-4 shrink-0" />
                 <span className="truncate">
@@ -300,7 +300,7 @@ export function LoginButton({
                   setIsOpen(false);
                   onNavigate?.();
                 }}
-                className="flex items-start gap-3 p-3 rounded-xl border border-transparent hover:border-emerald-200 bg-slate-50/70 hover:bg-[#ECFDF5] transition-all group cursor-pointer"
+                className="flex items-start gap-3 p-3 rounded-xl border border-slate-200/60 hover:border-[#006A4E] bg-slate-50/70 hover:bg-[#ECFDF5] hover:-translate-y-0.5 hover:shadow-xs transition-all duration-300 group cursor-pointer"
               >
                 <div className="w-9 h-9 rounded-xl bg-[#006A4E] text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform mt-0.5">
                   <User className="w-5 h-5" />
@@ -310,7 +310,7 @@ export function LoginButton({
                     <span className="text-xs font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors">
                       {language === 'bn' ? 'নাগরিক পোর্টাল' : 'Citizen Portal'}
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#006A4E] group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#006A4E] group-hover:translate-x-1 transition-all duration-300" />
                   </div>
                   <p className="text-[11px] text-[#4B5563] mt-0.5 leading-snug">
                     {language === 'bn'
@@ -327,7 +327,7 @@ export function LoginButton({
                   setIsOpen(false);
                   onNavigate?.();
                 }}
-                className="flex items-start gap-3 p-3 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50/70 hover:bg-slate-100 transition-all group cursor-pointer"
+                className="flex items-start gap-3 p-3 rounded-xl border border-slate-200/60 hover:border-[#006A4E] bg-slate-50/70 hover:bg-[#ECFDF5]/60 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-300 group cursor-pointer"
               >
                 <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform mt-0.5">
                   <Building2 className="w-5 h-5 text-emerald-400" />
@@ -337,7 +337,7 @@ export function LoginButton({
                     <span className="text-xs font-bold text-[#111827] group-hover:text-[#006A4E] transition-colors">
                       {language === 'bn' ? 'অ্যাডমিন পোর্টাল' : 'Admin Portal'}
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#006A4E] group-hover:translate-x-1 transition-all duration-300" />
                   </div>
                   <p className="text-[11px] text-[#4B5563] mt-0.5 leading-snug">
                     {language === 'bn'

@@ -41,6 +41,11 @@ export const metadata: Metadata = {
   title: 'Dhaka Smart City Corporation — Digital Citizen Service Platform',
   description:
     'Modern bilingual civic-tech portal and paperless citizen e-service platform for Dhaka Smart City Corporation with QR verification, geo-tagged complaints, GIS city map, open budget tracker, and RBAC operations.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/images/Dhaka_City_logo.png',
+  },
   openGraph: {
     title: 'Dhaka Smart City Corporation — Digital Citizen Service Platform',
     description:

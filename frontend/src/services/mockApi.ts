@@ -438,6 +438,8 @@ export const INITIAL_NOTICES: NoticeItem[] = [
     publishedAt: '2026-11-16',
     referenceCode: 'DSCC/REV/2026/409',
     isUrgent: true,
+    type: 'notice',
+    fileSize: 'PDF • 385 KB',
   },
   {
     id: 'not-02',
@@ -451,6 +453,8 @@ export const INITIAL_NOTICES: NoticeItem[] = [
     publishedAt: '2026-11-15',
     referenceCode: 'DSCC/HLT/2026/118',
     isUrgent: true,
+    type: 'notice',
+    fileSize: 'PDF • 512 KB',
   },
   {
     id: 'not-03',
@@ -463,6 +467,8 @@ export const INITIAL_NOTICES: NoticeItem[] = [
     category: 'tender',
     publishedAt: '2026-11-12',
     referenceCode: 'DSCC/ENG/ET-2026-88',
+    type: 'notice',
+    fileSize: 'PDF • 740 KB',
   },
   {
     id: 'not-04',
@@ -475,6 +481,8 @@ export const INITIAL_NOTICES: NoticeItem[] = [
     category: 'infrastructure',
     publishedAt: '2026-11-10',
     referenceCode: 'DSCC/ENG/RD-2026/214',
+    type: 'notice',
+    fileSize: 'PDF • 290 KB',
   },
   {
     id: 'not-05',
@@ -487,6 +495,8 @@ export const INITIAL_NOTICES: NoticeItem[] = [
     category: 'revenue',
     publishedAt: '2026-11-05',
     referenceCode: 'DSCC/REV/2026/382',
+    type: 'notice',
+    fileSize: 'PDF • 460 KB',
   },
   {
     id: 'not-06',
@@ -499,6 +509,50 @@ export const INITIAL_NOTICES: NoticeItem[] = [
     category: 'general',
     publishedAt: '2026-11-02',
     referenceCode: 'DSCC/GEN/2026/091',
+    type: 'notice',
+    fileSize: 'PDF • 340 KB',
+  },
+  {
+    id: 'news-01',
+    titleEn: 'Mayor Inaugurates 5 New Secondary Transfer Stations (STS) for Zero Open Waste',
+    titleBn: 'উন্মুক্ত বর্জ্যমুক্ত নগর গড়তে মেয়রের ৫টি নতুন সেকেন্ডারি ট্রান্সফার স্টেশন (STS) উদ্বোধন',
+    summaryEn:
+      'Honorable Mayor launched modern odor-controlled compaction transfer stations in Wards 24, 36, and 48 today, eliminating 38 open garbage dumps across South Dhaka.',
+    summaryBn:
+      'মাননীয় মেয়র আজ দক্ষিণ ঢাকার ৩টি অঞ্চলে আধুনিক কম্প্যাক্টযুক্ত ৫টি বর্জ্য স্থানান্তর কেন্দ্র উদ্বোধন করেছেন, যার ফলে ৩৮টি উন্মুক্ত ময়লার ভাগাড় সম্পূর্ণ অপসারিত হলো।',
+    category: 'infrastructure',
+    publishedAt: '2026-11-18',
+    referenceCode: 'DSCC/PR/2026/044',
+    type: 'news',
+    fileSize: 'PDF • 420 KB',
+  },
+  {
+    id: 'news-02',
+    titleEn: 'Dhaka Smart City Corporation Launches 24/7 AI-Assisted Citizen Complaint Desk',
+    titleBn: 'ঢাকা স্মার্ট সিটি কর্পোরেশনের ২৪/৭ এআই নাগরিক অভিযোগ ও ট্র্যাকিং ডেস্কে নাগরিক সাড়া',
+    summaryEn:
+      'Over 14,000 complaints resolved within a record 48-hour SLA in the past quarter through automated GPS geolocation and direct ward field team assignment.',
+    summaryBn:
+      'স্বয়ংক্রিয় জিপিএস ট্র্যাকিং ও ওয়ার্ড টিম সমন্বয়ের মাধ্যমে গত প্রান্তিকে ১৪,০০০-এর বেশি নাগরিক অভিযোগ ৪৮ ঘণ্টার গড় সময়সীমায় সমাধান সম্পন্ন হয়েছে।',
+    category: 'general',
+    publishedAt: '2026-11-14',
+    referenceCode: 'DSCC/PR/2026/043',
+    type: 'news',
+    fileSize: 'PDF • 530 KB',
+  },
+  {
+    id: 'news-03',
+    titleEn: 'Tree Plantation & Urban Micro-Forest Drive Commences Along Buriganga Riverfront',
+    titleBn: 'বুড়িগঙ্গা তীরবর্তী অঞ্চলে ৫০,০০০ বৃক্ষরোপণ ও নগর বন সৃজন কর্মসূচি শুরু',
+    summaryEn:
+      'A citywide greening initiative in partnership with environmental organizations will plant 50,000 indigenous trees to enhance air quality and pedestrian shading.',
+    summaryBn:
+      'পরিবেশ সংগঠনের সাথে যৌথ উদ্যোগে বুড়িগঙ্গার তীরজুড়ে দেশীয় প্রজাতির ৫০ হাজার বৃক্ষরোপণ কর্মসূচি শুরু হয়েছে।',
+    category: 'public_health',
+    publishedAt: '2026-11-08',
+    referenceCode: 'DSCC/PR/2026/041',
+    type: 'news',
+    fileSize: 'PDF • 380 KB',
   },
 ];
 
@@ -790,6 +844,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: '২৪ ঘণ্টা খোলা · জরুরি সেবা চালু',
     detailsEn: '65 beds, Dengue diagnostic corner & maternal ICU.',
     detailsBn: '৬৫ শয্যা, ডেঙ্গু শনাক্তকরণ কর্নার ও মাতৃ আইসিইউ।',
+    addressEn: 'Plot 14, Road 27, Dhanmondi, Dhaka-1209',
+    addressBn: 'প্লট ১৪, রোড ২৭, ধানমন্ডি, ঢাকা-১২০৯',
+    phone: '+880 2-9661234',
+    operatingHoursEn: '24 Hours / 7 Days',
+    operatingHoursBn: '২৪ ঘণ্টা / প্রতিদিন',
   },
   {
     id: 'gis-h2',
@@ -805,6 +864,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'খোলা সকাল ০৮:০০ – রাত ১০:০০',
     detailsEn: 'Free vaccination, outpatient clinic & pharmacy.',
     detailsBn: 'বিনামূল্যে টিকাদান, বহির্বিভাগ ও ফার্মেসি।',
+    addressEn: 'Section 12, Block C, Mirpur, Dhaka-1216',
+    addressBn: 'সেকশন ১২, ব্লক সি, মিরপুর, ঢাকা-১২১৬',
+    phone: '+880 2-9015543',
+    operatingHoursEn: '08:00 AM – 10:00 PM (Daily)',
+    operatingHoursBn: 'সকাল ০৮:০০ – রাত ১০:০০ (প্রতিদিন)',
   },
   {
     id: 'gis-t1',
@@ -820,6 +884,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'চালু · হুইলচেয়ার বান্ধব',
     detailsEn: 'Separate male/female/accessible cabins with water purifier.',
     detailsBn: 'নারী-পুরুষ ও বিশেষ চাহিদাসম্পন্নদের পৃথক ব্যবস্থা ও বিশুদ্ধ পানি।',
+    addressEn: 'Near Shapla Chattar, Motijheel C/A, Dhaka-1000',
+    addressBn: 'শাপলা চত্বরের নিকট, মতিঝিল বা/এ, ঢাকা-১০০০',
+    phone: '+880 1711-002233',
+    operatingHoursEn: '06:00 AM – 11:00 PM',
+    operatingHoursBn: 'সকাল ০৬:০০ – রাত ১১:০০',
   },
   {
     id: 'gis-t2',
@@ -835,6 +904,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'চালু · সার্বক্ষণিক তত্ত্বাবধায়ক',
     detailsEn: 'Automated hygiene sanitization every 30 minutes.',
     detailsBn: 'প্রতি ৩০ মিনিটে স্বয়ংক্রিয় জীবাণুমুক্তকরণ ব্যবস্থা।',
+    addressEn: 'Gulshan 1 Roundabout (South East Corner), Dhaka-1212',
+    addressBn: 'গুলশান ১ গোলচত্বর (দক্ষিণ-পূর্ব কোণ), ঢাকা-১২১২',
+    phone: '+880 1819-445566',
+    operatingHoursEn: '06:00 AM – 11:30 PM',
+    operatingHoursBn: 'সকাল ০৬:০০ – রাত ১১:৩০',
   },
   {
     id: 'gis-p1',
@@ -850,6 +924,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'খোলা · আলোকিত জগিং ট্র্যাক',
     detailsEn: '3.2 km pedestrian loop, solar benches & free Wi-Fi zone.',
     detailsBn: '৩.২ কি.মি. হাঁটার পথ, সোলার বেঞ্চ ও ফ্রি ওয়াই-ফাই জোন।',
+    addressEn: 'Lake Road, Sector 8A, Dhanmondi, Dhaka-1209',
+    addressBn: 'লেক রোড, সেক্টর ৮এ, ধানমন্ডি, ঢাকা-১২০৯',
+    phone: '+880 2-8141200',
+    operatingHoursEn: '05:00 AM – 10:00 PM',
+    operatingHoursBn: 'সকাল ০৫:০০ – রাত ১০:০০',
   },
   {
     id: 'gis-p2',
@@ -865,6 +944,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'খোলা · নবনির্মিত',
     detailsEn: 'Kids play zone, open-air gym and rainwater retention basin.',
     detailsBn: 'শিশুদের খেলার স্থান, ওপেন জিম ও বৃষ্টির পানি সংরক্ষণ জলাধার।',
+    addressEn: 'Road 4, Sector 6, Uttara Model Town, Dhaka-1230',
+    addressBn: 'রোড ৪, সেক্টর ৬, উত্তরা মডেল টাউন, ঢাকা-১২৩০',
+    phone: '+880 2-8951122',
+    operatingHoursEn: '05:30 AM – 09:30 PM',
+    operatingHoursBn: 'সকাল ০৫:৩০ – রাত ০৯:৩০',
   },
   {
     id: 'gis-w1',
@@ -880,6 +964,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'কম্প্যাক্টর চালু · দুর্গন্ধমুক্ত',
     detailsEn: 'Handles 42 tons/day with automated compactor haulage.',
     detailsBn: 'দৈনিক ৪২ টন বর্জ্য স্বয়ংক্রিয় কম্প্যাক্টরে প্রক্রিয়াজাত হয়।',
+    addressEn: 'Shahid Nagar Road, Lalbagh, Dhaka-1211',
+    addressBn: 'শহীদ নগর রোড, লালবাগ, ঢাকা-১২১১',
+    phone: '+880 1713-998877',
+    operatingHoursEn: '10:00 PM – 06:00 AM (Collection)',
+    operatingHoursBn: 'রাত ১০:০০ – সকাল ০৬:০০ (বর্জ্য অপসারণ)',
   },
   {
     id: 'gis-w2',
@@ -895,6 +984,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'চালু · জৈব সার প্রক্রিয়াজাতকরণ',
     detailsEn: 'Segregates recyclable plastics and organic market waste.',
     detailsBn: 'প্লাস্টিক রিসাইক্লিং ও জৈব সার তৈরির আধুনিক কেন্দ্র।',
+    addressEn: 'Staff Quarter Road, Demra, Dhaka-1360',
+    addressBn: 'স্টাফ কোয়ার্টার রোড, ডেমরা, ঢাকা-১৩৬০',
+    phone: '+880 1713-556677',
+    operatingHoursEn: '08:00 PM – 05:00 AM',
+    operatingHoursBn: 'রাত ০৮:০০ – ভোর ০৫:০০',
   },
   {
     id: 'gis-r1',
@@ -910,6 +1004,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'অনুমোদিত খনন (রাত ১১টা – ভোর ৫টা)',
     detailsEn: 'Permit DSCC-RD-2026-0791 · Restoration due 25 Nov.',
     detailsBn: 'অনুমতি DSCC-RD-2026-0791 · পুনর্নির্মাণ ২৫ নভেম্বর।',
+    addressEn: 'Green Road intersection to Panthapath, Dhaka-1205',
+    addressBn: 'গ্রীন রোড মোড় হতে পান্থপথ সংযোগ, ঢাকা-১২০৫',
+    phone: '+880 2-9670011',
+    operatingHoursEn: '11:00 PM – 05:00 AM (Night Work Only)',
+    operatingHoursBn: 'রাত ১১:০০ – ভোর ০৫:০০ (শুধু নৈশকালীন কাজ)',
   },
   {
     id: 'gis-r2',
@@ -925,6 +1024,11 @@ export const BASE_GIS_MARKERS: GisMarker[] = [
     statusBn: 'অনুমোদন পর্যালোচনাধীন',
     detailsEn: '45m underground utility trenching request.',
     detailsBn: '৪৫ মিটার ভূগর্ভস্থ ইউটিলিটি ট্রেঞ্চিং আবেদন।',
+    addressEn: 'Dilkusha Commercial Area, Motijheel, Dhaka-1000',
+    addressBn: 'দিলকুশা বাণিজ্যিক এলাকা, মতিঝিল, ঢাকা-১০০০',
+    phone: '+880 2-9552211',
+    operatingHoursEn: 'Pending Engineering Approval',
+    operatingHoursBn: 'প্রকৌশল অনুমোদন প্রক্রিয়াধীন',
   },
 ];
 

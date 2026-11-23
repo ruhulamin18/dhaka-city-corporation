@@ -37,6 +37,7 @@ interface InteractiveCityMapProps {
   selectedWard?: number | 'all';
   mode?: 'explorer' | 'picker';
   pickedCoords?: { x: number; y: number; lat: number; lng: number } | null;
+  focusedMarker?: GisMarker | null;
   onPickLocation?: (coords: {
     x: number;
     y: number;
@@ -154,15 +155,23 @@ function MapCameraController({
   selectedWard,
   mode,
   pickedCoords,
+  focusedMarker,
 }: {
   selectedWard?: number | 'all';
   mode?: 'explorer' | 'picker';
   pickedCoords?: { lat: number; lng: number } | null;
+  focusedMarker?: GisMarker | null;
 }) {
   const map = useMap();
 
   useEffect(() => {
     if (!map) return;
+    if (focusedMarker) {
+      map.panTo({ lat: focusedMarker.latitude, lng: focusedMarker.longitude });
+      map.setZoom(16);
+      return;
+    }
+
     if (mode === 'picker' && pickedCoords) {
       map.panTo({ lat: pickedCoords.lat, lng: pickedCoords.lng });
       map.setZoom(16);
@@ -177,7 +186,7 @@ function MapCameraController({
       map.panTo(DHAKA_CENTER);
       map.setZoom(12);
     }
-  }, [map, selectedWard, mode, pickedCoords]);
+  }, [map, selectedWard, mode, pickedCoords, focusedMarker]);
 
   return null;
 }
@@ -189,6 +198,7 @@ export function InteractiveCityMap({
   selectedWard = 'all',
   mode = 'explorer',
   pickedCoords = null,
+  focusedMarker = null,
   onPickLocation,
   onSelectMarker,
 }: InteractiveCityMapProps) {
@@ -196,11 +206,20 @@ export function InteractiveCityMap({
   const { apiKey, isLoadingKey } = useGoogleMapsContext();
 
   const [mapType, setMapType] = useState<MapTypeChoice>('hybrid');
-  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
+  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(focusedMarker?.id ?? null);
   const [locating, setLocating] = useState<boolean>(false);
   const [keyModalOpen, setKeyModalOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (focusedMarker) {
+      setActiveMarkerId(focusedMarker.id);
+    }
+  }, [focusedMarker]);
+
   const initialCenter = useMemo(() => {
+    if (focusedMarker) {
+      return { lat: focusedMarker.latitude, lng: focusedMarker.longitude };
+    }
     if (mode === 'picker' && pickedCoords) {
       return { lat: pickedCoords.lat, lng: pickedCoords.lng };
     }
@@ -208,10 +227,13 @@ export function InteractiveCityMap({
       return getWardCenter(selectedWard);
     }
     return DHAKA_CENTER;
-  }, [selectedWard, mode, pickedCoords]);
+  }, [selectedWard, mode, pickedCoords, focusedMarker]);
 
   // Center for embed iframe
   const embedCenter = useMemo(() => {
+    if (focusedMarker) {
+      return { lat: focusedMarker.latitude, lng: focusedMarker.longitude };
+    }
     if (mode === 'picker' && pickedCoords) {
       return { lat: pickedCoords.lat, lng: pickedCoords.lng };
     }
@@ -223,7 +245,7 @@ export function InteractiveCityMap({
       return getWardCenter(selectedWard);
     }
     return DHAKA_CENTER;
-  }, [mode, pickedCoords, activeMarkerId, markers, selectedWard]);
+  }, [mode, pickedCoords, activeMarkerId, markers, selectedWard, focusedMarker]);
 
   const visibleMarkers = useMemo(() => {
     return markers.filter((m) => {
@@ -377,6 +399,7 @@ export function InteractiveCityMap({
               selectedWard={selectedWard}
               mode={mode}
               pickedCoords={pickedCoords}
+              focusedMarker={focusedMarker}
             />
 
             {/* Explorer Mode: Ward Centroid Pills + Civic GIS Markers */}

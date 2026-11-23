@@ -236,6 +236,8 @@ export interface NoticeItem {
   publishedAt: string;
   referenceCode: string;
   isUrgent?: boolean;
+  type?: 'notice' | 'news';
+  fileSize?: string;
 }
 
 export type GisLayerType =
@@ -260,6 +262,11 @@ export interface GisMarker {
   statusBn: string;
   detailsEn: string;
   detailsBn: string;
+  addressEn?: string;
+  addressBn?: string;
+  phone?: string;
+  operatingHoursEn?: string;
+  operatingHoursBn?: string;
 }
 
 export interface WardBudget {

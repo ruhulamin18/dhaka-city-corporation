@@ -102,7 +102,7 @@ export function Navbar() {
     pathname === '/citizen' ||
     pathname.startsWith('/citizen/') ||
     pathname === '/admin' ||
-    pathname.startsWith('/admin/')
+    (pathname.startsWith('/admin/') && !pathname.startsWith('/admin/login'))
   ) {
     return null;
   }

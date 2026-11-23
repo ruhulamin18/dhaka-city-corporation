@@ -51,11 +51,18 @@ export default function AdminPortalLayout({
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const isLoginPage = Boolean(pathname && pathname.startsWith('/admin/login'));
+
   useEffect(() => {
+    if (isLoginPage) return;
     if (isInitialized && (!isAuthenticated || user?.role === 'citizen')) {
-      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      router.replace(`/admin/login?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [isInitialized, isAuthenticated, user, router, pathname]);
+  }, [isInitialized, isAuthenticated, user, router, pathname, isLoginPage]);
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   if (!isInitialized || !isAuthenticated || user?.role === 'citizen') {
     return (

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono, Noto_Sans_Bengali } from 'next/font/google';
+import { Inter, Manrope, JetBrains_Mono, Noto_Sans_Bengali } from 'next/font/google';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { AuthProvider } from '@/context/AuthContext';
@@ -12,8 +12,15 @@ import { CivicPortalBackdrop, CivicSkylineBand } from '@/components/CivicPortalB
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-inter',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  variable: '--font-heading',
   display: 'swap',
 });
 
@@ -53,8 +60,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html
-      lang="en"
-      className={`${inter.variable} ${notoBengali.variable} ${jetbrainsMono.variable}`}
+      lang="bn"
+      className={`${inter.variable} ${manrope.variable} ${notoBengali.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body className="relative min-h-screen flex flex-col antialiased bg-[#F8FAFC] text-[#111827] selection:bg-[#006A4E]/15 selection:text-[#006A4E]" suppressHydrationWarning>

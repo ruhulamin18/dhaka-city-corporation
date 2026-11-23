@@ -44,6 +44,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const root = document.documentElement;
     root.lang = language === 'bn' ? 'bn' : 'en';
+    if (language === 'bn') {
+      root.classList.add('lang-bn');
+      root.classList.remove('lang-en');
+    } else {
+      root.classList.add('lang-en');
+      root.classList.remove('lang-bn');
+    }
     root.classList.remove('font-scale-sm', 'font-scale-md', 'font-scale-lg');
     root.classList.add('font-scale-md');
     if (highContrast) {

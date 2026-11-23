@@ -16,9 +16,13 @@
   --color-civic-heading: #111827;
   --color-civic-body: #4b5563;
 
-  --font-sans: var(--font-inter), var(--font-bengali), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-bengali: var(--font-bengali), "Noto Sans Bengali", system-ui, sans-serif;
+  --font-sans: var(--font-body), sans-serif;
+  --font-body: var(--font-body), sans-serif;
+  --font-heading: var(--font-heading), sans-serif;
+  --font-bengali: var(--font-bengali), sans-serif;
+  --font-inter: var(--font-body), sans-serif;
   --font-mono: var(--font-mono), monospace;
+  --default-font-family: var(--font-body), sans-serif;
 }
 
 @layer base {
@@ -32,6 +36,10 @@
     --civic-border: #e2e8f0;
     --civic-heading: #111827;
     --civic-body: #4b5563;
+    --font-inter: var(--font-body);
+    --font-bengali: var(--font-bengali);
+    --font-heading: var(--font-heading);
+    --font-body: var(--font-body);
   }
 
   html {
@@ -56,24 +64,88 @@
     font-size: 18px;
   }
 
+  /* Default Body & English UI Text: Inter (weights 400, 500, 600, 700) */
   body {
     background-color: #f8fafc;
     color: #111827;
-    font-family: var(--font-inter), var(--font-bengali), system-ui, sans-serif;
+    font-family: var(--font-body), sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  html[lang='bn'] body {
-    font-family: var(--font-bengali), var(--font-inter), system-ui, sans-serif;
+  /* Default English Headings: Manrope (weights 600, 700, 800) */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), sans-serif;
+    letter-spacing: -0.015em;
   }
 
+  /* Bengali Typography: Noto Sans Bengali enforced globally across body, headings, and UI controls */
+  html[lang='bn'],
+  html[lang='bn'] body,
+  html.lang-bn,
+  html.lang-bn body,
+  :lang(bn) {
+    font-family: var(--font-bengali), sans-serif;
+    line-height: 1.65;
+  }
+
+  html[lang='bn'] h1,
+  html[lang='bn'] h2,
+  html[lang='bn'] h3,
+  html[lang='bn'] h4,
+  html[lang='bn'] h5,
+  html[lang='bn'] h6,
+  html.lang-bn h1,
+  html.lang-bn h2,
+  html.lang-bn h3,
+  html.lang-bn h4,
+  html.lang-bn h5,
+  html.lang-bn h6,
+  :lang(bn) h1,
+  :lang(bn) h2,
+  :lang(bn) h3,
+  :lang(bn) h4,
+  :lang(bn) h5,
+  :lang(bn) h6 {
+    font-family: var(--font-bengali), sans-serif;
+    letter-spacing: normal;
+    line-height: 1.45;
+  }
+
+  html[lang='bn'] input,
+  html[lang='bn'] button,
+  html[lang='bn'] select,
+  html[lang='bn'] textarea,
+  html[lang='bn'] label,
+  html[lang='bn'] table,
+  html.lang-bn input,
+  html.lang-bn button,
+  html.lang-bn select,
+  html.lang-bn textarea,
+  html.lang-bn label,
+  html.lang-bn table {
+    font-family: var(--font-bengali), sans-serif;
+  }
+
+  /* Explicit Typography Utilities */
   .font-bengali {
-    font-family: var(--font-bengali), "Noto Sans Bengali", sans-serif;
+    font-family: var(--font-bengali), sans-serif !important;
+    line-height: 1.65;
   }
 
-  .font-inter {
-    font-family: var(--font-inter), sans-serif;
+  .font-heading {
+    font-family: var(--font-heading), sans-serif !important;
+  }
+
+  .font-inter,
+  .font-body {
+    font-family: var(--font-body), sans-serif !important;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono), monospace !important;
   }
 
   html.high-contrast body {
@@ -206,6 +278,35 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Continuous Right-to-Left Notice Ticker Styles
+   ========================================================================== */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  animation: marquee 38s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track:hover .animate-marquee,
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation-play-state: paused;
+  }
 }
 
 /* ==========================================================================

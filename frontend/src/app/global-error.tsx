@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Inter, Noto_Sans_Bengali } from 'next/font/google';
+import { Inter, Manrope, Noto_Sans_Bengali } from 'next/font/google';
 import { Home, Loader2, RefreshCw } from 'lucide-react';
 import { STATUS_PAGE_CONFIGS } from '@/config/status-config';
 import { StatusIllustration } from '@/components/status/StatusIllustration';
@@ -12,8 +12,15 @@ import './globals.css';
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-inter',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  variable: '--font-heading',
   display: 'swap',
 });
 
@@ -44,8 +51,8 @@ export default function GlobalError({ reset }: GlobalErrorProps) {
 
   return (
     <html
-      lang="en"
-      className={`${inter.variable} ${notoBengali.variable}`}
+      lang="bn"
+      className={`${inter.variable} ${manrope.variable} ${notoBengali.variable}`}
       suppressHydrationWarning
     >
       <body className="relative min-h-screen flex flex-col antialiased bg-[#F8FAFC] text-[#163B32]">

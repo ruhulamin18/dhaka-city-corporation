@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Building2,
   ChevronRight,
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
-import { AuthRole } from '@/types';
+import { AuthRole, AuthUser, Language } from '@/types';
 
 const ROLE_BADGE_MAP: Record<
   AuthRole,
@@ -43,6 +44,35 @@ const ROLE_BADGE_MAP: Record<
 interface LoginButtonProps {
   variant?: 'desktop' | 'mobile';
   onNavigate?: () => void;
+}
+
+function getUserInitial(user: AuthUser, language: Language): string {
+  const name = language === 'bn'
+    ? user.nameBn || user.nameEn
+    : user.nameEn || user.nameBn;
+  return Array.from(name.trim() || 'U')[0].toLocaleUpperCase();
+}
+
+function UserAvatarContent({
+  user,
+  language,
+  size,
+}: {
+  user: AuthUser;
+  language: Language;
+  size: number;
+}) {
+  return user.avatarUrl ? (
+    <Image
+      src={user.avatarUrl}
+      alt=""
+      width={size}
+      height={size}
+      className="h-full w-full object-cover"
+    />
+  ) : (
+    <span aria-hidden="true">{getUserInitial(user, language)}</span>
+  );
 }
 
 export function LoginButton({
@@ -89,9 +119,9 @@ export function LoginButton({
         <div className="space-y-2.5">
           <div className="px-3.5 py-2.5 bg-[#ECFDF5] border border-emerald-200 rounded-xl flex items-center justify-between gap-2 shadow-2xs">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-[#006A4E] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-                {(user.nameEn || user.nameBn || 'U').charAt(0).toUpperCase()}
-              </div>
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-[#006A4E] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+              <UserAvatarContent user={user} language={language} size={32} />
+            </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-[#111827] truncate">
                   {language === 'bn' ? user.nameBn : user.nameEn}
@@ -194,7 +224,7 @@ export function LoginButton({
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-10 h-10 rounded-full border-2 border-[#006A4E] bg-[#ECFDF5] text-[#006A4E] hover:ring-3 hover:ring-emerald-200 hover:border-[#00523C] flex items-center justify-center font-bold text-sm shadow-xs hover:shadow-sm transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E]"
+          className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#006A4E] bg-[#ECFDF5] text-[#006A4E] hover:ring-3 hover:ring-emerald-200 hover:border-[#00523C] flex items-center justify-center font-bold text-sm shadow-xs hover:shadow-sm transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#006A4E]"
           aria-expanded={isOpen}
           aria-haspopup="true"
           aria-label={
@@ -204,7 +234,7 @@ export function LoginButton({
           }
           title={language === 'bn' ? 'প্রোফাইল মেনু' : 'Profile Menu'}
         >
-          {(user.nameEn || user.nameBn || 'U').charAt(0).toUpperCase()}
+          <UserAvatarContent user={user} language={language} size={40} />
         </button>
       ) : (
         <button

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -88,7 +89,17 @@ export default function CitizenProfilePage() {
       {/* Profile Header */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
         <div className="w-20 h-20 rounded-2xl bg-[#006A4E] text-white flex items-center justify-center font-bold text-3xl shadow-sm shrink-0">
-          {(language === 'bn' ? nameBn : name).charAt(0) || '•'}
+          {user?.avatarUrl ? (
+            <Image
+              src={user.avatarUrl}
+              alt=""
+              width={80}
+              height={80}
+              className="h-full w-full rounded-2xl object-cover"
+            />
+          ) : (
+            (language === 'bn' ? nameBn : name).charAt(0) || '•'
+          )}
         </div>
         <div className="flex-1 text-center sm:text-left space-y-1.5">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">

@@ -29,6 +29,7 @@ export interface AuthUser {
   titleEn: string;
   titleBn: string;
   phone?: string;
+  avatarUrl?: string;
   nid?: string;
   employeeId?: string;
   email?: string;
@@ -52,6 +53,8 @@ export interface AuthResponse {
 }
 
 export interface DemoCredentialInfo {
+  id: string;
+  group: 'citizen' | 'admin' | 'ward_officer' | 'dept_officer';
   role: AuthRole;
   labelEn: string;
   labelBn: string;

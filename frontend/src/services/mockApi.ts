@@ -48,11 +48,36 @@ const SEEDED_AUTH_ACCOUNTS: StoredAuthAccount[] = [
     nameBn: 'মো: রুহুল আমিন',
     titleEn: 'Verified Citizen · Ward 27',
     titleBn: 'যাচাইকৃত নাগরিক · ওয়ার্ড ২৭',
+    avatarUrl: '/images/profile.png',
     phone: '01816648095',
     email: 'mdruhulaminridoy18@gmail.com',
     nid: '1992269184723',
     wardNumber: 27,
     password: 'citizen123',
+  },
+  {
+    id: 'usr-citizen-02',
+    role: 'citizen',
+    nameEn: 'Ayesha Rahman',
+    nameBn: 'আয়েশা রহমান',
+    titleEn: 'Verified Citizen · Ward 12',
+    titleBn: 'যাচাইকৃত নাগরিক · ওয়ার্ড ১২',
+    phone: '01700000002',
+    email: 'citizen02@example.test',
+    wardNumber: 12,
+    password: 'citizen234',
+  },
+  {
+    id: 'usr-citizen-03',
+    role: 'citizen',
+    nameEn: 'Mahin Chowdhury',
+    nameBn: 'মাহিন চৌধুরী',
+    titleEn: 'Verified Citizen · Ward 32',
+    titleBn: 'যাচাইকৃত নাগরিক · ওয়ার্ড ৩২',
+    phone: '01900000003',
+    email: 'citizen03@example.test',
+    wardNumber: 32,
+    password: 'citizen345',
   },
   {
     id: 'usr-admin-01',
@@ -80,6 +105,45 @@ const SEEDED_AUTH_ACCOUNTS: StoredAuthAccount[] = [
     password: 'ward123',
   },
   {
+    id: 'usr-ward-02',
+    role: 'officer',
+    nameEn: 'Nusrat Jahan',
+    nameBn: 'নুসরাত জাহান',
+    titleEn: 'Ward Executive Officer · Ward 27',
+    titleBn: 'ওয়ার্ড নির্বাহী কর্মকর্তা · ওয়ার্ড ২৭',
+    employeeId: 'EMP-WRD-027',
+    email: 'ward.officer27@dscc.gov.bd',
+    wardNumber: 27,
+    department: 'Ward Operations & Field Oversight',
+    password: 'ward234',
+  },
+  {
+    id: 'usr-ward-03',
+    role: 'officer',
+    nameEn: 'Masud Rana',
+    nameBn: 'মাসুদ রানা',
+    titleEn: 'Ward Executive Officer · Ward 32',
+    titleBn: 'ওয়ার্ড নির্বাহী কর্মকর্তা · ওয়ার্ড ৩২',
+    employeeId: 'EMP-WRD-032',
+    email: 'ward.officer32@dscc.gov.bd',
+    wardNumber: 32,
+    department: 'Ward Operations & Field Oversight',
+    password: 'ward345',
+  },
+  {
+    id: 'usr-ward-04',
+    role: 'officer',
+    nameEn: 'Sadia Sultana',
+    nameBn: 'সাদিয়া সুলতানা',
+    titleEn: 'Ward Executive Officer · Ward 41',
+    titleBn: 'ওয়ার্ড নির্বাহী কর্মকর্তা · ওয়ার্ড ৪১',
+    employeeId: 'EMP-WRD-041',
+    email: 'ward.officer41@dscc.gov.bd',
+    wardNumber: 41,
+    department: 'Ward Operations & Field Oversight',
+    password: 'ward456',
+  },
+  {
     id: 'usr-officer-01',
     role: 'officer',
     nameEn: 'Farhana Yasmin, BCS',
@@ -91,6 +155,42 @@ const SEEDED_AUTH_ACCOUNTS: StoredAuthAccount[] = [
     wardNumber: 27,
     department: 'Revenue & Engineering Wing',
     password: 'officer123',
+  },
+  {
+    id: 'usr-officer-02',
+    role: 'officer',
+    nameEn: 'Arif Hossain',
+    nameBn: 'আরিফ হোসেন',
+    titleEn: 'Department Officer · Tax & Revenue',
+    titleBn: 'বিভাগীয় কর্মকর্তা · কর ও রাজস্ব',
+    employeeId: 'EMP-OFF-115',
+    email: 'tax.officer@dscc.gov.bd',
+    department: 'Tax & Revenue',
+    password: 'officer234',
+  },
+  {
+    id: 'usr-officer-03',
+    role: 'officer',
+    nameEn: 'Sharmin Akter',
+    nameBn: 'শারমিন আক্তার',
+    titleEn: 'Department Officer · Engineering',
+    titleBn: 'বিভাগীয় কর্মকর্তা · প্রকৌশল',
+    employeeId: 'EMP-OFF-207',
+    email: 'engineering.officer@dscc.gov.bd',
+    department: 'Infrastructure & Engineering',
+    password: 'officer345',
+  },
+  {
+    id: 'usr-officer-04',
+    role: 'officer',
+    nameEn: 'Mahfuzur Rahman',
+    nameBn: 'মাহফুজুর রহমান',
+    titleEn: 'Department Officer · Citizen Services',
+    titleBn: 'বিভাগীয় কর্মকর্তা · নাগরিক সেবা',
+    employeeId: 'EMP-OFF-321',
+    email: 'service.officer@dscc.gov.bd',
+    department: 'Citizen Services',
+    password: 'officer456',
   },
   {
     id: 'usr-staff-01',
@@ -110,36 +210,132 @@ const SEEDED_AUTH_ACCOUNTS: StoredAuthAccount[] = [
 
 export const DEMO_CREDENTIALS: DemoCredentialInfo[] = [
   {
+    id: 'usr-citizen-01',
+    group: 'citizen',
     role: 'citizen',
-    labelEn: 'Citizen Portal',
-    labelBn: 'সিটিজেন পোর্টাল',
+    labelEn: 'Citizen · Ward 27',
+    labelBn: 'নাগরিক · ওয়ার্ড ২৭',
     identifier: '01816648095',
     password: 'citizen123',
-    noteEn: 'Md. Ruhul Amin · mdruhulaminridoy18@gmail.com · Ward 27',
-    noteBn: 'মো: রুহুল আমিন · mdruhulaminridoy18@gmail.com · ওয়ার্ড ২৭',
+    noteEn: 'Citizen demo account · Ward 27',
+    noteBn: 'নাগরিক ডেমো অ্যাকাউন্ট · ওয়ার্ড ২৭',
   },
   {
+    id: 'usr-citizen-02',
+    group: 'citizen',
+    role: 'citizen',
+    labelEn: 'Citizen · Ward 12',
+    labelBn: 'নাগরিক · ওয়ার্ড ১২',
+    identifier: '01700000002',
+    password: 'citizen234',
+    noteEn: 'Citizen demo account · Ward 12',
+    noteBn: 'নাগরিক ডেমো অ্যাকাউন্ট · ওয়ার্ড ১২',
+  },
+  {
+    id: 'usr-citizen-03',
+    group: 'citizen',
+    role: 'citizen',
+    labelEn: 'Citizen · Ward 32',
+    labelBn: 'নাগরিক · ওয়ার্ড ৩২',
+    identifier: '01900000003',
+    password: 'citizen345',
+    noteEn: 'Citizen demo account · Ward 32',
+    noteBn: 'নাগরিক ডেমো অ্যাকাউন্ট · ওয়ার্ড ৩২',
+  },
+  {
+    id: 'usr-ward-01',
+    group: 'ward_officer',
     role: 'officer',
-    labelEn: 'Ward Officer Portal',
-    labelBn: 'ওয়ার্ড কর্মকর্তা পোর্টাল',
+    labelEn: 'Ward Officer · Ward 19',
+    labelBn: 'ওয়ার্ড কর্মকর্তা · ওয়ার্ড ১৯',
     identifier: 'ward.officer@dscc.gov.bd',
     password: 'ward123',
-    noteEn: 'ID: EMP-WRD-019 · Ward 19 Complaints & Inspections',
-    noteBn: 'আইডি: EMP-WRD-019 · ওয়ার্ড ১৯ অভিযোগ ও পরিদর্শন',
+    noteEn: 'EMP-WRD-019 · Ward 19 Operations',
+    noteBn: 'EMP-WRD-019 · ওয়ার্ড ১৯ কার্যক্রম',
   },
   {
+    id: 'usr-ward-02',
+    group: 'ward_officer',
     role: 'officer',
-    labelEn: 'Department Officer Portal',
-    labelBn: 'বিভাগীয় কর্মকর্তা পোর্টাল',
+    labelEn: 'Ward Officer · Ward 27',
+    labelBn: 'ওয়ার্ড কর্মকর্তা · ওয়ার্ড ২৭',
+    identifier: 'ward.officer27@dscc.gov.bd',
+    password: 'ward234',
+    noteEn: 'EMP-WRD-027 · Ward 27 Operations',
+    noteBn: 'EMP-WRD-027 · ওয়ার্ড ২৭ কার্যক্রম',
+  },
+  {
+    id: 'usr-ward-03',
+    group: 'ward_officer',
+    role: 'officer',
+    labelEn: 'Ward Officer · Ward 32',
+    labelBn: 'ওয়ার্ড কর্মকর্তা · ওয়ার্ড ৩২',
+    identifier: 'ward.officer32@dscc.gov.bd',
+    password: 'ward345',
+    noteEn: 'EMP-WRD-032 · Ward 32 Operations',
+    noteBn: 'EMP-WRD-032 · ওয়ার্ড ৩২ কার্যক্রম',
+  },
+  {
+    id: 'usr-ward-04',
+    group: 'ward_officer',
+    role: 'officer',
+    labelEn: 'Ward Officer · Ward 41',
+    labelBn: 'ওয়ার্ড কর্মকর্তা · ওয়ার্ড ৪১',
+    identifier: 'ward.officer41@dscc.gov.bd',
+    password: 'ward456',
+    noteEn: 'EMP-WRD-041 · Ward 41 Operations',
+    noteBn: 'EMP-WRD-041 · ওয়ার্ড ৪১ কার্যক্রম',
+  },
+  {
+    id: 'usr-officer-01',
+    group: 'dept_officer',
+    role: 'officer',
+    labelEn: 'Department Officer · Revenue & Engineering',
+    labelBn: 'বিভাগীয় কর্মকর্তা · রাজস্ব ও প্রকৌশল',
     identifier: 'dept.officer@dscc.gov.bd',
     password: 'officer123',
     noteEn: 'ID: EMP-OFF-104 · Revenue & Statutory Approvals',
     noteBn: 'আইডি: EMP-OFF-104 · রাজস্ব ও সংবিধিবদ্ধ অনুমোদন',
   },
   {
+    id: 'usr-officer-02',
+    group: 'dept_officer',
+    role: 'officer',
+    labelEn: 'Department Officer · Tax & Revenue',
+    labelBn: 'বিভাগীয় কর্মকর্তা · কর ও রাজস্ব',
+    identifier: 'tax.officer@dscc.gov.bd',
+    password: 'officer234',
+    noteEn: 'EMP-OFF-115 · Tax & Revenue',
+    noteBn: 'EMP-OFF-115 · কর ও রাজস্ব',
+  },
+  {
+    id: 'usr-officer-03',
+    group: 'dept_officer',
+    role: 'officer',
+    labelEn: 'Department Officer · Engineering',
+    labelBn: 'বিভাগীয় কর্মকর্তা · প্রকৌশল',
+    identifier: 'engineering.officer@dscc.gov.bd',
+    password: 'officer345',
+    noteEn: 'EMP-OFF-207 · Infrastructure & Engineering',
+    noteBn: 'EMP-OFF-207 · অবকাঠামো ও প্রকৌশল',
+  },
+  {
+    id: 'usr-officer-04',
+    group: 'dept_officer',
+    role: 'officer',
+    labelEn: 'Department Officer · Citizen Services',
+    labelBn: 'বিভাগীয় কর্মকর্তা · নাগরিক সেবা',
+    identifier: 'service.officer@dscc.gov.bd',
+    password: 'officer456',
+    noteEn: 'EMP-OFF-321 · Citizen Services',
+    noteBn: 'EMP-OFF-321 · নাগরিক সেবা',
+  },
+  {
+    id: 'usr-admin-01',
+    group: 'admin',
     role: 'admin',
-    labelEn: 'Admin Portal',
-    labelBn: 'অ্যাডমিন পোর্টাল',
+    labelEn: 'Super Admin · Mayor Secretariat',
+    labelBn: 'সুপার অ্যাডমিন · মেয়র সচিবালয়',
     identifier: 'admin@dscc.gov.bd',
     password: 'admin123',
     noteEn: 'ID: EMP-ADM-001 · Mayor Command, Citizens, Services & Audit',
@@ -163,8 +359,13 @@ function readAuthAccounts(): StoredAuthAccount[] {
     const raw = window.localStorage.getItem(AUTH_USERS_KEY);
     if (!raw) return SEEDED_AUTH_ACCOUNTS;
     const parsed = JSON.parse(raw) as StoredAuthAccount[];
-    const existingIds = new Set(parsed.map((a) => a.id));
-    const merged = [...parsed];
+    const merged = parsed.map((account) => {
+      const seededAccount = SEEDED_AUTH_ACCOUNTS.find((seed) => seed.id === account.id);
+      return seededAccount?.avatarUrl && !account.avatarUrl
+        ? { ...account, avatarUrl: seededAccount.avatarUrl }
+        : account;
+    });
+    const existingIds = new Set(merged.map((account) => account.id));
     for (const seed of SEEDED_AUTH_ACCOUNTS) {
       if (!existingIds.has(seed.id)) merged.push(seed);
     }
@@ -1877,7 +2078,13 @@ export const mockApi = {
     try {
       const raw = window.localStorage.getItem(AUTH_SESSION_KEY);
       if (!raw) return null;
-      return JSON.parse(raw) as AuthUser;
+      const storedUser = JSON.parse(raw) as AuthUser;
+      const seededAvatar = SEEDED_AUTH_ACCOUNTS.find(
+        (account) => account.id === storedUser.id
+      )?.avatarUrl;
+      return storedUser.avatarUrl || !seededAvatar
+        ? storedUser
+        : { ...storedUser, avatarUrl: seededAvatar };
     } catch {
       return null;
     }

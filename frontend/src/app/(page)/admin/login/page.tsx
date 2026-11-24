@@ -23,12 +23,17 @@ import { DEMO_CREDENTIALS, getDashboardPathForRole } from '@/services/mockApi';
 import { AuthRole, OfficialRole } from '@/types';
 import { SecurityCodeField } from '@/components/SecurityCodeField';
 
-type AdminTabRole = 'admin' | 'ward_officer' | 'dept_officer';
+type AdminTabRole = Extract<
+  (typeof DEMO_CREDENTIALS)[number]['group'],
+  'admin' | 'ward_officer' | 'dept_officer'
+>;
 
 interface OfficialProfilePreset {
+  id: string;
   key: AdminTabRole;
   role: OfficialRole;
   identifier: string;
+  password: string;
   labelBn: string;
   labelEn: string;
   subBn: string;
@@ -37,41 +42,41 @@ interface OfficialProfilePreset {
   badgeEn: string;
 }
 
-const OFFICIAL_PROFILES: OfficialProfilePreset[] = [
-  {
-    key: 'admin',
-    role: 'admin',
-    identifier: 'admin@dscc.gov.bd',
-    labelBn: 'মেয়র সচিবালয় ও সুপার অ্যাডমিন',
-    labelEn: 'Mayor Secretariat & Super Admin',
-    subBn: 'আইডি: EMP-ADM-001 · কেন্দ্রীয় কমান্ড ও অডিট',
-    subEn: 'ID: EMP-ADM-001 · Central Command & Audit',
-    badgeBn: 'সুপার অ্যাডমিন',
-    badgeEn: 'Super Admin',
-  },
-  {
-    key: 'ward_officer',
-    role: 'officer',
-    identifier: 'ward.officer@dscc.gov.bd',
-    labelBn: 'ওয়ার্ড নির্বাহী কর্মকর্তা (ওয়ার্ড ১৯)',
-    labelEn: 'Ward Executive Officer (Ward 19)',
-    subBn: 'আইডি: EMP-WRD-019 · ওয়ার্ড অভিযোগ ও মাঠ পরিদর্শন',
-    subEn: 'ID: EMP-WRD-019 · Ward Complaints & Field Oversight',
-    badgeBn: 'ওয়ার্ড কর্মকর্তা',
-    badgeEn: 'Ward Officer',
-  },
-  {
-    key: 'dept_officer',
-    role: 'officer',
-    identifier: 'dept.officer@dscc.gov.bd',
-    labelBn: 'বিভাগীয় কর্মকর্তা (রাজস্ব ও প্রকৌশল)',
-    labelEn: 'Department Officer (Revenue & Eng.)',
-    subBn: 'আইডি: EMP-OFF-104 · রাজস্ব ও সংবিধিবদ্ধ অনুমোদন',
-    subEn: 'ID: EMP-OFF-104 · Revenue & Statutory Approvals',
-    badgeBn: 'বিভাগীয় কর্মকর্তা',
-    badgeEn: 'Dept Officer',
-  },
-];
+const OFFICIAL_PROFILES: OfficialProfilePreset[] = DEMO_CREDENTIALS.flatMap(
+  (credential): OfficialProfilePreset[] => {
+    if (credential.group === 'citizen') return [];
+
+    const badge =
+      credential.group === 'admin'
+        ? { bn: 'সুপার অ্যাডমিন', en: 'Super Admin' }
+        : credential.group === 'ward_officer'
+          ? { bn: 'ওয়ার্ড কর্মকর্তা', en: 'Ward Officer' }
+          : { bn: 'বিভাগীয় কর্মকর্তা', en: 'Dept Officer' };
+
+    return [
+      {
+        id: credential.id,
+        key: credential.group,
+        role: credential.group === 'admin' ? 'admin' : 'officer',
+        identifier: credential.identifier,
+        password: credential.password,
+        labelBn: credential.labelBn,
+        labelEn: credential.labelEn,
+        subBn: credential.noteBn,
+        subEn: credential.noteEn,
+        badgeBn: badge.bn,
+        badgeEn: badge.en,
+      },
+    ];
+  }
+).sort((first, second) => {
+  const groupOrder: Record<AdminTabRole, number> = {
+    admin: 0,
+    ward_officer: 1,
+    dept_officer: 2,
+  };
+  return groupOrder[first.key] - groupOrder[second.key];
+});
 
 function isRedirectAllowedForRole(redirectPath: string, role: AuthRole): boolean {
   if (!redirectPath.startsWith('/') || redirectPath.startsWith('//')) return false;
@@ -113,6 +118,9 @@ function AdminLoginForm() {
   // Demo menu popover
   const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
   const demoMenuRef = useRef<HTMLDivElement>(null);
+  const visibleOfficialProfiles = OFFICIAL_PROFILES.filter(
+    (profile) => profile.key === selectedRoleKey
+  );
 
   // Click-outside listener for demo popover
   useEffect(() => {
@@ -152,32 +160,25 @@ function AdminLoginForm() {
   // Switch role preset tabs
   const handleRoleTabSelect = (key: AdminTabRole) => {
     setSelectedRoleKey(key);
+    setIdentifier('');
+    setPassword('');
     setFormError('');
     setCodeError('');
-    triggerCodeRegeneration();
-
-    const preset = OFFICIAL_PROFILES.find((p) => p.key === key);
-    if (preset) {
-      setIdentifier(preset.identifier);
-      if (key === 'admin') setPassword('admin123');
-      else if (key === 'ward_officer') setPassword('ward123');
-      else setPassword('officer123');
-    }
   };
 
   // Populate from demo popover
-  const handleSelectOfficialDemo = (key: AdminTabRole) => {
-    handleRoleTabSelect(key);
-    if (expectedCode) {
-      setEnteredCode(expectedCode);
-    }
+  const handleSelectOfficialDemo = (preset: OfficialProfilePreset) => {
+    setSelectedRoleKey(preset.key);
+    setIdentifier(preset.identifier);
+    setPassword(preset.password);
+    setFormError('');
+    setCodeError('');
     setIsDemoMenuOpen(false);
 
-    const preset = OFFICIAL_PROFILES.find((p) => p.key === key);
     setDemoNotice(
       language === 'bn'
-        ? `${preset?.labelBn} টেস্ট তথ্য লোড হয়েছে।`
-        : `${preset?.labelEn} demo credentials populated.`
+        ? `${preset.labelBn} টেস্ট তথ্য লোড হয়েছে।`
+        : `${preset.labelEn} demo credentials populated.`
     );
     setTimeout(() => setDemoNotice(null), 4000);
   };
@@ -220,8 +221,7 @@ function AdminLoginForm() {
 
     // 4. Authenticate Official
     setSubmitting(true);
-    const activePreset = OFFICIAL_PROFILES.find((p) => p.key === selectedRoleKey);
-    const targetRole: OfficialRole = activePreset?.role || 'admin';
+    const targetRole: OfficialRole = selectedRoleKey === 'admin' ? 'admin' : 'officer';
 
     try {
       const res = await loginOfficial(identifier, password, targetRole);
@@ -444,7 +444,7 @@ function AdminLoginForm() {
                   <ChevronDown className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${isDemoMenuOpen ? 'rotate-180' : 'opacity-70'}`} />
                 </button>
 
-                {/* Popover Listing ONLY the 3 Official Profiles with Interactive Cards */}
+                {/* Official demo accounts */}
                 {isDemoMenuOpen && (
                   <div className="absolute left-0 bottom-full mb-2 w-76 sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-bottom-left">
                     <div className="px-2.5 py-1.5 border-b border-slate-100">
@@ -455,17 +455,17 @@ function AdminLoginForm() {
                       </p>
                       <p className="text-[10px] text-slate-500">
                         {language === 'bn'
-                          ? 'এক-ক্লিকে অফিশিয়াল ক্রেডেনশিয়াল লোড করুন'
-                          : 'One-click load official municipal credentials'}
+                          ? `এই বিভাগে ${visibleOfficialProfiles.length}টি ডেমো অ্যাকাউন্ট`
+                          : `${visibleOfficialProfiles.length} demo account${visibleOfficialProfiles.length === 1 ? '' : 's'} for this role`}
                       </p>
                     </div>
 
-                    <div className="space-y-1.5 mt-2">
-                      {OFFICIAL_PROFILES.map((preset) => (
+                    <div className="mt-2 max-h-[min(60vh,28rem)] space-y-1.5 overflow-y-auto overscroll-contain pr-1">
+                      {visibleOfficialProfiles.map((preset) => (
                         <button
-                          key={preset.key}
+                          key={preset.id}
                           type="button"
-                          onClick={() => handleSelectOfficialDemo(preset.key)}
+                          onClick={() => handleSelectOfficialDemo(preset)}
                           className="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-emerald-300 hover:bg-[#ECFDF5] hover:-translate-y-0.5 hover:shadow-2xs transition-all duration-200 cursor-pointer group"
                         >
                           <div className="flex items-center justify-between">
@@ -478,6 +478,12 @@ function AdminLoginForm() {
                           </div>
                           <p className="text-[10px] text-slate-500 group-hover:text-slate-600 font-mono mt-0.5 truncate transition-colors">
                             {language === 'bn' ? preset.subBn : preset.subEn}
+                          </p>
+                          <p className="mt-1 truncate font-mono text-[10px] text-slate-600">
+                            {language === 'bn' ? 'লগইন আইডি:' : 'Login ID:'} {preset.identifier}
+                          </p>
+                          <p className="truncate font-mono text-[10px] text-slate-600">
+                            {language === 'bn' ? 'পাসওয়ার্ড:' : 'Password:'} {preset.password}
                           </p>
                         </button>
                       ))}

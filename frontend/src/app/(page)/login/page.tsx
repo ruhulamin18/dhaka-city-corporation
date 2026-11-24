@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Building2,
   CheckCircle2,
+  ChevronDown,
   Eye,
   EyeOff,
   Landmark,
@@ -19,7 +20,7 @@ import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { usePreloader } from '@/context/PreloaderContext';
 import { DEMO_CREDENTIALS, getDashboardPathForRole } from '@/services/mockApi';
-import { AuthRole } from '@/types';
+import { AuthRole, DemoCredentialInfo } from '@/types';
 import { SecurityCodeField } from '@/components/SecurityCodeField';
 
 function isRedirectAllowedForRole(redirectPath: string, role: AuthRole): boolean {
@@ -55,6 +56,21 @@ function CitizenLoginForm() {
   const [codeError, setCodeError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [demoNotice, setDemoNotice] = useState(false);
+  const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
+  const demoMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (demoMenuRef.current && !demoMenuRef.current.contains(event.target as Node)) {
+        setIsDemoMenuOpen(false);
+      }
+    }
+
+    if (isDemoMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDemoMenuOpen]);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -76,20 +92,16 @@ function CitizenLoginForm() {
     setRefreshNonce((n) => n + 1);
   };
 
-  // One-click autofill for Verified Citizen ONLY
-  const handleAutofillCitizenDemo = () => {
+  const handleAutofillCitizenDemo = (citizenDemo: DemoCredentialInfo) => {
+    if (citizenDemo.group !== 'citizen') return;
+
     setFormError('');
     setCodeError('');
-    const citizenDemo = DEMO_CREDENTIALS.find((c) => c.role === 'citizen');
-    if (citizenDemo) {
-      setPhone(citizenDemo.identifier);
-      setPassword(citizenDemo.password);
-      if (expectedCode) {
-        setEnteredCode(expectedCode);
-      }
-      setDemoNotice(true);
-      setTimeout(() => setDemoNotice(false), 4000);
-    }
+    setPhone(citizenDemo.identifier);
+    setPassword(citizenDemo.password);
+    setIsDemoMenuOpen(false);
+    setDemoNotice(true);
+    setTimeout(() => setDemoNotice(false), 4000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -186,8 +198,8 @@ function CitizenLoginForm() {
               <CheckCircle2 className="w-4 h-4 text-[#006A4E] shrink-0" />
               <span>
                 {language === 'bn'
-                  ? 'নাগরিক টেস্ট তথ্য লোড হয়েছে (মো: রুহুল আমিন · 01816648095)।'
-                  : 'Citizen demo credentials loaded (Md. Ruhul Amin · 01816648095).'}
+                  ? 'নাগরিক ডেমো লগইন তথ্য পূরণ হয়েছে।'
+                  : 'Citizen demo credentials filled.'}
               </span>
             </div>
           )}
@@ -281,22 +293,73 @@ function CitizenLoginForm() {
               />
             </div>
 
-            {/* Action Bar: Demo Access Button (Left) + Sign In Button (Right) */}
+            {/* Action Bar: Demo Accounts (Left) + Sign In Button (Right) */}
             <div className="pt-2 flex items-center gap-2.5">
-              {/* Interactive Demo Access Button with Lift and Mint Hover */}
-              <button
-                type="button"
-                onClick={handleAutofillCitizenDemo}
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#006A4E] bg-[#ECFDF5] hover:bg-[#D1FAE5] border border-emerald-300 hover:border-[#006A4E] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer shrink-0 shadow-2xs hover:shadow-xs active:translate-y-0 focus-visible:outline-2 focus-visible:outline-[#006A4E]"
-                title={
-                  language === 'bn'
-                    ? 'ডেমো টেস্ট তথ্য এক-ক্লিকে পূরণ করুন'
-                    : 'One-click autofill verified citizen demo credentials'
-                }
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#006A4E]" />
-                <span>{language === 'bn' ? 'ডেমো পূরণ' : 'Demo Fill'}</span>
-              </button>
+              <div className="relative shrink-0" ref={demoMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsDemoMenuOpen((open) => !open)}
+                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-[#006A4E] ${
+                    isDemoMenuOpen
+                      ? 'bg-[#006A4E] text-white'
+                      : 'text-[#006A4E] bg-[#ECFDF5] hover:bg-[#D1FAE5] border border-emerald-300 hover:border-[#006A4E]'
+                  }`}
+                  title={
+                    language === 'bn'
+                      ? 'নাগরিক ডেমো অ্যাকাউন্ট নির্বাচন করুন'
+                      : 'Select a citizen demo account'
+                  }
+                  aria-haspopup="true"
+                  aria-expanded={isDemoMenuOpen}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{language === 'bn' ? 'ডেমো অ্যাকাউন্ট' : 'Demo Accounts'}</span>
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isDemoMenuOpen ? 'rotate-180' : 'opacity-70'
+                    }`}
+                  />
+                </button>
+
+                {isDemoMenuOpen && (
+                  <div className="absolute left-0 bottom-full mb-2 w-72 sm:w-80 rounded-2xl border border-slate-200 bg-white p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 origin-bottom-left">
+                    <div className="px-2.5 py-1.5 border-b border-slate-100">
+                      <p className="text-[11px] font-bold text-slate-800">
+                        {language === 'bn'
+                          ? 'নাগরিক ডেমো অ্যাকাউন্ট নির্বাচন'
+                          : 'Choose a Citizen Demo Account'}
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        {language === 'bn'
+                          ? 'নির্বাচিত অ্যাকাউন্টের নম্বর ও পাসওয়ার্ড পূরণ হবে'
+                          : 'Selecting an account fills only its number and password'}
+                      </p>
+                    </div>
+                    <div className="mt-2 max-h-[min(50vh,18rem)] space-y-1.5 overflow-y-auto">
+                      {DEMO_CREDENTIALS.filter(
+                        (credential) => credential.group === 'citizen'
+                      ).map((credential) => (
+                        <button
+                          key={credential.id}
+                          type="button"
+                          onClick={() => handleAutofillCitizenDemo(credential)}
+                          className="group w-full rounded-xl border border-slate-100 p-2.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-[#ECFDF5] hover:shadow-2xs"
+                        >
+                          <span className="block text-xs font-bold text-slate-900 group-hover:text-[#006A4E]">
+                            {language === 'bn' ? credential.labelBn : credential.labelEn}
+                          </span>
+                          <span className="mt-1 block truncate font-mono text-[10px] text-slate-500">
+                            {language === 'bn' ? 'মোবাইল:' : 'Mobile:'} {credential.identifier}
+                          </span>
+                          <span className="block truncate font-mono text-[10px] text-slate-500">
+                            {language === 'bn' ? 'পাসওয়ার্ড:' : 'Password:'} {credential.password}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Citizen Sign In Button with Subtle Lift */}
               <button

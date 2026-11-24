@@ -281,6 +281,35 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
   font-variant-numeric: tabular-nums;
 }
 
+@keyframes civic-preloader-breathe {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.civic-preloader-ring {
+  animation: civic-preloader-breathe 2.4s ease-in-out infinite;
+}
+
+.civic-preloader-progress {
+  transform-origin: left center;
+  transition: transform 80ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .civic-preloader-ring {
+    animation: none;
+  }
+  .civic-preloader-progress {
+    transition: none;
+  }
+}
+
 /* ==========================================================================
    Continuous Right-to-Left Notice Ticker Styles
    ========================================================================== */

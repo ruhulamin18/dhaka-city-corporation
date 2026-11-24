@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getDashboardPathForRole, mockApi } from '@/services/mockApi';
+import { usePreloader } from '@/context/PreloaderContext';
 import {
   AuthResponse,
   AuthRole,
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { showPreloader } = usePreloader();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -74,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    showPreloader('logout');
     mockApi.clearSession();
     setUser(null);
     router.push('/');

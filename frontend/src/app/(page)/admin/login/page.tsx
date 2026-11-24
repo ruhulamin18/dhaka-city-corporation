@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { usePreloader } from '@/context/PreloaderContext';
 import { DEMO_CREDENTIALS, getDashboardPathForRole } from '@/services/mockApi';
 import { AuthRole, OfficialRole } from '@/types';
 import { SecurityCodeField } from '@/components/SecurityCodeField';
@@ -88,6 +89,7 @@ function AdminLoginForm() {
 
   const { language } = useApp();
   const { user, isAuthenticated, loginOfficial } = useAuth();
+  const { showPreloader } = usePreloader();
 
   // Active role tab
   const [selectedRoleKey, setSelectedRoleKey] = useState<AdminTabRole>('admin');
@@ -237,6 +239,7 @@ function AdminLoginForm() {
         redirectParam && isRedirectAllowedForRole(redirectParam, res.user.role)
           ? redirectParam
           : getDashboardPathForRole(res.user.role);
+      showPreloader('admin');
       router.replace(target);
     } finally {
       setSubmitting(false);

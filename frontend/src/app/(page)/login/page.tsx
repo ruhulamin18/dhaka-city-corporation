@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { usePreloader } from '@/context/PreloaderContext';
 import { DEMO_CREDENTIALS, getDashboardPathForRole } from '@/services/mockApi';
 import { AuthRole } from '@/types';
 import { SecurityCodeField } from '@/components/SecurityCodeField';
@@ -37,6 +38,7 @@ function CitizenLoginForm() {
 
   const { language } = useApp();
   const { user, isAuthenticated, loginCitizen } = useAuth();
+  const { showPreloader } = usePreloader();
 
   // Citizen input fields
   const [phone, setPhone] = useState('');
@@ -145,6 +147,7 @@ function CitizenLoginForm() {
         redirectParam && isRedirectAllowedForRole(redirectParam, res.user.role)
           ? redirectParam
           : getDashboardPathForRole(res.user.role);
+      showPreloader('citizen');
       router.replace(target);
     } finally {
       setSubmitting(false);

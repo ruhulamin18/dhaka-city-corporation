@@ -3,6 +3,7 @@ import { Inter, Manrope, JetBrains_Mono, Noto_Sans_Bengali } from 'next/font/goo
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { AuthProvider } from '@/context/AuthContext';
+import { PreloaderProvider } from '@/context/PreloaderContext';
 import { GoogleMapsProvider } from '@/components/GoogleMapsProvider';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -72,16 +73,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="relative min-h-screen flex flex-col antialiased bg-[#F8FAFC] text-[#111827] selection:bg-[#006A4E]/15 selection:text-[#006A4E]" suppressHydrationWarning>
         <CivicPortalBackdrop />
         <AppProvider>
-          <AuthProvider>
-            <GoogleMapsProvider initialApiKey={mapsApiKey}>
-              <Navbar />
-              <main className="relative z-10 flex-1">{children}</main>
-              <CivicSkylineBand />
-              <Footer />
-              <AiAssistantWidget />
-              <AccessibilityWidget />
-            </GoogleMapsProvider>
-          </AuthProvider>
+          <PreloaderProvider>
+            <AuthProvider>
+              <GoogleMapsProvider initialApiKey={mapsApiKey}>
+                <Navbar />
+                <main className="relative z-10 flex-1">{children}</main>
+                <CivicSkylineBand />
+                <Footer />
+                <AiAssistantWidget />
+                <AccessibilityWidget />
+              </GoogleMapsProvider>
+            </AuthProvider>
+          </PreloaderProvider>
         </AppProvider>
       </body>
     </html>

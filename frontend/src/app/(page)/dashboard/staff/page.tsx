@@ -43,6 +43,10 @@ function StaffDashboardContent() {
     if (selectedStaffId === 'all') return c.assignedStaffId || c.status !== 'pending';
     return c.assignedStaffId === selectedStaffId;
   });
+  const mappedTasks = assignedTasks.filter(
+    (task): task is Complaint & { latitude: number; longitude: number } =>
+      task.latitude != null && task.longitude != null
+  );
 
   const handleProofUpload = (complaintId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -122,11 +126,11 @@ function StaffDashboardContent() {
               </span>
             </div>
             <SatellitePinMap
-              lat={assignedTasks[0]?.latitude ?? DHAKA_CENTER.lat}
-              lng={assignedTasks[0]?.longitude ?? DHAKA_CENTER.lng}
+              lat={mappedTasks[0]?.latitude ?? DHAKA_CENTER.lat}
+              lng={mappedTasks[0]?.longitude ?? DHAKA_CENTER.lng}
               zoom={12}
               heightClassName="h-64"
-              pins={assignedTasks.map((task) => ({
+              pins={mappedTasks.map((task) => ({
                 id: task.id,
                 lat: task.latitude,
                 lng: task.longitude,
@@ -174,29 +178,33 @@ function StaffDashboardContent() {
                   <span>{task.locationLabel}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[#4B5563] tabular-nums">
-                    {task.latitude.toFixed(4)}°N, {task.longitude.toFixed(4)}°E
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setExpandedMapId(expandedMapId === task.id ? null : task.id)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#ECFDF5] border border-emerald-200 hover:bg-[#006A4E] text-[#006A4E] hover:text-white text-[11px] font-semibold rounded-md transition-colors cursor-pointer"
-                  >
-                    <Satellite className="w-3 h-3" />
-                    <span>
-                      {expandedMapId === task.id
-                        ? language === 'bn'
-                          ? 'ম্যাপ লুকান'
-                          : 'Hide Map'
-                        : language === 'bn'
-                          ? 'স্যাটেলাইট'
-                          : 'Satellite'}
-                    </span>
-                  </button>
+                  {task.latitude != null && task.longitude != null && (
+                    <>
+                      <span className="font-mono text-[#4B5563] tabular-nums">
+                        {task.latitude.toFixed(4)}°N, {task.longitude.toFixed(4)}°E
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedMapId(expandedMapId === task.id ? null : task.id)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#ECFDF5] border border-emerald-200 hover:bg-[#006A4E] text-[#006A4E] hover:text-white text-[11px] font-semibold rounded-md transition-colors cursor-pointer"
+                      >
+                        <Satellite className="w-3 h-3" />
+                        <span>
+                          {expandedMapId === task.id
+                            ? language === 'bn'
+                              ? 'ম্যাপ লুকান'
+                              : 'Hide Map'
+                            : language === 'bn'
+                              ? 'স্যাটেলাইট'
+                              : 'Satellite'}
+                        </span>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
-              {expandedMapId === task.id && (
+              {expandedMapId === task.id && task.latitude != null && task.longitude != null && (
                 <SatellitePinMap
                   lat={task.latitude}
                   lng={task.longitude}

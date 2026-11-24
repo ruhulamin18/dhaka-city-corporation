@@ -431,19 +431,27 @@ export default function AdminComplaintsPage() {
                   <MapPin className="w-4 h-4 text-rose-500 shrink-0" />
                   <span>{selectedComplaint.locationLabel}</span>
                 </div>
-                <div className="text-xs font-mono text-slate-500 mt-1">
-                  Lat: {selectedComplaint.latitude.toFixed(5)}°N, Lng:{' '}
-                  {selectedComplaint.longitude.toFixed(5)}°E
-                </div>
-                <a
-                  href={`https://maps.google.com/?q=${selectedComplaint.latitude},${selectedComplaint.longitude}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-[#006A4E] font-semibold hover:underline mt-1.5"
-                >
-                  {language === 'bn' ? 'গুগল ম্যাপে দেখুন' : 'Open in Google Maps'}
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                {selectedComplaint.latitude !== undefined && selectedComplaint.longitude !== undefined ? (
+                  <>
+                    <div className="text-xs font-mono text-slate-500 mt-1">
+                      Lat: {selectedComplaint.latitude.toFixed(5)}°N, Lng:{' '}
+                      {selectedComplaint.longitude.toFixed(5)}°E
+                    </div>
+                    <a
+                      href={`https://maps.google.com/?q=${selectedComplaint.latitude},${selectedComplaint.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-[#006A4E] font-semibold hover:underline mt-1.5"
+                    >
+                      {language === 'bn' ? 'গুগল ম্যাপে দেখুন' : 'Open in Google Maps'}
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </>
+                ) : (
+                  <p className="mt-1 text-xs text-slate-500">
+                    {language === 'bn' ? 'জিপিএস স্থানাঙ্ক দেওয়া হয়নি।' : 'No GPS coordinates were provided.'}
+                  </p>
+                )}
               </div>
             </div>
 

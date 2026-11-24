@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
-  HelpCircle,
   PhoneCall,
   Mail,
   Clock,
@@ -16,9 +15,26 @@ import {
   Headphones,
   ExternalLink,
   MessageSquare,
+  AlertCircle,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+
+interface SupportTicket {
+  id: string;
+  category: string;
+  subject: string;
+  message: string;
+  createdAt: string;
+}
+
+const TICKET_CATEGORIES: Record<string, { bn: string; en: string }> = {
+  'holding-tax': { bn: 'হোল্ডিং ট্যাক্স ও মূল্যায়ন', en: 'Holding Tax & Assessment' },
+  'trade-license': { bn: 'ট্রেড লাইসেন্স ও নবায়ন', en: 'Trade License & Renewal' },
+  certificates: { bn: 'সনদ ও প্রত্যায়নপত্র', en: 'Certificates & Endorsements' },
+  'payment-issue': { bn: 'পেমেন্ট ও চালান সমস্যা', en: 'Payment & Challan Settlement' },
+  technical: { bn: 'প্রযুক্তিগত / পোর্টাল সমস্যা', en: 'Portal / Technical Issue' },
+};
 
 interface FAQItem {
   id: string;
@@ -48,8 +64,8 @@ const FAQS: FAQItem[] = [
       en: 'How can digital citizen certificates be verified?',
     },
     answer: {
-      bn: 'ইস্যুকৃত প্রতিটি সনদে একটি সরকারি এনক্রিপ্টেড কিউআর (QR) কোড এবং ইউনিক ভেরিফিকেশন আইডি থাকে। যেকোনো স্মার্টফোন ক্যামেরা বা পোর্টালের ভেরিফিকেশন পেজ থেকে স্ক্যান করে এর সত্যতা নিশ্চিত করা যায়।',
-      en: 'Every issued certificate contains an encrypted official QR code and a unique verification ID. It can be verified instantly by scanning with any smartphone camera or through the portal verification page.',
+      bn: 'সনদের রেফারেন্স নম্বর দিয়ে ইস্যুকারী কার্যালয়ে যাচাই করুন। এই ডেমো পোর্টালের প্রিভিউকে স্বাক্ষরিত সরকারি নথি হিসেবে ব্যবহার করবেন না।',
+      en: 'Verify the certificate reference with its issuing office. Do not treat a preview in this demo portal as a digitally signed official document.',
     },
   },
   {
@@ -60,8 +76,8 @@ const FAQS: FAQItem[] = [
       en: 'How long does civic problem resolution take?',
     },
     answer: {
-      bn: 'জরুরি নিষ্কাশন বা বর্জ্য সংক্রান্ত অভিযোগ সাধারণত ২৪ থেকে ৪৮ ঘণ্টার মধ্যে ওয়ার্ড পরিদর্শক দল পরিদর্শন ও সমাধান করে। রাস্তা সংস্কার বা বড় অবকাঠামো মেরামতের ক্ষেত্রে প্রকৌশল বিভাগ ৩ থেকে ৭ কর্মদিবসের মধ্যে কাজ শুরু করে।',
-      en: 'Urgent drainage or waste management complaints are typically inspected and resolved within 24 to 48 hours by the ward inspection team. Road repair or larger infrastructure works commence within 3-7 working days by the engineering department.',
+      bn: 'সমস্যার ধরন ও ওয়ার্ড অনুযায়ী সময় ভিন্ন হতে পারে। রিপোর্টের ট্র্যাকিং নম্বর দিয়ে অবস্থা দেখুন; তাৎক্ষণিক ঝুঁকি থাকলে হেল্পলাইনে যোগাযোগ করুন।',
+      en: 'Response times vary by issue and ward. Check the report using its tracking ID; contact the listed helpline if there is an immediate safety risk.',
     },
   },
   {
@@ -72,8 +88,8 @@ const FAQS: FAQItem[] = [
       en: 'Payment was deducted but receipt not generated, what to do?',
     },
     answer: {
-      bn: 'পেমেন্ট গেটওয়ের সাময়িক বিলম্বের কারণে এমন হতে পারে। ৩-৫ মিনিট অপেক্ষা করে "পেমেন্ট ইতিহাস" পেজ দেখুন অথবা আপনার ব্যাংক/বিকাশ লেনদেন আইডি (TrxID) দিয়ে "রসিদ যাচাই" ট্যাবে অনুসন্ধান করুন। সমস্যা থাকলে হেল্পলাইন ১৬১০৬-এ কল করুন।',
-      en: 'This can occur due to brief payment gateway settlement delays. Please wait 3-5 minutes and check your "Payment History" page or query the "Verify Receipt" tab with your Bank/bKash TrxID. If unresolved, call Helpline 16106.',
+      bn: 'পেমেন্ট রেফারেন্স ও ব্যাংক বা মোবাইল ওয়ালেটের লেনদেন নম্বর সংরক্ষণ করে পেমেন্ট ইতিহাস দেখুন। রেকর্ড না মিললে তালিকাভুক্ত হেল্পলাইনে যোগাযোগ করুন।',
+      en: 'Keep the payment reference and bank or mobile-wallet transaction ID, then check payment history. If the records do not match, contact the listed helpline.',
     },
   },
   {
@@ -84,8 +100,8 @@ const FAQS: FAQItem[] = [
       en: 'How do I submit additional documents if requested by the officer?',
     },
     answer: {
-      bn: 'যাচাইকারী কর্মকর্তা অতিরিক্ত তথ্যের জন্য অনুরোধ পাঠালে আপনার নোটিফিকেশন ও "আবেদনের অবস্থা" ট্যাবে রিমার্কসসহ সতর্কবার্তা আসবে। সেখানে থাকা "কাগজপত্র আপলোড" বাটনে ক্লিক করে ফাইল জমা দিন।',
-      en: 'If a reviewing officer requests additional documents, you will receive an alert with officer remarks under Notifications and "Application Tracking". Click the "Upload Document" button on that application to submit.',
+      bn: 'এই ডেমো পোর্টালে অতিরিক্ত নথি আপলোডের সুবিধা নেই। আপনার আবেদন রেফারেন্সসহ সহায়তা টিকেট জমা দিন অথবা সংশ্লিষ্ট ওয়ার্ড কার্যালয়ে যোগাযোগ করুন।',
+      en: 'Additional document uploads are not available in this demo portal. Submit a support ticket with your application reference or contact your ward office.',
     },
   },
 ];
@@ -100,6 +116,27 @@ export default function CitizenSupportPage() {
   const [ticketMessage, setTicketMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketSubmitted, setTicketSubmitted] = useState<string | null>(null);
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [ticketError, setTicketError] = useState('');
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      try {
+        const saved = localStorage.getItem(`dscc_citizen_support_${user.id}`);
+        setTickets(saved ? JSON.parse(saved) as SupportTicket[] : []);
+      } catch (error) {
+        setTicketError(error instanceof Error
+          ? error.message
+          : language === 'bn' ? 'সহায়তা টিকেট লোড করা যায়নি।' : 'Unable to load support requests.');
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [user, language]);
 
   const toggleFaq = (id: string) => {
     setExpandedFaq(expandedFaq === id ? null : id);
@@ -108,15 +145,31 @@ export default function CitizenSupportPage() {
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!ticketSubject.trim() || !ticketMessage.trim()) return;
+    if (!user) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const generatedId = `TKT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-      setIsSubmitting(false);
-      setTicketSubmitted(generatedId);
+    setTicketError('');
+    const ticket: SupportTicket = {
+      id: `TKT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      category: ticketCategory,
+      subject: ticketSubject.trim(),
+      message: ticketMessage.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    const next = [ticket, ...tickets];
+    try {
+      localStorage.setItem(`dscc_citizen_support_${user.id}`, JSON.stringify(next));
+      setTickets(next);
+      setTicketSubmitted(ticket.id);
       setTicketSubject('');
       setTicketMessage('');
-    }, 700);
+    } catch (error) {
+      setTicketError(error instanceof Error
+        ? error.message
+        : language === 'bn' ? 'টিকেট সংরক্ষণ করা যায়নি।' : 'Unable to save the support request.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -127,15 +180,15 @@ export default function CitizenSupportPage() {
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#ECFDF5] text-[#006A4E] text-xs font-semibold uppercase tracking-wider mb-2">
               <Headphones className="w-3.5 h-3.5" />
-              {language === 'bn' ? '২৪/৭ নাগরিক সেবা ডেস্ক' : '24/7 Citizen Help Desk'}
+              {language === 'bn' ? 'নাগরিক সহায়তা ডেস্ক' : 'Citizen Help Desk'}
             </div>
             <h1 className="text-2xl font-bold text-slate-900">
               {language === 'bn' ? 'সহায়তা ও হেল্পডেস্ক' : 'Citizen Help & Support Center'}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
               {language === 'bn'
-                ? 'যেকোনো নাগরিক সেবা, ফি পরিশোধ বা আবেদন সংক্রান্ত জিজ্ঞাসার জন্য যোগাযোগ করুন বা সহায়তা টিকেট জমা দিন।'
-                : 'Get immediate assistance, submit support tickets, or find answers to frequently asked questions.'}
+                ? 'নাগরিক সেবা বা আবেদন সংক্রান্ত প্রশ্নের জন্য যোগাযোগের তথ্য দেখুন, সহায়তা টিকেট জমা দিন বা সাধারণ প্রশ্ন পড়ুন।'
+                : 'Find contact details, submit a support request saved on this device, or browse frequently asked questions.'}
             </p>
           </div>
 
@@ -161,7 +214,7 @@ export default function CitizenSupportPage() {
             {language === 'bn' ? 'জরুরি নাগরিক হেল্পলাইন' : 'Emergency Citizen Hotline'}
           </h3>
           <p className="text-xs text-slate-500 mt-1 mb-3">
-            {language === 'bn' ? 'সার্বক্ষণিক জরুরি সেবা ও নিয়ন্ত্রণ কক্ষ' : 'Toll-free 24/7 Central Control Room'}
+            {language === 'bn' ? 'জরুরি সেবা ও নিয়ন্ত্রণ কক্ষ' : 'Emergency service and control room'}
           </p>
           <div className="space-y-1 text-sm font-medium text-slate-800">
             <div>
@@ -189,9 +242,6 @@ export default function CitizenSupportPage() {
             <div>
               {language === 'bn' ? 'ইমেইল:' : 'Email:'}{' '}
               <a href="mailto:support@dhakacity.gov.bd" className="text-blue-600 underline">support@dhakacity.gov.bd</a>
-            </div>
-            <div className="text-xs text-slate-500">
-              {language === 'bn' ? 'কার্যদিবসে ৪ ঘণ্টার মধ্যে জবাব' : 'Response within 4 hours on working days'}
             </div>
           </div>
         </div>
@@ -230,6 +280,8 @@ export default function CitizenSupportPage() {
             </h2>
           </div>
 
+          {ticketError && <p role="alert" className="mb-4 flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"><AlertCircle className="h-4 w-4" />{ticketError}</p>}
+
           {ticketSubmitted ? (
             <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-xl text-center space-y-3">
               <CheckCircle2 className="w-12 h-12 text-[#006A4E] mx-auto" />
@@ -238,10 +290,11 @@ export default function CitizenSupportPage() {
               </h3>
               <p className="text-xs text-emerald-800">
                 {language === 'bn'
-                  ? `আপনার টিকেট নম্বর ${ticketSubmitted}। শীঘ্রই আমাদের সহায়তা কর্মকর্তা আপনার সাথে যোগাযোগ করবেন।`
-                  : `Your ticket ID is ${ticketSubmitted}. A representative will review and reply shortly.`}
+                  ? `আপনার টিকেট নম্বর ${ticketSubmitted}। এটি এই ডিভাইসে সংরক্ষিত হয়েছে।`
+                  : `Your ticket ID is ${ticketSubmitted}. The request was saved on this device.`}
               </p>
               <button
+                type="button"
                 onClick={() => setTicketSubmitted(null)}
                 className="mt-2 text-xs font-semibold px-4 py-2 bg-[#006A4E] text-white rounded-lg hover:bg-[#00523c]"
               >
@@ -327,6 +380,23 @@ export default function CitizenSupportPage() {
               </button>
             </form>
           )}
+
+          {tickets.length > 0 && (
+            <section className="mt-6 border-t border-slate-200 pt-4">
+              <h3 className="text-sm font-semibold text-slate-900">
+                {language === 'bn' ? 'আমার সহায়তা টিকেট' : 'My support requests'}
+              </h3>
+              <ul className="mt-3 space-y-2">
+                {tickets.slice(0, 3).map((ticket) => (
+                  <li key={ticket.id} className="rounded-lg border border-slate-200 p-3">
+                    <p className="font-mono text-xs font-semibold text-[#006A4E]">{ticket.id}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-800">{ticket.subject}</p>
+                    <p className="mt-1 text-xs text-slate-600">{TICKET_CATEGORIES[ticket.category]?.[language] ?? ticket.category} · {new Intl.DateTimeFormat(language === 'bn' ? 'bn-BD' : 'en-US', { dateStyle: 'medium' }).format(new Date(ticket.createdAt))}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
 
         {/* FAQs Accordion */}
@@ -347,7 +417,10 @@ export default function CitizenSupportPage() {
                   className="border border-slate-200 rounded-lg overflow-hidden transition"
                 >
                   <button
+                    type="button"
                     onClick={() => toggleFaq(faq.id)}
+                    aria-expanded={isOpen}
+                    aria-controls={`${faq.id}-answer`}
                     className="w-full flex items-center justify-between p-4 text-left bg-slate-50 hover:bg-slate-100 transition"
                   >
                     <span className="font-semibold text-slate-800 text-sm">
@@ -359,11 +432,15 @@ export default function CitizenSupportPage() {
                       <ChevronDown className="w-4 h-4 text-slate-500 shrink-0" />
                     )}
                   </button>
-                  {isOpen && (
-                    <div className="p-4 bg-white text-sm text-slate-600 leading-relaxed border-t border-slate-200">
-                      {language === 'bn' ? faq.answer.bn : faq.answer.en}
-                    </div>
-                  )}
+                  <div
+                    id={`${faq.id}-answer`}
+                    role="region"
+                    aria-labelledby={`${faq.id}-question`}
+                    hidden={!isOpen}
+                    className="p-4 bg-white text-sm text-slate-600 leading-relaxed border-t border-slate-200"
+                  >
+                    {language === 'bn' ? faq.answer.bn : faq.answer.en}
+                  </div>
                 </div>
               );
             })}
@@ -375,7 +452,7 @@ export default function CitizenSupportPage() {
                 {language === 'bn' ? 'নাগরিক সেবা নির্দেশিকা দেখতে চান?' : 'Need citizen services charter?'}
               </p>
               <p className="text-xs text-slate-500 mt-0.5">
-                {language === 'bn' ? 'সকল ৩১টি নাগরিক সেবার পূর্ণাঙ্গ চার্টার ও সময়সীমা' : 'Explore all 31 citizen services guidelines'}
+                {language === 'bn' ? 'নাগরিক সেবার নির্দেশিকা দেখুন' : 'Browse citizen service information'}
               </p>
             </div>
             <Link

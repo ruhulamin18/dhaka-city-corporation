@@ -65,16 +65,13 @@ export const PaymentHistoryTable: React.FC<PaymentHistoryTableProps> = ({ transa
   };
 
   const formatDate = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-    } catch {
-      return dateStr;
-    }
+    const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   return (
@@ -82,8 +79,12 @@ export const PaymentHistoryTable: React.FC<PaymentHistoryTableProps> = ({ transa
       {/* Search & Filter Header */}
       <div className="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div className="relative w-full sm:w-80">
+          <label htmlFor="payment-history-search" className="sr-only">
+            {language === 'bn' ? 'লেনদেন খুঁজুন' : 'Search transactions'}
+          </label>
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
+            id="payment-history-search"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -99,6 +100,7 @@ export const PaymentHistoryTable: React.FC<PaymentHistoryTableProps> = ({ transa
         <div className="flex items-center space-x-2 w-full sm:w-auto">
           <Filter className="w-4 h-4 text-slate-400" />
           <select
+            aria-label={language === 'bn' ? 'সেবার ধরন দিয়ে ফিল্টার করুন' : 'Filter by service'}
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             className="text-xs sm:text-sm rounded-xl border border-slate-200 py-2 px-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"

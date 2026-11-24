@@ -149,6 +149,7 @@ export interface TranslationDictionary {
       waste: string;
       street_light: string;
       mosquito: string;
+      other: string;
     };
   };
   cityMapPage: {
@@ -383,6 +384,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         waste: 'Waste & Garbage Dumping',
         street_light: 'Street Light Outage',
         mosquito: 'Mosquito / Dengue Breeding',
+        other: 'Encroachment / Other',
       },
     },
     cityMapPage: {
@@ -622,6 +624,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         waste: 'বর্জ্য ও ময়লা আবর্জনা',
         street_light: 'সড়কবাতি বিকল',
         mosquito: 'মশা ও ডেঙ্গু প্রজনন',
+        other: 'অবৈধ দখল বা অন্যান্য',
       },
     },
     cityMapPage: {

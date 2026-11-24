@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useAuth } from '@/context/AuthContext';
 import {
   Bell,
-  CheckCircle2,
-  Clock,
   CreditCard,
-  FileText,
   AlertTriangle,
   Award,
   Trash2,
@@ -21,7 +19,7 @@ const INITIAL_NOTIFICATIONS = [
       bn: 'হোল্ডিং H-10482 এর জন্য ৳২৭,৯২৭ টাকা পরিশোধ সফল হয়েছে। ডিজিটাল রশিদ সংগ্রহ করুন।',
       en: 'Payment of ৳27,927 for Holding H-10482 confirmed. Official receipt available.',
     },
-    timestamp: '১০ মিনিট আগে',
+    createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
     isRead: false,
     category: 'PAYMENT',
   },
@@ -32,7 +30,7 @@ const INITIAL_NOTIFICATIONS = [
       bn: 'আপনার অভিযোগ নং CMP-2026-88412 (রাস্তার গর্ত) তদন্তে সহকারী প্রকৌশলী সাইট পরিদর্শনে গেছেন।',
       en: 'Assistant Engineer assigned to inspect your pothole grievance CMP-2026-88412.',
     },
-    timestamp: '২ ঘন্টা আগে',
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     isRead: false,
     category: 'COMPLAINT',
   },
@@ -43,7 +41,7 @@ const INITIAL_NOTIFICATIONS = [
       bn: 'মেসার্স মেঘনা এন্টারপ্রাইজ এর ট্রেড লাইসেন্স নবায়িত হয়েছে এবং সনদ ইস্যু করা হয়েছে।',
       en: 'Trade License renewal for M/S Meghna Enterprise finalized and ready for download.',
     },
-    timestamp: '১ দিন আগে',
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     isRead: true,
     category: 'CERTIFICATE',
   },
@@ -51,14 +49,67 @@ const INITIAL_NOTIFICATIONS = [
 
 export default function CitizenNotificationsPage() {
   const { language } = useApp();
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState<typeof INITIAL_NOTIFICATIONS>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      try {
+        const stored = localStorage.getItem(`dscc_citizen_notifications_${user.id}`);
+        if (stored) {
+          setNotifications(JSON.parse(stored) as typeof INITIAL_NOTIFICATIONS);
+        } else {
+          setNotifications(user.id === 'usr-citizen-01' ? INITIAL_NOTIFICATIONS : []);
+        }
+      } catch (loadError) {
+        setError(loadError instanceof Error
+          ? loadError.message
+          : language === 'bn' ? 'বিজ্ঞপ্তি লোড করা যায়নি।' : 'Unable to load notifications.');
+      } finally {
+        setIsLoaded(true);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [user, language]);
+
+  const saveNotifications = (next: typeof INITIAL_NOTIFICATIONS) => {
+    if (!user) return false;
+    try {
+      localStorage.setItem(`dscc_citizen_notifications_${user.id}`, JSON.stringify(next));
+      setNotifications(next);
+      setError('');
+      return true;
+    } catch (saveError) {
+      setError(saveError instanceof Error
+        ? saveError.message
+        : language === 'bn' ? 'বিজ্ঞপ্তি সংরক্ষণ করা যায়নি।' : 'Unable to save notification changes.');
+      return false;
+    }
+  };
 
   const markAllRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, isRead: true })));
+    saveNotifications(notifications.map((n) => ({ ...n, isRead: true })));
   };
 
   const deleteNotification = (id: string) => {
-    setNotifications(notifications.filter((n) => n.id !== id));
+    saveNotifications(notifications.filter((n) => n.id !== id));
+  };
+
+  const formatDate = (value: string) => {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? value
+      : new Intl.DateTimeFormat(language === 'bn' ? 'bn-BD' : 'en-US', {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        }).format(date);
   };
 
   return (
@@ -78,13 +129,21 @@ export default function CitizenNotificationsPage() {
         <button
           type="button"
           onClick={markAllRead}
+          disabled={!isLoaded || notifications.every((item) => item.isRead)}
           className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer self-start sm:self-auto"
         >
           {language === 'bn' ? 'সব পঠিত হিসেবে চিহ্নিত করুন' : 'Mark All Read'}
         </button>
       </div>
 
+      {error && <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{error}</p>}
+
       <div className="space-y-3">
+        {isLoaded && notifications.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-600">
+            {language === 'bn' ? 'আপনার কোনো বিজ্ঞপ্তি নেই।' : 'You have no notifications.'}
+          </div>
+        )}
         {notifications.map((notif) => (
           <div
             key={notif.id}
@@ -120,15 +179,16 @@ export default function CitizenNotificationsPage() {
                   )}
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">{notif.message[language]}</p>
-                <span className="text-[11px] text-slate-400 block pt-0.5">{notif.timestamp}</span>
+                <time dateTime={notif.createdAt} className="text-[11px] text-slate-400 block pt-0.5">{formatDate(notif.createdAt)}</time>
               </div>
             </div>
 
             <button
               type="button"
               onClick={() => deleteNotification(notif.id)}
+              aria-label={language === 'bn' ? 'বিজ্ঞপ্তি মুছুন' : 'Delete notification'}
               className="text-slate-400 hover:text-rose-600 p-1.5 transition-colors cursor-pointer shrink-0"
-              title="Delete"
+              title={language === 'bn' ? 'মুছুন' : 'Delete'}
             >
               <Trash2 className="w-4 h-4" />
             </button>

@@ -59,7 +59,25 @@ export default function CitizenPortalLayout({
     }
   }, [isInitialized, isAuthenticated, user, router, pathname]);
 
-  if (!isInitialized || !isAuthenticated) {
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    queueMicrotask(() => setMobileOpen(false));
+  }, [pathname]);
+
+  if (!isInitialized || !isAuthenticated || user?.role !== 'citizen') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center space-y-3">
@@ -72,7 +90,9 @@ export default function CitizenPortalLayout({
     );
   }
 
-  const citizenName = user?.nameEn || 'Md. Ruhul Amin';
+  const citizenName = language === 'bn'
+    ? user?.nameBn || user?.nameEn || 'নাগরিক'
+    : user?.nameEn || 'Citizen';
   const citizenWard = user?.wardNumber || 27;
 
   const NAV_SECTIONS: CitizenNavSection[] = [
@@ -156,7 +176,6 @@ export default function CitizenPortalLayout({
           href: '/citizen/notifications',
           label: { bn: 'নোটিফিকেশন', en: 'Notifications' },
           icon: Bell,
-          badge: { bn: '৩', en: '3' },
         },
         {
           href: '/citizen/support',
@@ -171,9 +190,17 @@ export default function CitizenPortalLayout({
       ],
     },
   ];
+  const navItems = NAV_SECTIONS.flatMap((section) => section.items);
+  const activeHref = navItems
+    .filter((item) =>
+      item.exact
+        ? pathname === item.href
+        : pathname === item.href || pathname.startsWith(`${item.href}/`)
+    )
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col lg:flex-row text-slate-900">
+    <div className="citizen-portal min-h-screen bg-slate-50 flex flex-col lg:flex-row text-slate-900">
       {/* Mobile Header Bar */}
       <div className="lg:hidden bg-[#006A4E] text-white px-4 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-md">
         <div className="flex items-center space-x-2">
@@ -181,13 +208,23 @@ export default function CitizenPortalLayout({
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-sm font-bold leading-tight">ঢাকা সিটি কর্পোরেশন</h1>
-            <p className="text-[10px] text-emerald-200">নাগরিক সেবা পোর্টাল</p>
+            <h1 className="text-sm font-bold leading-tight">
+              {language === 'bn' ? 'ঢাকা সিটি কর্পোরেশন' : 'Dhaka City Corporation'}
+            </h1>
+            <p className="text-[10px] text-emerald-200">
+              {language === 'bn' ? 'নাগরিক সেবা পোর্টাল' : 'Citizen Services Portal'}
+            </p>
           </div>
         </div>
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white"
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-label={mobileOpen
+            ? language === 'bn' ? 'মেনু বন্ধ করুন' : 'Close navigation menu'
+            : language === 'bn' ? 'মেনু খুলুন' : 'Open navigation menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="citizen-sidebar"
+          className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -195,6 +232,8 @@ export default function CitizenPortalLayout({
 
       {/* Sidebar Navigation */}
       <aside
+        id="citizen-sidebar"
+        aria-label={language === 'bn' ? 'নাগরিক পোর্টাল নেভিগেশন' : 'Citizen portal navigation'}
         className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-white border-r border-slate-200 flex flex-col justify-between transition-transform duration-200 ease-in-out ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
@@ -238,15 +277,14 @@ export default function CitizenPortalLayout({
                 </p>
                 {section.items.map((item) => {
                   const Icon = item.icon;
-                  const isActive = item.exact
-                    ? pathname === item.href
-                    : pathname.startsWith(item.href);
+                  const isActive = activeHref === item.href;
 
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
+                      aria-current={isActive ? 'page' : undefined}
                       className={`flex items-center justify-between px-3 py-2 rounded-xl font-medium transition-colors ${
                         isActive
                           ? 'bg-[#006A4E] text-white shadow-xs font-semibold'
@@ -288,10 +326,8 @@ export default function CitizenPortalLayout({
             </button>
           </div>
           <button
-            onClick={() => {
-              logout();
-              router.push('/login');
-            }}
+            type="button"
+            onClick={logout}
             className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -300,8 +336,17 @@ export default function CitizenPortalLayout({
         </div>
       </aside>
 
+      {mobileOpen && (
+        <button
+          type="button"
+          aria-label={language === 'bn' ? 'নেভিগেশন বন্ধ করুন' : 'Close navigation'}
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-30 bg-slate-950/40 lg:hidden"
+        />
+      )}
+
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         {/* Desktop Top Header Bar */}
         <header className="hidden lg:flex bg-white border-b border-slate-200 px-8 py-3.5 items-center justify-between sticky top-0 z-30 shadow-xs">
           <div className="flex items-center space-x-3 text-xs text-slate-500">
@@ -322,6 +367,7 @@ export default function CitizenPortalLayout({
 
             <Link
               href="/citizen/notifications"
+              aria-label={language === 'bn' ? 'বিজ্ঞপ্তি' : 'Notifications'}
               className="relative p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
             >
               <Bell className="w-4 h-4" />

@@ -2,58 +2,59 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { mockApi } from '@/services/mockApi';
+import type { ApplicationType, PaymentMethod } from '@/types';
 import {
   FilePlus2,
   CheckCircle2,
-  AlertCircle,
-  FileText,
-  UploadCloud,
   Send,
-  Building2,
   ShieldCheck,
-  Calendar,
-  Lock,
 } from 'lucide-react';
 
-const SELECTABLE_SERVICES = [
+const SELECTABLE_SERVICES: {
+  id: ApplicationType;
+  title: { bn: string; en: string };
+  department: { bn: string; en: string };
+  fee: number;
+  days: { bn: string; en: string };
+  requiredDocs: { name: { bn: string; en: string }; mandatory: boolean }[];
+}[] = [
   {
-    id: 'hold_survey',
-    title: { bn: 'নতুন হোল্ডিং নম্বর বরাদ্দ ও সার্ভে আবেদন', en: 'New Holding Assessment & Survey' },
-    department: { bn: 'রাজস্ব বিভাগ ও এসেসমেন্ট উইং', en: 'Revenue Wing' },
-    fee: 500,
-    days: '৫-৭ কর্মদিবস',
+    id: 'birth_certificate',
+    title: { bn: 'জন্ম নিবন্ধন আবেদন', en: 'Birth Registration Application' },
+    department: { bn: 'নিবন্ধন বিভাগ', en: 'Registration Department' },
+    fee: 100,
+    days: { bn: '৩-৫ কর্মদিবস', en: '3-5 working days' },
     requiredDocs: [
-      { name: 'জমির রেজিস্ট্রিকৃত মূল দলিল বা নামজারি পরচা', mandatory: true },
-      { name: 'রাজউক বা যথাযথ কর্তৃপক্ষ কর্তৃক অনুমোদিত ভবনের নকশা', mandatory: true },
-      { name: 'আবেদনকারীর জাতীয় পরিচয়পত্র (NID) কপি', mandatory: true },
-      { name: 'সর্বশেষ খাজনা পরিশোধের দাখিলা কপি', mandatory: false },
+      { name: { bn: 'জন্মের প্রমাণপত্র', en: 'Proof of birth' }, mandatory: true },
+      { name: { bn: 'পিতা-মাতার জাতীয় পরিচয়পত্র', en: 'Parents’ national identity documents' }, mandatory: true },
+      { name: { bn: 'ঠিকানার প্রমাণ', en: 'Proof of address' }, mandatory: false },
     ],
   },
   {
-    id: 'citizen_cert',
+    id: 'citizen_certificate',
     title: { bn: 'নাগরিকত্ব সনদপত্র আবেদন', en: 'Citizenship Certificate Application' },
     department: { bn: 'কাউন্সিলর সচিবালয়', en: 'Councillor Secretariat' },
     fee: 150,
-    days: '১-৩ কর্মদিবস',
+    days: { bn: '১-৩ কর্মদিবস', en: '1-3 working days' },
     requiredDocs: [
-      { name: 'জাতীয় পরিচয়পত্র বা অনলাইন জন্ম নিবন্ধন সনদ', mandatory: true },
-      { name: 'আবাসিক হোল্ডিং ট্যাক্স পরিশোধের সর্বশেষ রসিদ', mandatory: true },
-      { name: 'সদ্য তোলা ২ কপি পাসপোর্ট সাইজ ছবি', mandatory: true },
+      { name: { bn: 'জাতীয় পরিচয়পত্র বা জন্ম নিবন্ধন সনদ', en: 'National ID or birth certificate' }, mandatory: true },
+      { name: { bn: 'ঠিকানার প্রমাণ', en: 'Proof of address' }, mandatory: true },
+      { name: { bn: 'সাম্প্রতিক পাসপোর্ট সাইজ ছবি', en: 'Recent passport-size photo' }, mandatory: true },
     ],
   },
   {
-    id: 'trade_new',
+    id: 'trade_license',
     title: { bn: 'নতুন ই-ট্রেড লাইসেন্স ইস্যু আবেদন', en: 'New E-Trade License Application' },
     department: { bn: 'বাণিজ্য ও লাইসেন্স শাখা', en: 'Commerce & Trade Branch' },
     fee: 4500,
-    days: '২-৪ কর্মদিবস',
+    days: { bn: '২-৪ কর্মদিবস', en: '2-4 working days' },
     requiredDocs: [
-      { name: 'দোকান বা বাণিজ্যিক স্পেসের ভাড়া চুক্তিপত্র বা মালিকানার প্রমাণ', mandatory: true },
-      { name: 'স্বত্বাধিকারীর জাতীয় পরিচয়পত্র ও টিআইএন (TIN) সনদ', mandatory: true },
-      { name: 'লিমিটেড কোম্পানি হলে মেমোরেন্ডাম ও সার্টিফিকেট অব ইনকর্পোরেশন', mandatory: false },
+      { name: { bn: 'দোকান বা বাণিজ্যিক স্থানের মালিকানা / ভাড়ার প্রমাণ', en: 'Proof of business premises ownership or lease' }, mandatory: true },
+      { name: { bn: 'স্বত্বাধিকারীর জাতীয় পরিচয়পত্র', en: 'Owner’s national identity document' }, mandatory: true },
+      { name: { bn: 'প্রযোজ্য ক্ষেত্রে প্রতিষ্ঠানের নিবন্ধন নথি', en: 'Business registration documents, if applicable' }, mandatory: false },
     ],
   },
 ];
@@ -61,8 +62,6 @@ const SELECTABLE_SERVICES = [
 export default function NewApplicationPage() {
   const { language } = useApp();
   const { user } = useAuth();
-  const router = useRouter();
-
   const [selectedServiceId, setSelectedServiceId] = useState(SELECTABLE_SERVICES[0].id);
   const selectedService = SELECTABLE_SERVICES.find((s) => s.id === selectedServiceId) || SELECTABLE_SERVICES[0];
 
@@ -73,22 +72,41 @@ export default function NewApplicationPage() {
   const [propertyAddress, setPropertyAddress] = useState('House 42, Road 9/A, Dhanmondi, Dhaka');
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [agreed, setAgreed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreed) return;
 
     setIsSubmitting(true);
-    const generatedId = `APP-DSCC-2026-${Math.floor(10000 + Math.random() * 90000)}`;
-
-    setTimeout(() => {
+    setSubmitError('');
+    try {
+      const { application } = await mockApi.submitApplication({
+        citizenId: user?.id,
+        type: selectedService.id,
+        applicantName,
+        applicantNameBn: user?.nameBn,
+        nid: user?.nid ?? '',
+        phone: applicantPhone,
+        wardNumber,
+        address: propertyAddress,
+        feeBdt: selectedService.fee,
+        paymentMethod,
+        details: { notes: additionalNotes },
+      });
+      setSubmittedId(application.referenceId);
+    } catch (error: unknown) {
+      setSubmitError(error instanceof Error
+        ? error.message
+        : language === 'bn' ? 'আবেদন জমা দেওয়া যায়নি।' : 'Unable to submit the application.');
+    } finally {
       setIsSubmitting(false);
-      setSubmittedId(generatedId);
-    }, 700);
+    }
   };
 
   return (
@@ -170,7 +188,7 @@ export default function NewApplicationPage() {
                     </div>
                     <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
                       <span className="font-bold text-emerald-800">৳{s.fee}</span>
-                      <span className="text-slate-400">{s.days}</span>
+                      <span className="text-slate-400">{s.days[language]}</span>
                     </div>
                   </button>
                 );
@@ -186,7 +204,9 @@ export default function NewApplicationPage() {
                 <span>{language === 'bn' ? 'প্রয়োজনীয় নথিপত্র ও সরকারি ফি' : 'Required Documents & Fee Schedule'}</span>
               </h3>
               <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                {language === 'bn' ? `প্রক্রিয়াকরণ: ${selectedService.days}` : `Time: ${selectedService.days}`}
+                {language === 'bn'
+                  ? `প্রক্রিয়াকরণ: ${selectedService.days.bn}`
+                  : `Time: ${selectedService.days.en}`}
               </span>
             </div>
 
@@ -198,7 +218,7 @@ export default function NewApplicationPage() {
                 <ul className="space-y-1.5 list-disc list-inside text-slate-600">
                   {selectedService.requiredDocs.map((doc, idx) => (
                     <li key={idx}>
-                      <span className="font-medium text-slate-800">{doc.name}</span>{' '}
+                      <span className="font-medium text-slate-800">{doc.name[language]}</span>{' '}
                       {doc.mandatory && (
                         <span className="text-rose-600 text-[10px] font-bold">
                           ({language === 'bn' ? 'বাধ্যতামূলক' : 'Mandatory'})
@@ -288,6 +308,23 @@ export default function NewApplicationPage() {
                 />
               </div>
 
+              <div>
+                <label htmlFor="application-payment-method" className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'bn' ? 'পেমেন্ট মাধ্যম' : 'Payment method'}
+                </label>
+                <select
+                  id="application-payment-method"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                >
+                  <option value="bkash">bKash</option>
+                  <option value="nagad">Nagad</option>
+                  <option value="rocket">Rocket</option>
+                  <option value="card">{language === 'bn' ? 'কার্ড' : 'Card'}</option>
+                </select>
+              </div>
+
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'বিশেষ মন্তব্য বা আবেদন বিবরণী' : 'Additional Notes / Case Specifics'}
@@ -320,6 +357,12 @@ export default function NewApplicationPage() {
               </label>
             </div>
           </div>
+
+          {submitError && (
+            <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
+              {submitError}
+            </p>
+          )}
 
           <div className="flex items-center justify-end gap-3">
             <Link

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -8,9 +8,6 @@ import {
   ShieldCheck,
   Mail,
   Phone,
-  CreditCard,
-  MapPin,
-  Calendar,
   Save,
   CheckCircle2,
   Lock,
@@ -18,27 +15,72 @@ import {
 
 export default function CitizenProfilePage() {
   const { language } = useApp();
-  const { user } = useAuth();
+  const { user, updateCitizenAccount } = useAuth();
 
-  const [name, setName] = useState('Md. Ruhul Amin');
-  const [nameBn, setNameBn] = useState('মো: রুহুল আমিন');
-  const [email, setEmail] = useState('mdruhulaminridoy18@gmail.com');
-  const [phone, setPhone] = useState('01816648095');
-  const [nid] = useState('1992269184723');
-  const [dob] = useState('1994-08-15');
+  const [name, setName] = useState('');
+  const [nameBn, setNameBn] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [wardNumber, setWardNumber] = useState<number>(27);
-  const [presentAddress, setPresentAddress] = useState(
-    'House 42, Road 9/A, Dhanmondi, Dhaka-1209'
-  );
-  const [permanentAddress, setPermanentAddress] = useState(
-    'Vill: Shariatpur Sadar, Upazila: Palong, Dist: Shariatpur'
-  );
+  const [presentAddress, setPresentAddress] = useState('');
+  const [permanentAddress, setPermanentAddress] = useState('');
   const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
-  const handleSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      setName(user.nameEn);
+      setNameBn(user.nameBn);
+      setEmail(user.email ?? '');
+      setPhone(user.phone ?? '');
+      setWardNumber(user.wardNumber ?? 27);
+      try {
+        const saved = localStorage.getItem(`dscc_citizen_profile_${user.id}`);
+        if (saved) {
+          const details = JSON.parse(saved) as { presentAddress?: string; permanentAddress?: string };
+          setPresentAddress(details.presentAddress ?? '');
+          setPermanentAddress(details.permanentAddress ?? '');
+        }
+      } catch (error) {
+        setSaveError(error instanceof Error ? error.message : 'Unable to load saved profile details.');
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+    if (!user) return;
+    setIsSaving(true);
+    setSaveError('');
+    try {
+      localStorage.setItem(`dscc_citizen_profile_${user.id}`, JSON.stringify({
+        presentAddress,
+        permanentAddress,
+      }));
+      const updated = await updateCitizenAccount({
+        nameEn: name.trim(),
+        nameBn: nameBn.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        wardNumber,
+      });
+      if (!updated) throw new Error('Unable to update the citizen account.');
+      setIsSaved(true);
+      window.setTimeout(() => setIsSaved(false), 3000);
+    } catch (error) {
+      setSaveError(error instanceof Error
+        ? error.message
+        : language === 'bn' ? 'প্রোফাইল সংরক্ষণ করা যায়নি।' : 'Unable to save profile changes.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -46,7 +88,7 @@ export default function CitizenProfilePage() {
       {/* Profile Header */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
         <div className="w-20 h-20 rounded-2xl bg-[#006A4E] text-white flex items-center justify-center font-bold text-3xl shadow-sm shrink-0">
-          R
+          {(language === 'bn' ? nameBn : name).charAt(0) || '•'}
         </div>
         <div className="flex-1 text-center sm:text-left space-y-1.5">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
@@ -86,6 +128,7 @@ export default function CitizenProfilePage() {
           </span>
         </div>
       )}
+      {saveError && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{saveError}</p>}
 
       {/* Profile Form */}
       <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
@@ -101,11 +144,12 @@ export default function CitizenProfilePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="profile-name-en" className="block text-xs font-semibold text-slate-700 mb-1">
               {language === 'bn' ? 'পূর্ণ নাম (ইংরেজি) *' : 'Full Name (English) *'}
             </label>
             <input
               type="text"
+              id="profile-name-en"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
@@ -114,11 +158,12 @@ export default function CitizenProfilePage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="profile-name-bn" className="block text-xs font-semibold text-slate-700 mb-1">
               {language === 'bn' ? 'পূর্ণ নাম (বাংলা) *' : 'Full Name (Bangla) *'}
             </label>
             <input
               type="text"
+              id="profile-name-bn"
               value={nameBn}
               onChange={(e) => setNameBn(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
@@ -127,24 +172,25 @@ export default function CitizenProfilePage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              {language === 'bn' ? 'ইমেইল ঠিকানা *' : 'Email Address *'}
+            <label htmlFor="profile-email" className="block text-xs font-semibold text-slate-700 mb-1">
+              {language === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address'}
             </label>
             <input
               type="email"
+              id="profile-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
-              required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="profile-phone" className="block text-xs font-semibold text-slate-700 mb-1">
               {language === 'bn' ? 'মোবাইল নম্বর *' : 'Mobile Number *'}
             </label>
             <input
               type="tel"
+              id="profile-phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
@@ -152,42 +198,29 @@ export default function CitizenProfilePage() {
             />
           </div>
 
-          {/* Locked Government Verified Fields */}
+          {/* Locked Government Verified Field */}
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1 flex items-center justify-between">
+            <label htmlFor="profile-nid" className="block text-xs font-semibold text-slate-500 mb-1 flex items-center justify-between">
               <span>{language === 'bn' ? 'জাতীয় পরিচয়পত্র নম্বর (NID)' : 'National ID (NID)'}</span>
               <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
                 <Lock className="w-3 h-3" /> {language === 'bn' ? 'সুরক্ষিত' : 'Locked'}
               </span>
             </label>
             <input
+              id="profile-nid"
               type="text"
-              value={nid}
+              value={user?.nid ?? ''}
               readOnly
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-mono text-sm text-slate-600 cursor-not-allowed"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1 flex items-center justify-between">
-              <span>{language === 'bn' ? 'জন্ম তারিখ (NID অনুযায়ী)' : 'Date of Birth'}</span>
-              <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
-                <Lock className="w-3 h-3" /> {language === 'bn' ? 'সুরক্ষিত' : 'Locked'}
-              </span>
-            </label>
-            <input
-              type="text"
-              value={dob}
-              readOnly
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-mono text-sm text-slate-600 cursor-not-allowed"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="profile-ward" className="block text-xs font-semibold text-slate-700 mb-1">
               {language === 'bn' ? 'আওতাধীন ওয়ার্ড নম্বর *' : 'Assigned Ward *'}
             </label>
             <select
+              id="profile-ward"
               value={wardNumber}
               onChange={(e) => setWardNumber(Number(e.target.value))}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
@@ -201,11 +234,12 @@ export default function CitizenProfilePage() {
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="profile-present-address" className="block text-xs font-semibold text-slate-700 mb-1">
               {language === 'bn' ? 'বর্তমান ঠিকানা *' : 'Present Address *'}
             </label>
             <input
               type="text"
+              id="profile-present-address"
               value={presentAddress}
               onChange={(e) => setPresentAddress(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
@@ -214,11 +248,12 @@ export default function CitizenProfilePage() {
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="profile-permanent-address" className="block text-xs font-semibold text-slate-700 mb-1">
               {language === 'bn' ? 'স্থায়ী ঠিকানা' : 'Permanent Address'}
             </label>
             <input
               type="text"
+              id="profile-permanent-address"
               value={permanentAddress}
               onChange={(e) => setPermanentAddress(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
@@ -229,10 +264,13 @@ export default function CitizenProfilePage() {
         <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-xl bg-[#006A4E] hover:bg-[#00523C] text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+            disabled={isSaving}
+            className="px-6 py-2.5 rounded-xl bg-[#006A4E] hover:bg-[#00523C] disabled:opacity-60 text-white text-xs font-bold transition-colors shadow-md flex items-center gap-1.5 cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            <span>{language === 'bn' ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Changes'}</span>
+          <span>{isSaving
+            ? language === 'bn' ? 'সংরক্ষণ হচ্ছে...' : 'Saving...'
+            : language === 'bn' ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Changes'}</span>
           </button>
         </div>
       </form>

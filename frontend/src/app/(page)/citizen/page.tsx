@@ -1,411 +1,373 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { mockApi } from '@/services/mockApi';
+import { PaymentService } from '@/services/payment/payment-service';
+import type { ApplicationType, Complaint, ComplaintCategory, ServiceApplication } from '@/types';
+import type { PaymentTransaction } from '@/types/payment';
 import {
-  FileText,
-  Clock,
-  CheckCircle2,
   AlertCircle,
-  FilePlus2,
-  SearchCheck,
-  CreditCard,
   AlertTriangle,
-  ArrowRight,
-  Activity,
-  ShieldCheck,
-  Calendar,
-  Building2,
-  ExternalLink,
+  ArrowUpRight,
+  CheckCircle2,
+  Clock3,
+  CreditCard,
+  Droplets,
+  FilePlus2,
+  FileText,
+  Lightbulb,
+  MapPin,
+  SearchCheck,
+  Trash2,
 } from 'lucide-react';
+
+const SERVICE_NAMES: Record<ApplicationType, { bn: string; en: string }> = {
+  trade_license: { bn: 'ট্রেড লাইসেন্স', en: 'Trade license' },
+  birth_certificate: { bn: 'জন্ম নিবন্ধন', en: 'Birth registration' },
+  citizen_certificate: { bn: 'নাগরিকত্ব সনদ', en: 'Citizenship certificate' },
+  road_digging: { bn: 'সড়ক খনন অনুমতি', en: 'Road digging permit' },
+};
+
+const REPORT_CATEGORIES: {
+  id: ComplaintCategory;
+  title: { bn: string; en: string };
+  icon: typeof AlertTriangle;
+}[] = [
+  { id: 'road_damage', title: { bn: 'রাস্তা ও গর্ত', en: 'Roads & potholes' }, icon: MapPin },
+  { id: 'drainage', title: { bn: 'ড্রেন ও জলাবদ্ধতা', en: 'Drainage & waterlogging' }, icon: Droplets },
+  { id: 'waste', title: { bn: 'ময়লা-আবর্জনা', en: 'Waste & garbage' }, icon: Trash2 },
+  { id: 'street_light', title: { bn: 'সড়কবাতি', en: 'Streetlights' }, icon: Lightbulb },
+  { id: 'other', title: { bn: 'অন্যান্য সমস্যা', en: 'Other issues' }, icon: AlertTriangle },
+];
+
+interface ActivityEntry {
+  id: string;
+  title: string;
+  reference: string;
+  date: string;
+  href: string;
+  kind: 'application' | 'complaint' | 'payment';
+}
+
+function formatDate(value: string, language: 'bn' | 'en') {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? value
+    : new Intl.DateTimeFormat(language === 'bn' ? 'bn-BD' : 'en-US', { dateStyle: 'medium' }).format(date);
+}
 
 export default function CitizenDashboardPage() {
   const { language } = useApp();
   const { user } = useAuth();
+  const [applications, setApplications] = useState<ServiceApplication[]>([]);
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [payments, setPayments] = useState<PaymentTransaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const citizenName = language === 'bn'
+    ? user?.nameBn || user?.nameEn || 'নাগরিক'
+    : user?.nameEn || 'Citizen';
+  const citizenWard = user?.wardNumber ?? 0;
 
-  const citizenName = user?.nameEn || 'Md. Ruhul Amin';
-  const citizenWard = user?.wardNumber || 27;
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (active) setIsLoading(true);
+    });
+    Promise.all([mockApi.getApplications(), mockApi.getComplaints()])
+      .then(([allApplications, allComplaints]) => {
+        if (!active) return;
+        setApplications(allApplications.filter(
+          (item) => item.citizenId === user.id || (Boolean(user.phone) && item.phone === user.phone)
+        ));
+        setComplaints(allComplaints.filter(
+          (item) =>
+            item.citizenId === user.id ||
+            (Boolean(user.phone) && item.phone === user.phone)
+        ));
+        setPayments(PaymentService.getAllTransactions().filter((item) => item.userId === user.id));
+        setError('');
+      })
+      .catch((loadError: unknown) => {
+        if (active) {
+          setError(loadError instanceof Error
+            ? loadError.message
+            : language === 'bn' ? 'ড্যাশবোর্ডের তথ্য লোড করা যায়নি।' : 'Unable to load dashboard data.');
+        }
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user, language]);
 
-  // Realistic Pre-seeded Applications for Citizen Workspace
-  const [recentApplications] = useState([
-    {
-      id: 'APP-DSCC-2026-44109',
-      serviceName: { bn: 'নতুন হোল্ডিং নম্বর বরাদ্দ ও সার্ভে', en: 'New Holding Assessment & Survey' },
-      category: { bn: 'হোল্ডিং কর', en: 'Holding Tax' },
-      submittedAt: '2026-02-12',
-      status: 'UNDER_REVIEW',
-      statusLabel: { bn: 'পর্যালোচনাধীন', en: 'Under Review' },
-      department: { bn: 'রাজস্ব বিভাগ অঞ্চল ৩', en: 'Revenue Dept Zone 3' },
-    },
-    {
-      id: 'APP-DSCC-2026-19284',
-      serviceName: { bn: 'ট্রেড লাইসেন্স নবায়ন (২০২৫-২৬)', en: 'Trade License Renewal (2025-26)' },
-      category: { bn: 'বাণিজ্য লাইসেন্স', en: 'Trade License' },
-      submittedAt: '2026-02-02',
-      status: 'APPROVED',
-      statusLabel: { bn: 'অনুমোদিত ও ইস্যুকৃত', en: 'Approved & Issued' },
-      department: { bn: 'বাণিজ্য ও লাইসেন্স শাখা', en: 'Commerce & Licensing' },
-    },
-    {
-      id: 'APP-DSCC-2026-08142',
-      serviceName: { bn: 'নাগরিকত্ব সনদপত্র আবেদন', en: 'Citizenship Certificate Request' },
-      category: { bn: 'পৌর সনদ', en: 'Civic Certificate' },
-      submittedAt: '2026-01-20',
-      status: 'COMPLETED',
-      statusLabel: { bn: 'সম্পন্ন', en: 'Completed' },
-      department: { bn: 'ওয়ার্ড কাউন্সিলর কার্যালয় ২৭', en: 'Ward Councillor 27' },
-    },
-    {
-      id: 'APP-DSCC-2025-99214',
-      serviceName: { bn: 'সড়ক বাতি মেরামত ও এলইডি পুনঃস্থাপন', en: 'Streetlight Repair & LED Fix' },
-      category: { bn: 'নাগরিক অভিযোগ', en: 'Civic Complaint' },
-      submittedAt: '2025-12-18',
-      status: 'RESOLVED',
-      statusLabel: { bn: 'সমাধানকৃত', en: 'Resolved' },
-      department: { bn: 'বিদ্যুৎ ও আলোকায়ন বিভাগ', en: 'Electrical & Lighting' },
-    },
-  ]);
-
-  // Chronological Activity Timeline
-  const [activities] = useState([
-    {
-      id: 'ACT-01',
-      title: { bn: 'হোল্ডিং ট্যাক্স বিল পরিশোধ সম্পন্ন', en: 'Holding Tax Payment Completed' },
-      desc: {
-        bn: 'হোল্ডিং H-10482 এর জন্য ৳২৭,৯২৭ টাকা বিকাশ গেটওয়ের মাধ্যমে পরিশোধিত হয়েছে।',
-        en: '৳27,927 settled for Holding H-10482 via bKash gateway.',
-      },
-      ref: 'TXN-2026-891245',
-      timestamp: '2026-02-15 10:25 AM',
-      type: 'PAYMENT',
-      href: '/online-payment/receipt?no=DSCC-RCP-2026-10492',
-    },
-    {
-      id: 'ACT-02',
-      title: { bn: 'নতুন হোল্ডিং এসেসমেন্ট আবেদন গৃহীত', en: 'Application Received & Under Review' },
-      desc: {
-        bn: 'আবেদন নং APP-DSCC-2026-44109 এর প্রাথমিক স্ক্রুটিনি সম্পন্ন হয়ে অঞ্চল ৩ এ পাঠানো হয়েছে।',
-        en: 'Application APP-DSCC-2026-44109 passed scrutiny and assigned to Zone 3.',
-      },
-      ref: 'APP-DSCC-2026-44109',
-      timestamp: '2026-02-12 02:40 PM',
-      type: 'APPLICATION',
-      href: '/citizen/tracking?id=APP-DSCC-2026-44109',
-    },
-    {
-      id: 'ACT-03',
-      title: { bn: 'ট্রেড লাইসেন্স ই-সনদপত্র ইস্যু সম্পন্ন', en: 'Digital Trade License Issued' },
-      desc: {
-        bn: 'মেসার্স মেঘনা এন্টারপ্রাইজ এর ডিজিটাল নবায়ন সনদ কিউআর কোডসহ ডাউনলোডযোগ্য।',
-        en: 'M/S Meghna Enterprise digital license is ready with verifiable QR.',
-      },
-      ref: 'TRAD/DSCC/019284/2026',
-      timestamp: '2026-02-02 03:15 PM',
-      type: 'CERTIFICATE',
-      href: '/citizen/certificates',
-    },
-    {
-      id: 'ACT-04',
-      title: { bn: 'সড়ক বাতি মেরামত অভিযোগ নিষ্পত্তি', en: 'Civic Complaint Resolved' },
-      desc: {
-        bn: 'রোড নং ১২/এ সংলগ্ন অকেজো সড়কবাতি মেরামতপূর্বক কার্যকারিতা নিশ্চিত করা হয়েছে।',
-        en: 'Defective streetlight on Road 12/A successfully replaced and operational.',
-      },
-      ref: 'CMP-2025-99214',
-      timestamp: '2025-12-20 11:10 AM',
-      type: 'COMPLAINT',
+  const activity = useMemo<ActivityEntry[]>(() => {
+    const applicationEntries = applications.map((item) => ({
+      id: item.id,
+      title: `${SERVICE_NAMES[item.type][language]} · ${
+        item.status === 'approved'
+          ? language === 'bn' ? 'অনুমোদিত' : 'Approved'
+          : item.status === 'rejected'
+            ? language === 'bn' ? 'প্রত্যাখ্যাত' : 'Rejected'
+            : language === 'bn' ? 'পর্যালোচনাধীন' : 'In progress'
+      }`,
+      reference: item.referenceId,
+      date: item.submittedAt,
+      href: `/citizen/tracking?id=${encodeURIComponent(item.referenceId)}`,
+      kind: 'application' as const,
+    }));
+    const complaintEntries = complaints.map((item) => ({
+      id: item.id,
+      title: language === 'bn' ? 'নাগরিক সমস্যা রিপোর্ট জমা হয়েছে' : 'Civic issue report submitted',
+      reference: item.trackingId,
+      date: item.createdAt,
       href: '/citizen/complaints',
-    },
-  ]);
+      kind: 'complaint' as const,
+    }));
+    const paymentEntries = payments.map((item) => ({
+      id: item.id,
+      title: item.serviceName[language],
+      reference: item.transactionReference,
+      date: item.completedAt ?? item.initiatedAt,
+      href: '/online-payment/history',
+      kind: 'payment' as const,
+    }));
+    return [...applicationEntries, ...complaintEntries, ...paymentEntries]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+  }, [applications, complaints, language, payments]);
+
+  const pendingApplications = applications.filter((item) => item.status === 'pending' || item.status === 'under_review').length;
+  const resolvedComplaints = complaints.filter((item) => item.status === 'resolved').length;
+  const recentApplications = applications.slice(0, 5);
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden border border-emerald-700/50">
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-400/30 text-emerald-100 text-xs font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-              <span>{language === 'bn' ? 'যাচাইকৃত জাতীয় পরিচয়পত্র প্রোফাইল' : 'Verified Resident Profile'}</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+    <div className="mx-auto max-w-7xl space-y-6">
+      <header className="rounded-2xl bg-[#006A4E] p-5 text-white shadow-sm sm:p-7">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-emerald-100">
+              {language === 'bn' ? `ওয়ার্ড ${citizenWard} নাগরিক পোর্টাল` : `Citizen portal · Ward ${citizenWard}`}
+            </p>
+            <h1 className="mt-1 text-2xl font-bold sm:text-3xl">
               {language === 'bn' ? `স্বাগতম, ${citizenName}` : `Welcome, ${citizenName}`}
             </h1>
-            <p className="text-xs sm:text-sm text-emerald-100/90 max-w-2xl">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50">
               {language === 'bn'
-                ? `ঢাকা দক্ষিণ সিটি কর্পোরেশন · ওয়ার্ড নং ${citizenWard} (ধানমন্ডি অঞ্চল) · আপনার নাগরিক সেবা ও আবেদনসমূহ এক জায়গা থেকে পরিচালনা করুন।`
-                : `Dhaka City Corporation · Ward No ${citizenWard} (Dhanmondi Zone) · Manage your civic services, dues, and requests.`}
+                ? 'আপনার সেবা আবেদন, পেমেন্ট এবং এলাকার সমস্যা রিপোর্ট এক জায়গা থেকে পরিচালনা করুন।'
+                : 'Manage service applications, payments, and local issue reports in one place.'}
             </p>
           </div>
-
-          <div className="flex items-center gap-3 self-start md:self-auto">
-            <Link
-              href="/citizen/profile"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-xl border border-white/20 transition-colors"
-            >
-              {language === 'bn' ? 'প্রোফাইল দেখুন' : 'View Profile'}
-            </Link>
-            <Link
-              href="/citizen/applications/new"
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl transition-colors shadow-sm"
-            >
-              {language === 'bn' ? 'নতুন সেবা আবেদন' : 'Apply for Service'}
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Compact Overview KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#006A4E] flex items-center justify-center shrink-0">
-            <FileText className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              {language === 'bn' ? 'মোট আবেদন' : 'Total Applications'}
-            </p>
-            <p className="text-xl font-extrabold text-slate-900 font-mono">৪ টি</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
-            <Clock className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              {language === 'bn' ? 'পর্যালোচনাধীন' : 'Under Review'}
-            </p>
-            <p className="text-xl font-extrabold text-amber-800 font-mono">১ টি</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              {language === 'bn' ? 'অনুমোদিত / সম্পন্ন' : 'Approved / Issued'}
-            </p>
-            <p className="text-xl font-extrabold text-blue-800 font-mono">৩ টি</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
-            <CreditCard className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">
-              {language === 'bn' ? 'বকেয়া বিল' : 'Unpaid Dues'}
-            </p>
-            <p className="text-xl font-extrabold text-emerald-700 font-mono">৳০ (পরিশোধিত)</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Action Shortcuts */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-slate-900">
-          {language === 'bn' ? 'জরুরি নাগরিক সেবা শর্টকাট' : 'Quick Civic Actions'}
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Link
-            href="/citizen/applications/new"
-            className="p-4 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-sm transition-all group flex flex-col justify-between"
-          >
-            <div className="w-9 h-9 rounded-lg bg-emerald-100 text-[#006A4E] flex items-center justify-center mb-3">
-              <FilePlus2 className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 group-hover:text-[#006A4E] transition-colors">
-                {language === 'bn' ? 'সেবা আবেদন' : 'Apply for Service'}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {language === 'bn' ? '৩১টি সরকারি নাগরিক সেবা' : '31 official civic services'}
-              </p>
-            </div>
-          </Link>
-
-          <Link
-            href="/citizen/tracking"
-            className="p-4 rounded-xl bg-white border border-slate-200 hover:border-blue-500 hover:shadow-sm transition-all group flex flex-col justify-between"
-          >
-            <div className="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-3">
-              <SearchCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
-                {language === 'bn' ? 'আবেদন ট্র্যাকিং' : 'Track Application'}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {language === 'bn' ? 'লাইভ অগ্রগতি নিরীক্ষণ' : 'Real-time workflow stages'}
-              </p>
-            </div>
-          </Link>
-
-          <Link
-            href="/online-payment"
-            className="p-4 rounded-xl bg-white border border-slate-200 hover:border-teal-500 hover:shadow-sm transition-all group flex flex-col justify-between"
-          >
-            <div className="w-9 h-9 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center mb-3">
-              <CreditCard className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 group-hover:text-teal-700 transition-colors">
-                {language === 'bn' ? 'ট্যাক্স ও ফি পরিশোধ' : 'Pay Tax & Fees'}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {language === 'bn' ? '১০% সরকারি রিবেট সুবিধা' : 'Instant digital receipt'}
-              </p>
-            </div>
-          </Link>
-
-          <Link
-            href="/citizen/complaints"
-            className="p-4 rounded-xl bg-white border border-slate-200 hover:border-rose-500 hover:shadow-sm transition-all group flex flex-col justify-between"
-          >
-            <div className="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center mb-3">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 group-hover:text-rose-700 transition-colors">
-                {language === 'bn' ? 'নাগরিক অভিযোগ' : 'Report Civic Issue'}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {language === 'bn' ? 'ছবি ও জিপিএস লোকেশনসহ' : 'With photo & GPS location'}
-              </p>
-            </div>
+          <Link href="/citizen/profile" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/40 px-4 text-sm font-semibold text-white hover:bg-white/10">
+            {language === 'bn' ? 'প্রোফাইল দেখুন' : 'View profile'}
           </Link>
         </div>
-      </div>
+      </header>
 
-      {/* Main Grid: Recent Applications & My Activity Timeline */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Recent Applications Table */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#006A4E]" />
-                <span>{language === 'bn' ? 'সাম্প্রতিক আবেদনসমূহ' : 'Recent Civic Applications'}</span>
-              </h3>
-            </div>
-            <Link
-              href="/citizen/applications"
-              className="text-xs font-bold text-[#006A4E] hover:underline flex items-center gap-1"
-            >
-              <span>{language === 'bn' ? 'সকল আবেদন' : 'View All'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+      {error && <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"><AlertCircle className="mr-2 inline h-4 w-4" />{error}</p>}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                <tr>
-                  <th className="px-3 py-2.5">{language === 'bn' ? 'আবেদন আইডি' : 'App ID'}</th>
-                  <th className="px-3 py-2.5">{language === 'bn' ? 'সেবার বিবরণ' : 'Service'}</th>
-                  <th className="px-3 py-2.5">{language === 'bn' ? 'তারিখ' : 'Date'}</th>
-                  <th className="px-3 py-2.5">{language === 'bn' ? 'স্ট্যাটাস' : 'Status'}</th>
-                  <th className="px-3 py-2.5 text-right">{language === 'bn' ? 'কার্যক্রম' : 'Action'}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
-                {recentApplications.map((app) => (
-                  <tr key={app.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-3 py-3 font-mono font-bold text-slate-900">{app.id}</td>
-                    <td className="px-3 py-3">
-                      <p className="font-semibold text-slate-900 leading-snug">
-                        {app.serviceName[language]}
-                      </p>
-                      <p className="text-[11px] text-slate-500">{app.department[language]}</p>
-                    </td>
-                    <td className="px-3 py-3 text-slate-500 whitespace-nowrap">{app.submittedAt}</td>
-                    <td className="px-3 py-3 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          app.status === 'APPROVED' || app.status === 'COMPLETED' || app.status === 'RESOLVED'
-                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : 'bg-amber-50 text-amber-800 border border-amber-200'
-                        }`}
-                      >
-                        {app.statusLabel[language]}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 text-right whitespace-nowrap">
-                      <Link
-                        href={`/citizen/tracking?id=${app.id}`}
-                        className="text-[#006A4E] hover:underline font-semibold"
-                      >
-                        {language === 'bn' ? 'ট্র্যাকিং' : 'Track'}
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* My Activity Chronological Timeline */}
-        <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-              <Activity className="w-4 h-4 text-[#006A4E]" />
-              <span>{language === 'bn' ? 'আমার কার্যক্রম (টাইমলাইন)' : 'My Activity Timeline'}</span>
-            </div>
-            <Link
-              href="/citizen/activity"
-              className="text-xs font-bold text-[#006A4E] hover:underline flex items-center gap-1"
-            >
-              <span>{language === 'bn' ? 'সম্পূর্ণ লগ' : 'Full Log'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
-            {activities.map((act) => (
-              <div key={act.id} className="relative group">
-                <div
-                  className={`absolute -left-6 top-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[10px] shadow-xs ${
-                    act.type === 'PAYMENT'
-                      ? 'bg-emerald-600 text-white'
-                      : act.type === 'CERTIFICATE'
-                      ? 'bg-blue-600 text-white'
-                      : act.type === 'COMPLAINT'
-                      ? 'bg-rose-600 text-white'
-                      : 'bg-amber-500 text-white'
-                  }`}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500">
-                    <span className="font-mono text-emerald-800 font-semibold">{act.ref}</span>
-                    <span>{act.timestamp}</span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#006A4E] transition-colors">
-                    {act.title[language]}
-                  </h4>
-                  <p className="text-[11px] text-slate-600 leading-relaxed">{act.desc[language]}</p>
-                  <Link
-                    href={act.href}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#006A4E] hover:underline pt-0.5"
-                  >
-                    <span>{language === 'bn' ? 'বিস্তারিত দেখুন' : 'View Details'}</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </Link>
+      <section aria-label={language === 'bn' ? 'সারসংক্ষেপ' : 'Overview'} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[
+          {
+            label: { bn: 'মোট আবেদন', en: 'Applications' },
+            value: applications.length,
+            icon: FileText,
+          },
+          {
+            label: { bn: 'পর্যালোচনাধীন', en: 'Awaiting decision' },
+            value: pendingApplications,
+            icon: Clock3,
+          },
+          {
+            label: { bn: 'নাগরিক রিপোর্ট', en: 'Issue reports' },
+            value: complaints.length,
+            icon: AlertTriangle,
+          },
+          {
+            label: { bn: 'সমাধানকৃত সমস্যা', en: 'Issues resolved' },
+            value: resolvedComplaints,
+            icon: CheckCircle2,
+          },
+        ].map((item) => {
+          const Icon = item.icon;
+          return (
+            <article key={item.label.en} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[#006A4E] hover:bg-[#ECFDF5] motion-reduce:transform-none sm:p-5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E]">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">{item.label[language]}</p>
+                  <p className="mt-0.5 text-xl font-bold tabular-nums text-slate-900">
+                    {isLoading ? '—' : item.value.toLocaleString(language === 'bn' ? 'bn-BD' : 'en-US')}
+                  </p>
                 </div>
               </div>
-            ))}
+            </article>
+          );
+        })}
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-slate-900">
+          {language === 'bn' ? 'দ্রুত কার্যক্রম' : 'Quick actions'}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { href: '/citizen/applications/new', title: { bn: 'সেবা আবেদন', en: 'Apply for a service' }, icon: FilePlus2 },
+            { href: '/citizen/tracking', title: { bn: 'আবেদন ট্র্যাকিং', en: 'Track an application' }, icon: SearchCheck },
+            { href: '/online-payment', title: { bn: 'পেমেন্ট ও ফি', en: 'Payments & fees' }, icon: CreditCard },
+            { href: '/citizen/complaints', title: { bn: 'আমার রিপোর্ট', en: 'My reports' }, icon: FileText },
+          ].map((action) => {
+            const Icon = action.icon;
+            return (
+              <Link
+                key={action.href}
+                href={action.href}
+                className="group flex min-h-20 items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[#006A4E] hover:bg-[#ECFDF5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E] motion-reduce:transform-none"
+              >
+                <span className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="text-sm font-semibold text-slate-800 group-hover:text-[#00523C]">{action.title[language]}</span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-[#006A4E]" />
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="dashboard-reporting-title"
+        className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm"
+      >
+        <div className="grid lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="flex flex-col items-start justify-center bg-[#ECFDF5] p-5 sm:p-6">
+            <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#006A4E] text-white">
+              <AlertTriangle className="h-5 w-5" />
+            </span>
+            <h2 id="dashboard-reporting-title" className="text-lg font-bold text-slate-900">
+              {language === 'bn' ? 'আপনার এলাকার সমস্যা জানান' : 'Report a problem in your area'}
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+              {language === 'bn'
+                ? 'ছবি, ওয়ার্ড ও সঠিক অবস্থানসহ রিপোর্ট জমা দিন। ট্র্যাকিং নম্বর দিয়ে অগ্রগতি দেখুন।'
+                : 'Submit a report with photos, ward, and location, then follow progress with your tracking ID.'}
+            </p>
+            <Link
+              href="/citizen/complaints?new=1"
+              className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#006A4E] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#00523C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E]"
+            >
+              {language === 'bn' ? 'এখনই রিপোর্ট করুন' : 'Start a report'}
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="p-5 sm:p-6">
+            <h3 className="mb-3 text-sm font-semibold text-slate-800">
+              {language === 'bn' ? 'সমস্যার ধরন বেছে নিন' : 'Choose a problem category'}
+            </h3>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {REPORT_CATEGORIES.map((category) => {
+                const Icon = category.icon;
+                return (
+                  <Link
+                    key={category.id}
+                    href={`/citizen/complaints?new=1&category=${category.id}`}
+                    className="group flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[#006A4E] hover:bg-[#ECFDF5] hover:text-[#00523C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E] motion-reduce:transform-none"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E] transition-colors group-hover:bg-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span>{category.title[language]}</span>
+                    <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-slate-400 group-hover:text-[#006A4E]" />
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 p-4 sm:p-5">
+            <h2 className="text-base font-semibold text-slate-900">{language === 'bn' ? 'সাম্প্রতিক আবেদন' : 'Recent applications'}</h2>
+            <Link href="/citizen/applications" className="text-sm font-semibold text-[#006A4E] hover:underline">
+              {language === 'bn' ? 'সব দেখুন' : 'View all'}
+            </Link>
+          </div>
+          {isLoading ? (
+            <p role="status" className="p-6 text-sm text-slate-600">{language === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}</p>
+          ) : recentApplications.length === 0 ? (
+            <div className="p-6 text-sm text-slate-600">
+              {language === 'bn' ? 'এখনও কোনো আবেদন নেই।' : 'No applications submitted yet.'}
+              <Link href="/citizen/applications/new" className="ml-1 font-semibold text-[#006A4E] hover:underline">
+                {language === 'bn' ? 'আবেদন শুরু করুন' : 'Start an application'}
+              </Link>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-left text-sm">
+                <thead className="bg-slate-50 text-xs font-semibold text-slate-600">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">{language === 'bn' ? 'রেফারেন্স' : 'Reference'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'bn' ? 'সেবা' : 'Service'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'bn' ? 'তারিখ' : 'Date'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'bn' ? 'অবস্থা' : 'Status'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {recentApplications.map((item) => (
+                    <tr key={item.id} className="transition-colors hover:bg-[#ECFDF5]">
+                      <td className="px-4 py-3 font-mono text-xs font-semibold text-slate-800">{item.referenceId}</td>
+                      <td className="px-4 py-3 text-slate-700">{SERVICE_NAMES[item.type][language]}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-slate-600">{formatDate(item.submittedAt, language)}</td>
+                      <td className="px-4 py-3 text-slate-700">{item.status === 'approved' ? language === 'bn' ? 'অনুমোদিত' : 'Approved' : item.status === 'rejected' ? language === 'bn' ? 'প্রত্যাখ্যাত' : 'Rejected' : language === 'bn' ? 'পর্যালোচনাধীন' : 'In progress'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 p-4 sm:p-5">
+            <h2 className="text-base font-semibold text-slate-900">{language === 'bn' ? 'সাম্প্রতিক কার্যক্রম' : 'Recent activity'}</h2>
+            <Link href="/citizen/activity" className="text-sm font-semibold text-[#006A4E] hover:underline">
+              {language === 'bn' ? 'সব দেখুন' : 'View all'}
+            </Link>
+          </div>
+          {isLoading ? (
+            <p role="status" className="p-6 text-sm text-slate-600">{language === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}</p>
+          ) : activity.length === 0 ? (
+            <div className="p-6 text-sm text-slate-600">{language === 'bn' ? 'এখনও কোনো কার্যক্রম নেই।' : 'Activity will appear here when you submit a request or report.'}</div>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {activity.map((item) => (
+                <li key={`${item.kind}-${item.id}`} className="flex items-start justify-between gap-3 p-4 transition-colors hover:bg-[#ECFDF5]">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900">{item.title}</p>
+                    <p className="mt-1 font-mono text-xs text-slate-600">{item.reference}</p>
+                    <p className="mt-1 text-xs text-slate-500">{formatDate(item.date, language)}</p>
+                  </div>
+                  <Link href={item.href} aria-label={`${language === 'bn' ? 'রেকর্ড দেখুন' : 'View record'} ${item.reference}`} className="mt-1 shrink-0 text-[#006A4E] hover:underline">
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   );

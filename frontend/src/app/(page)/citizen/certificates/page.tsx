@@ -1,249 +1,236 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
-import {
-  Award,
-  Download,
-  ShieldCheck,
-  CheckCircle2,
-  Calendar,
-  Building2,
-  Printer,
-  X,
-  FileBadge,
-  Eye,
-} from 'lucide-react';
+import { mockApi } from '@/services/mockApi';
+import type { ApplicationType, ServiceApplication } from '@/types';
+import { AlertCircle, Award, CheckCircle2, FileBadge, Loader2, Printer, X } from 'lucide-react';
 
-interface IssuedCert {
+interface IssuedCertificate {
   id: string;
-  certNumber: string;
-  title: { bn: string; en: string };
-  category: { bn: string; en: string };
-  recipientName: string;
-  recipientNid: string;
+  reference: string;
+  type: ApplicationType;
+  applicantName: string;
+  nid: string;
   wardNumber: number;
   issueDate: string;
-  validUntil: string;
   issuingAuthority: { bn: string; en: string };
-  qrUrl: string;
 }
 
-const ISSUED_CERTS: IssuedCert[] = [
-  {
-    id: 'CRT-001',
-    certNumber: 'DSCC-CRT-2026-98124',
-    title: { bn: 'নাগরিকত্ব প্রত্যয়নপত্র', en: 'Citizenship Certificate' },
-    category: { bn: 'পৌর সনদ', en: 'Civic Certificate' },
-    recipientName: 'Md. Ruhul Amin',
-    recipientNid: '1992269184723',
-    wardNumber: 27,
-    issueDate: '2026-01-20',
-    validUntil: 'আজীবন বৈধ / Lifetime',
-    issuingAuthority: {
-      bn: 'কাউন্সিলর কার্যালয়, ওয়ার্ড নং ২৭, ঢাকা দক্ষিণ সিটি কর্পোরেশন',
-      en: 'Councillor Office, Ward 27, Dhaka South City Corporation',
-    },
-    qrUrl: 'https://dscc.gov.bd/online-payment/verification?ref=CERT-2026-98124',
-  },
-  {
-    id: 'CRT-002',
-    certNumber: 'DSCC-TRD-2026-19284',
-    title: { bn: 'ই-ট্রেড লাইসেন্স সনদপত্র (২০২৫-২৬)', en: 'Digital E-Trade License (2025-26)' },
-    category: { bn: 'বাণিজ্য লাইসেন্স', en: 'Trade License' },
-    recipientName: 'Md. Ruhul Amin (M/S Meghna Enterprise)',
-    recipientNid: '1992269184723',
-    wardNumber: 21,
-    issueDate: '2026-02-02',
-    validUntil: '৩০ জুন, ২০২৬ / 30 June, 2026',
-    issuingAuthority: {
-      bn: 'বাণিজ্য ও লাইসেন্স শাখা, রাজস্ব বিভাগ, নগর ভবন, ঢাকা',
-      en: 'Commerce & Licensing Wing, Nagar Bhaban, Dhaka',
-    },
-    qrUrl: 'https://dscc.gov.bd/online-payment/verification?ref=TRAD/DSCC/019284/2026',
-  },
-  {
-    id: 'CRT-003',
-    certNumber: 'DSCC-CH-2025-44019',
-    title: { bn: 'চারিত্রিক প্রত্যয়নপত্র', en: 'Character Certificate' },
-    category: { bn: 'পৌর সনদ', en: 'Civic Certificate' },
-    recipientName: 'Md. Ruhul Amin',
-    recipientNid: '1992269184723',
-    wardNumber: 27,
-    issueDate: '2025-11-15',
-    validUntil: '৬ মাস / 6 Months',
-    issuingAuthority: {
-      bn: 'কাউন্সিলর কার্যালয়, ওয়ার্ড নং ২৭',
-      en: 'Councillor Office, Ward No 27',
-    },
-    qrUrl: 'https://dscc.gov.bd/online-payment/verification?ref=DSCC-CH-2025-44019',
-  },
-];
+const SERVICE_NAMES: Record<ApplicationType, { bn: string; en: string }> = {
+  trade_license: { bn: 'ট্রেড লাইসেন্স', en: 'Trade license' },
+  birth_certificate: { bn: 'জন্ম নিবন্ধন', en: 'Birth registration' },
+  citizen_certificate: { bn: 'নাগরিকত্ব সনদ', en: 'Citizenship certificate' },
+  road_digging: { bn: 'সড়ক খনন অনুমতি', en: 'Road digging permit' },
+};
+
+function toCertificate(application: ServiceApplication): IssuedCertificate {
+  return {
+    id: application.id,
+    reference: application.referenceId,
+    type: application.type,
+    applicantName: application.applicantName,
+    nid: application.nid,
+    wardNumber: application.wardNumber,
+    issueDate: application.reviewedAt ?? application.submittedAt,
+    issuingAuthority: application.type === 'citizen_certificate'
+      ? {
+          bn: `কাউন্সিলর সচিবালয় · ওয়ার্ড ${application.wardNumber}`,
+          en: `Councillor Secretariat · Ward ${application.wardNumber}`,
+        }
+      : { bn: 'সংশ্লিষ্ট সেবা বিভাগ', en: 'Responsible service department' },
+  };
+}
+
+function formatDate(value: string, language: 'bn' | 'en') {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? value
+    : new Intl.DateTimeFormat(language === 'bn' ? 'bn-BD' : 'en-US', { dateStyle: 'medium' }).format(date);
+}
 
 export default function CitizenCertificatesPage() {
   const { language } = useApp();
-  const [selectedCert, setSelectedCert] = useState<IssuedCert | null>(null);
+  const { user } = useAuth();
+  const [certificates, setCertificates] = useState<IssuedCertificate[]>([]);
+  const [selectedCert, setSelectedCert] = useState<IssuedCertificate | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const handlePrint = () => {
-    window.print();
-  };
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (active) setIsLoading(true);
+    });
+    mockApi.getApplications()
+      .then((applications) => {
+        if (!active) return;
+        setCertificates(
+          applications
+            .filter((application) =>
+              (application.citizenId === user.id || application.phone === user.phone) &&
+              application.status === 'approved'
+            )
+            .map(toCertificate)
+        );
+        setError('');
+      })
+      .catch((loadError: unknown) => {
+        if (active) {
+          setError(loadError instanceof Error
+            ? loadError.message
+            : language === 'bn' ? 'সনদপত্র লোড করা যায়নি।' : 'Unable to load certificates.');
+        }
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user, language]);
+
+  useEffect(() => {
+    if (!selectedCert) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    document.documentElement.classList.add('print-certificate-mode');
+    closeButtonRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedCert(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.documentElement.classList.remove('print-certificate-mode');
+      previousFocus?.focus();
+    };
+  }, [selectedCert]);
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold mb-2">
-            <Award className="w-3.5 h-3.5 text-blue-600" />
-            <span>{language === 'bn' ? 'ডিজিটাল সিলযুক্ত পৌর সনদপত্র' : 'Digitally Certified Records'}</span>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ECFDF5] text-[#006A4E]"><Award className="h-5 w-5" /></span>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{language === 'bn' ? 'আমার সনদপত্র' : 'My certificates'}</h1>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              {language === 'bn'
+                ? 'আপনার অ্যাকাউন্টের অনুমোদিত আবেদন থেকে ইস্যু করা সনদপত্র দেখুন ও প্রিন্ট করুন।'
+                : 'View and print certificates associated with applications approved on your account.'}
+            </p>
           </div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">
-            {language === 'bn' ? 'আমার ইস্যুকৃত সরকারি সনদসমূহ' : 'My Issued Civic Certificates'}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-            {language === 'bn'
-              ? 'সিটি কর্পোরেশন কর্তৃক ইস্যুকৃত সকল নাগরিকত্ব সনদ, ট্রেড লাইসেন্স ও প্রত্যয়নপত্র এখানে ডিজিটাল ফরম্যাটে সংরক্ষিত রয়েছে। যেকোনো সময় প্রিন্ট ও পিডিএফ ডাউনলোড করা যাবে।'
-              : 'Official authorized certificates issued by the City Corporation, equipped with verifiable QR codes and legally recognized digital seals.'}
+        </div>
+      </header>
+
+      {error && <p role="alert" className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"><AlertCircle className="h-4 w-4" />{error}</p>}
+
+      {isLoading ? (
+        <div role="status" className="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-600">
+          <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin text-[#006A4E] motion-reduce:animate-none" />
+          {language === 'bn' ? 'সনদপত্র লোড হচ্ছে...' : 'Loading certificates...'}
+        </div>
+      ) : certificates.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center sm:p-12">
+          <FileBadge className="mx-auto h-8 w-8 text-slate-400" />
+          <h2 className="mt-3 text-base font-semibold text-slate-900">{language === 'bn' ? 'কোনো অনুমোদিত সনদ নেই' : 'No approved certificates'}</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            {language === 'bn' ? 'অনুমোদিত আবেদন থেকে ইস্যু হওয়া সনদ এখানে দেখা যাবে।' : 'Certificates from approved applications will appear here.'}
           </p>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {ISSUED_CERTS.map((cert) => (
-          <div
-            key={cert.id}
-            className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between hover:shadow-md hover:border-emerald-500 transition-all group"
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#006A4E] flex items-center justify-center font-bold">
-                  <FileBadge className="w-5 h-5" />
-                </div>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#006A4E]">
-                  <CheckCircle2 className="w-3 h-3" />
-                  <span>{language === 'bn' ? 'বৈধ সনদ' : 'Valid'}</span>
-                </span>
-              </div>
-
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {certificates.map((certificate) => (
+            <article key={certificate.id} className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[#006A4E] hover:bg-[#ECFDF5] motion-reduce:transform-none">
               <div>
-                <span className="font-mono text-[11px] font-bold text-emerald-800 block">
-                  {cert.certNumber}
-                </span>
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-[#006A4E] transition-colors mt-0.5">
-                  {cert.title[language]}
-                </h3>
-              </div>
-
-              <div className="text-xs space-y-1 text-slate-600 pt-2 border-t border-slate-100">
-                <p>
-                  <span className="text-slate-400">{language === 'bn' ? 'প্রাপক: ' : 'Recipient: '}</span>
-                  <span className="font-semibold text-slate-800">{cert.recipientName}</span>
-                </p>
-                <p>
-                  <span className="text-slate-400">{language === 'bn' ? 'ইস্যু তারিখ: ' : 'Issued: '}</span>
-                  <span>{cert.issueDate}</span>
-                </p>
-                <p>
-                  <span className="text-slate-400">{language === 'bn' ? 'মেয়াদ: ' : 'Validity: '}</span>
-                  <span className="font-medium text-slate-700">{cert.validUntil}</span>
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedCert(cert)}
-                className="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>{language === 'bn' ? 'সনদ দেখুন' : 'View'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedCert(cert);
-                  setTimeout(() => window.print(), 100);
-                }}
-                className="py-2 px-3 rounded-xl bg-[#006A4E] hover:bg-[#00523C] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>{language === 'bn' ? 'PDF' : 'PDF'}</span>
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Official Certificate Inspection Modal */}
-      {selectedCert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="bg-emerald-900 text-white px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-300" />
-                <span className="text-sm font-bold">{selectedCert.title[language]}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handlePrint}
-                  className="px-3 py-1 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center gap-1"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>{language === 'bn' ? 'প্রিন্ট' : 'Print'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedCert(null)}
-                  className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-8 space-y-6 overflow-y-auto print:p-0">
-              {/* Institutional Certificate Layout */}
-              <div className="border-4 border-double border-emerald-800 p-8 rounded-xl text-center space-y-4 relative bg-radial from-white to-slate-50">
-                <div className="w-14 h-14 rounded-full bg-[#006A4E] text-white flex items-center justify-center mx-auto shadow-sm">
-                  <Building2 className="w-8 h-8" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-extrabold text-slate-900">ঢাকা সিটি কর্পোরেশন</h2>
-                  <p className="text-xs font-semibold text-emerald-800">{selectedCert.issuingAuthority[language]}</p>
-                  <span className="inline-block mt-2 px-4 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-950 font-mono text-xs font-bold">
-                    সনদ নং: {selectedCert.certNumber}
+                <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#ECFDF5] text-[#006A4E]"><FileBadge className="h-5 w-5" /></span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+                    <CheckCircle2 className="h-3.5 w-3.5" />{language === 'bn' ? 'অনুমোদিত' : 'Approved'}
                   </span>
                 </div>
-
-                <div className="py-4 text-sm text-slate-800 leading-relaxed max-w-lg mx-auto">
-                  <p>
-                    এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, <span className="font-bold">{selectedCert.recipientName}</span>,
-                    জাতীয় পরিচয়পত্র নং <span className="font-mono font-bold">{selectedCert.recipientNid}</span>, ওয়ার্ড
-                    নং <span className="font-bold">{selectedCert.wardNumber}</span> এর একজন স্থায়ী ও নিয়মিত করদাতা নাগরিক।
-                    উক্ত সনদের যাবতীয় তথ্য ঢাকা সিটি কর্পোরেশনের কেন্দ্রীয় ডাটাবেজে যথাযথভাবে নথিভুক্ত রয়েছে।
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-6 border-t border-slate-200 text-xs">
-                  <div className="text-left font-mono">
-                    <p className="text-slate-400">QR VERIFICATION</p>
-                    <div className="w-16 h-16 bg-slate-900 rounded flex items-center justify-center text-white text-[9px] font-bold mt-1">
-                      VALID QR
-                    </div>
+                <p className="mt-4 break-all font-mono text-xs font-semibold text-[#006A4E]">{certificate.reference}</p>
+                <h2 className="mt-1 text-base font-semibold text-slate-900">{SERVICE_NAMES[certificate.type][language]}</h2>
+                <dl className="mt-4 space-y-2 border-t border-slate-100 pt-3 text-sm">
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-slate-500">{language === 'bn' ? 'ইস্যুর তারিখ' : 'Issued'}</dt>
+                    <dd className="text-right text-slate-800">{formatDate(certificate.issueDate, language)}</dd>
                   </div>
-                  <div className="text-right space-y-1">
-                    <div className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>ডিজিটালভাবে স্বাক্ষরিত</span>
-                    </div>
-                    <p className="text-[11px] text-slate-500">মেয়াদ: {selectedCert.validUntil}</p>
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-slate-500">{language === 'bn' ? 'ওয়ার্ড' : 'Ward'}</dt>
+                    <dd className="text-slate-800">{certificate.wardNumber}</dd>
                   </div>
-                </div>
+                </dl>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedCert(certificate)}
+                className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#006A4E] px-4 text-sm font-semibold text-white hover:bg-[#00523C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E]"
+              >
+                <FileBadge className="h-4 w-4" />{language === 'bn' ? 'সনদ দেখুন' : 'View certificate'}
+              </button>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {selectedCert && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-3 sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedCert(null);
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="certificate-dialog-title"
+            className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-6">
+              <h2 id="certificate-dialog-title" className="text-base font-semibold text-slate-900">{SERVICE_NAMES[selectedCert.type][language]}</h2>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => window.print()} className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#006A4E] px-3 text-sm font-semibold text-white hover:bg-[#00523C]">
+                  <Printer className="h-4 w-4" />{language === 'bn' ? 'প্রিন্ট' : 'Print'}
+                </button>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  aria-label={language === 'bn' ? 'সনদ বন্ধ করুন' : 'Close certificate'}
+                  onClick={() => setSelectedCert(null)}
+                  className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#006A4E]"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
             </div>
-          </div>
+            <div className="p-4 sm:p-8">
+              <article className="print-certificate space-y-6 rounded-xl border-4 border-double border-[#006A4E] p-5 text-center sm:p-8">
+                <div>
+                  <p className="text-sm font-bold text-[#006A4E]">{language === 'bn' ? 'ঢাকা সিটি কর্পোরেশন' : 'Dhaka City Corporation'}</p>
+                  <p className="mt-1 text-xs text-slate-600">{selectedCert.issuingAuthority[language]}</p>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">{SERVICE_NAMES[selectedCert.type][language]}</h3>
+                  <p className="mt-2 break-all font-mono text-sm font-semibold text-[#006A4E]">{selectedCert.reference}</p>
+                </div>
+                <p className="mx-auto max-w-xl text-sm leading-7 text-slate-700">
+                  {language === 'bn'
+                    ? `${selectedCert.applicantName} (ওয়ার্ড ${selectedCert.wardNumber})-এর আবেদনটি অনুমোদিত হিসেবে রেকর্ড করা হয়েছে।`
+                    : `The application for ${selectedCert.applicantName}, Ward ${selectedCert.wardNumber}, is recorded as approved.`}
+                </p>
+                <dl className="grid grid-cols-1 gap-3 border-t border-slate-200 pt-4 text-left text-sm sm:grid-cols-2">
+                  <div><dt className="text-slate-500">{language === 'bn' ? 'জাতীয় পরিচয়পত্র' : 'National ID'}</dt><dd className="font-mono text-slate-800">{selectedCert.nid || '—'}</dd></div>
+                  <div><dt className="text-slate-500">{language === 'bn' ? 'অনুমোদনের তারিখ' : 'Approval date'}</dt><dd className="text-slate-800">{formatDate(selectedCert.issueDate, language)}</dd></div>
+                </dl>
+                <p className="text-xs text-slate-500">
+                  {language === 'bn' ? 'এই ডেমো প্রিভিউটি অনুমোদন রেকর্ডের সারাংশ; এটি স্বাক্ষরিত সরকারি নথি নয়।' : 'This demo preview summarizes an approval record; it is not a digitally signed official document.'}
+                </p>
+              </article>
+            </div>
+          </section>
         </div>
       )}
     </div>

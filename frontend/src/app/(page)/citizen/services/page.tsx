@@ -7,11 +7,6 @@ import {
   Layers,
   Search,
   ArrowRight,
-  ShieldCheck,
-  FileBadge,
-  Building,
-  Store,
-  FileCheck2,
 } from 'lucide-react';
 
 const SERVICES = [
@@ -20,34 +15,34 @@ const SERVICES = [
     items: [
       {
         slug: 'citizenship-certificate',
-        catSlug: 'registration',
+        catSlug: 'registration-certificates',
         title: { bn: 'নাগরিকত্ব সনদপত্র', en: 'Citizenship Certificate' },
         fee: 150,
-        days: '১-৩ কর্মদিবস',
+        days: { bn: '১-৩ কর্মদিবস', en: '1-3 working days' },
         desc: { bn: 'স্থায়ী নাগরিকত্বের সরকারি প্রত্যয়নপত্র সংগ্রহ।', en: 'Official civic residence verification certificate.' },
       },
       {
         slug: 'birth-certificate-verification',
-        catSlug: 'registration',
+        catSlug: 'registration-certificates',
         title: { bn: 'জন্ম নিবন্ধন ইংরেজি কপি', en: 'Birth Certificate (English)' },
         fee: 100,
-        days: '১-২ কর্মদিবস',
+        days: { bn: '১-২ কর্মদিবস', en: '1-2 working days' },
         desc: { bn: 'অনলাইন জন্ম নিবন্ধনের ইংরেজি প্রতিলিপি ও সত্যয়ন।', en: 'English transcription of verified birth record.' },
       },
       {
         slug: 'character-certificate',
-        catSlug: 'registration',
+        catSlug: 'registration-certificates',
         title: { bn: 'চারিত্রিক সনদপত্র', en: 'Character Certificate' },
         fee: 100,
-        days: '১-২ কর্মদিবস',
+        days: { bn: '১-২ কর্মদিবস', en: '1-2 working days' },
         desc: { bn: 'কাউন্সিলর কর্তৃক চারিত্রিক প্রত্যয়নপত্র।', en: 'Official character testimonial by Councillor.' },
       },
       {
         slug: 'family-certificate',
-        catSlug: 'registration',
+        catSlug: 'registration-certificates',
         title: { bn: 'ওয়ারিশান ও পারিবারিক সনদ', en: 'Inheritance (Waris) Certificate' },
         fee: 250,
-        days: '৩-৫ কর্মদিবস',
+        days: { bn: '৩-৫ কর্মদিবস', en: '3-5 working days' },
         desc: { bn: 'আইনগত উত্তরাধিকারী তালিকা প্রত্যয়ন।', en: 'Legal inheritance and family tree testimonial.' },
       },
     ],
@@ -57,18 +52,18 @@ const SERVICES = [
     items: [
       {
         slug: 'new-trade-license',
-        catSlug: 'business',
+        catSlug: 'business-licensing',
         title: { bn: 'নতুন ই-ট্রেড লাইসেন্স', en: 'New E-Trade License' },
         fee: 4500,
-        days: '২-৪ কর্মদিবস',
+        days: { bn: '২-৪ কর্মদিবস', en: '2-4 working days' },
         desc: { bn: 'নতুন ব্যবসা প্রতিষ্ঠানের জন্য পৌর লাইসেন্স বরাদ্দ।', en: 'New commercial trade license authorization.' },
       },
       {
         slug: 'trade-license-renewal',
-        catSlug: 'business',
+        catSlug: 'business-licensing',
         title: { bn: 'ট্রেড লাইসেন্স নবায়ন', en: 'Trade License Renewal' },
         fee: 4500,
-        days: '১ কর্মদিবস',
+        days: { bn: '১ কর্মদিবস', en: '1 working day' },
         desc: { bn: 'চলতি অর্থবছরের জন্য ট্রেড লাইসেন্স অনলাইন নবায়ন।', en: 'Annual trade license renewal and tax payment.' },
       },
     ],
@@ -78,18 +73,18 @@ const SERVICES = [
     items: [
       {
         slug: 'holding-tax-assessment',
-        catSlug: 'taxation',
+        catSlug: 'tax-revenue',
         title: { bn: 'নতুন হোল্ডিং নম্বর বরাদ্দ ও সার্ভে', en: 'New Holding Assessment' },
         fee: 500,
-        days: '৫-৭ কর্মদিবস',
+        days: { bn: '৫-৭ কর্মদিবস', en: '5-7 working days' },
         desc: { bn: 'নতুন নির্মিত ভবনের পৌর মূল্যায়ন ও নম্বর বরাদ্দ।', en: 'New property survey, GIS mapping, and assessment.' },
       },
       {
         slug: 'holding-tax-payment',
-        catSlug: 'taxation',
+        catSlug: 'tax-revenue',
         title: { bn: 'হোল্ডিং ট্যাক্স পরিশোধ', en: 'Holding Tax Payment' },
         fee: 0,
-        days: 'তাৎক্ষণিক',
+        days: { bn: 'তাৎক্ষণিক', en: 'Immediate' },
         desc: { bn: '১০% রিবেটসহ অনলাইন পৌর কর পরিশোধ।', en: 'Instant online property tax clearance with 10% rebate.' },
       },
     ],
@@ -99,18 +94,18 @@ const SERVICES = [
     items: [
       {
         slug: 'community-center-booking',
-        catSlug: 'infrastructure',
+        catSlug: 'infrastructure-public-services',
         title: { bn: 'কমিউনিটি সেন্টার বুকিং', en: 'Community Center Booking' },
         fee: 25000,
-        days: '১ কর্মদিবস',
+        days: { bn: '১ কর্মদিবস', en: '1 working day' },
         desc: { bn: 'সিটি কর্পোরেশন কমিউনিটি সেন্টার ভাড়া।', en: 'Hall reservation and event scheduling.' },
       },
       {
         slug: 'road-repair-request',
-        catSlug: 'infrastructure',
+        catSlug: 'infrastructure-public-services',
         title: { bn: 'সড়ক মেরামত ও রাস্তা খনন অনুমোদন', en: 'Road Trenching & Repair Permit' },
         fee: 12000,
-        days: '৩-৫ কর্মদিবস',
+        days: { bn: '৩-৫ কর্মদিবস', en: '3-5 working days' },
         desc: { bn: 'ইউটিলিটি সংযোগের জন্য রাস্তা খনন অনুমতি ও নিরাপত্তা জামানত।', en: 'Trenching permission & restoration security deposit.' },
       },
     ],
@@ -120,6 +115,10 @@ const SERVICES = [
 export default function CitizenServicesDirectoryPage() {
   const { language } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const search = searchTerm.trim().toLocaleLowerCase();
+  const hasResults = SERVICES.some((group) => group.items.some(
+    (item) => item.title.bn.toLocaleLowerCase().includes(search) || item.title.en.toLocaleLowerCase().includes(search)
+  ));
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -143,6 +142,7 @@ export default function CitizenServicesDirectoryPage() {
         <div className="relative w-full sm:w-72">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
+            aria-label={language === 'bn' ? 'নাগরিক সেবা খুঁজুন' : 'Search citizen services'}
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -154,6 +154,11 @@ export default function CitizenServicesDirectoryPage() {
 
       {/* Grouped Services */}
       <div className="space-y-8">
+        {!hasResults && (
+          <p role="status" className="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-600">
+            {language === 'bn' ? 'কোনো সেবা মেলেনি। অন্য শব্দ দিয়ে খুঁজুন।' : 'No services match your search. Try another term.'}
+          </p>
+        )}
         {SERVICES.map((grp, gIdx) => (
           <div key={gIdx} className="space-y-4">
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
@@ -163,15 +168,11 @@ export default function CitizenServicesDirectoryPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {grp.items
-                .filter(
-                  (item) =>
-                    item.title.bn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.title.en.toLowerCase().includes(searchTerm.toLowerCase())
-                )
+                .filter((item) => item.title.bn.toLocaleLowerCase().includes(search) || item.title.en.toLocaleLowerCase().includes(search))
                 .map((item) => (
                   <div
                     key={item.slug}
-                    className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs hover:border-[#006A4E] transition-all flex flex-col justify-between space-y-3 group"
+                    className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs transition-[background-color,border-color,transform,box-shadow] duration-300 hover:bg-[#ECFDF5] hover:border-[#006A4E] hover:-translate-y-0.5 motion-reduce:transform-none flex flex-col justify-between space-y-3 group"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
@@ -188,7 +189,7 @@ export default function CitizenServicesDirectoryPage() {
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
                       <span className="text-[11px] text-slate-400">
                         {language === 'bn' ? 'প্রক্রিয়াকরণ: ' : 'Time: '}
-                        <strong className="text-slate-700">{item.days}</strong>
+                        <strong className="text-slate-700">                        {item.days[language]}</strong>
                       </span>
 
                       <Link

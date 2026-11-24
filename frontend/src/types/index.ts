@@ -74,6 +74,7 @@ export type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'card';
 export interface ServiceApplication {
   id: string;
   referenceId: string;
+  citizenId?: string;
   type: ApplicationType;
   applicantName: string;
   applicantNameBn?: string;
@@ -157,13 +158,15 @@ export type ComplaintCategory =
   | 'drainage'
   | 'waste'
   | 'street_light'
-  | 'mosquito';
+  | 'mosquito'
+  | 'other';
 
 export type ComplaintStatus = 'pending' | 'assigned' | 'in_progress' | 'resolved';
 
 export interface Complaint {
   id: string;
   trackingId: string;
+  citizenId?: string;
   citizenName: string;
   phone: string;
   wardNumber: number;
@@ -172,10 +175,11 @@ export interface Complaint {
   departmentBn: string;
   title: string;
   description: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   locationLabel: string;
   photoUrl?: string;
+  photoIds?: string[];
   proofPhotoUrl?: string;
   assignedStaffId?: string;
   assignedStaffName?: string;

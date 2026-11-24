@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Settings,
   Shield,
   Bell,
   Lock,
   Globe,
-  Smartphone,
   CheckCircle2,
   AlertCircle,
   Eye,
@@ -17,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { mockApi } from '@/services/mockApi';
 
 export default function CitizenSettingsPage() {
   const { language, setLanguage } = useApp();
@@ -38,8 +38,38 @@ export default function CitizenSettingsPage() {
 
   // Save Preferences
   const [settingsSaved, setSettingsSaved] = useState(false);
+  const [settingsError, setSettingsError] = useState('');
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      try {
+        const saved = localStorage.getItem(`dscc_citizen_settings_${user.id}`);
+        if (!saved) return;
+        const preferences = JSON.parse(saved) as {
+          smsAppUpdates?: boolean;
+          emailTaxReminders?: boolean;
+          complaintAlerts?: boolean;
+          newsletterUpdates?: boolean;
+        };
+        setSmsAppUpdates(preferences.smsAppUpdates ?? true);
+        setEmailTaxReminders(preferences.emailTaxReminders ?? true);
+        setComplaintAlerts(preferences.complaintAlerts ?? true);
+        setNewsletterUpdates(preferences.newsletterUpdates ?? false);
+      } catch (error) {
+        setSettingsError(error instanceof Error
+          ? error.message
+          : language === 'bn' ? 'পছন্দের সেটিংস লোড করা যায়নি।' : 'Unable to load preferences.');
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [user, language]);
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError('');
     setPasswordSuccess(false);
@@ -62,16 +92,51 @@ export default function CitizenSettingsPage() {
       return;
     }
 
-    setPasswordSuccess(true);
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setTimeout(() => setPasswordSuccess(false), 4000);
+    if (newPassword === currentPassword) {
+      setPasswordError(language === 'bn'
+        ? 'নতুন পাসওয়ার্ডটি বর্তমান পাসওয়ার্ড থেকে আলাদা হতে হবে।'
+        : 'The new password must be different from the current password.');
+      return;
+    }
+    if (!user) return;
+
+    try {
+      const changed = await mockApi.changeCitizenPassword(user.id, currentPassword, newPassword);
+      if (!changed) {
+        setPasswordError(language === 'bn'
+          ? 'বর্তমান পাসওয়ার্ড সঠিক নয়।'
+          : 'The current password is incorrect.');
+        return;
+      }
+      setPasswordSuccess(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      window.setTimeout(() => setPasswordSuccess(false), 4000);
+    } catch (error) {
+      setPasswordError(error instanceof Error
+        ? error.message
+        : language === 'bn' ? 'পাসওয়ার্ড পরিবর্তন করা যায়নি।' : 'Unable to update the password.');
+    }
   };
 
   const handleSavePreferences = () => {
-    setSettingsSaved(true);
-    setTimeout(() => setSettingsSaved(false), 3000);
+    if (!user) return;
+    setSettingsError('');
+    try {
+      localStorage.setItem(`dscc_citizen_settings_${user.id}`, JSON.stringify({
+        smsAppUpdates,
+        emailTaxReminders,
+        complaintAlerts,
+        newsletterUpdates,
+      }));
+      setSettingsSaved(true);
+      window.setTimeout(() => setSettingsSaved(false), 3000);
+    } catch (error) {
+      setSettingsError(error instanceof Error
+        ? error.message
+        : language === 'bn' ? 'পছন্দসমূহ সংরক্ষণ করা যায়নি।' : 'Unable to save preferences.');
+    }
   };
 
   return (
@@ -134,12 +199,14 @@ export default function CitizenSettingsPage() {
 
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label htmlFor="current-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   {language === 'bn' ? 'বর্তমান পাসওয়ার্ড' : 'Current Password'}
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    id="current-password"
+                    autoComplete="current-password"
                     required
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
@@ -149,6 +216,9 @@ export default function CitizenSettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword
+                      ? language === 'bn' ? 'পাসওয়ার্ড লুকান' : 'Hide password'
+                      : language === 'bn' ? 'পাসওয়ার্ড দেখান' : 'Show password'}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -157,11 +227,13 @@ export default function CitizenSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label htmlFor="new-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   {language === 'bn' ? 'নতুন পাসওয়ার্ড' : 'New Password'}
                 </label>
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  id="new-password"
+                  autoComplete="new-password"
                   required
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -171,11 +243,13 @@ export default function CitizenSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label htmlFor="confirm-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                   {language === 'bn' ? 'নতুন পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm New Password'}
                 </label>
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  id="confirm-password"
+                  autoComplete="new-password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -211,10 +285,10 @@ export default function CitizenSettingsPage() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-slate-800">
-                      Chrome (Windows 11) - {language === 'bn' ? 'বর্তমান সেশন' : 'Current Session'}
+                      {language === 'bn' ? 'এই ডিভাইস · বর্তমান সেশন' : 'This device · Current session'}
                     </div>
                     <div className="text-xs text-slate-500">
-                      IP: 103.145.xxx.xxx • Dhaka, Bangladesh
+                      {language === 'bn' ? 'আপনি এই ডিভাইস থেকে লগ ইন করেছেন।' : 'You are signed in on this device.'}
                     </div>
                   </div>
                 </div>
@@ -235,6 +309,8 @@ export default function CitizenSettingsPage() {
                 {language === 'bn' ? 'বিজ্ঞপ্তি ও নোটিফিকেশন সেটিংস' : 'Notification Preferences'}
               </h2>
             </div>
+
+            {settingsError && <p role="alert" className="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{settingsError}</p>}
 
             {settingsSaved && (
               <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-2 text-emerald-800 text-sm">

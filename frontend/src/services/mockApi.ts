@@ -174,12 +174,13 @@ function readAuthAccounts(): StoredAuthAccount[] {
   }
 }
 
-function writeAuthAccounts(accounts: StoredAuthAccount[]): void {
-  if (typeof window === 'undefined') return;
+function writeAuthAccounts(accounts: StoredAuthAccount[]): boolean {
+  if (typeof window === 'undefined') return false;
   try {
     window.localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(accounts));
+    return true;
   } catch {
-    // ignore storage errors
+    return false;
   }
 }
 
@@ -1154,12 +1155,13 @@ function readState(): PersistedState {
   }
 }
 
-function writeState(state: PersistedState): void {
-  if (typeof window === 'undefined') return;
+function writeState(state: PersistedState): boolean {
+  if (typeof window === 'undefined') return false;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return true;
   } catch {
-    // Ignore storage quota errors in sandboxed frames
+    return false;
   }
 }
 
@@ -1228,8 +1230,10 @@ export const mockApi = {
   },
 
   async submitApplication(input: {
+    citizenId?: string;
     type: ApplicationType;
     applicantName: string;
+    applicantNameBn?: string;
     nid: string;
     phone: string;
     wardNumber: number;
@@ -1256,8 +1260,10 @@ export const mockApi = {
     const application: ServiceApplication = {
       id: `app-${Date.now()}`,
       referenceId,
+      citizenId: input.citizenId,
       type: input.type,
       applicantName: input.applicantName,
+      applicantNameBn: input.applicantNameBn,
       nid: input.nid,
       phone: input.phone,
       wardNumber: input.wardNumber,
@@ -1276,7 +1282,9 @@ export const mockApi = {
     };
 
     state.applications = [application, ...state.applications];
-    writeState(state);
+    if (!writeState(state)) {
+      throw new Error('Unable to save the application to local storage.');
+    }
 
     return {
       application,
@@ -1548,6 +1556,14 @@ export const mockApi = {
         priority: 'normal',
       };
     }
+    if (category === 'other') {
+      return {
+        departmentEn: 'Ward Operations & Public Space',
+        departmentBn: 'ওয়ার্ড পরিচালনা ও জনপরিসর বিভাগ',
+        slaHours: 48,
+        priority: 'normal',
+      };
+    }
     return {
       departmentEn: 'Civil Engineering & Roads',
       departmentBn: 'প্রকৌশল ও সড়ক বিভাগ',
@@ -1568,24 +1584,31 @@ export const mockApi = {
   },
 
   async submitComplaint(input: {
+    citizenId?: string;
     citizenName: string;
     phone: string;
     wardNumber: number;
     category: ComplaintCategory;
     title: string;
     description: string;
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
     locationLabel: string;
     photoUrl?: string;
+    photoIds?: string[];
   }): Promise<Complaint> {
     await delay(260);
     const state = readState();
     const route = this.autoRouteComplaint(input.category, `${input.title} ${input.description}`);
-    const trackingId = `CMP-2026-${Math.floor(8600 + Math.random() * 1300)}`;
+    const year = new Date().getFullYear();
+    let trackingId = '';
+    do {
+      trackingId = `CMP-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    } while (state.complaints.some((complaint) => complaint.trackingId === trackingId));
     const created: Complaint = {
       id: `cmp-${Date.now()}`,
       trackingId,
+      citizenId: input.citizenId,
       citizenName: input.citizenName,
       phone: input.phone,
       wardNumber: input.wardNumber,
@@ -1597,16 +1620,23 @@ export const mockApi = {
       latitude: input.latitude,
       longitude: input.longitude,
       locationLabel: input.locationLabel,
-      photoUrl:
-        input.photoUrl ||
-        makeCivicPreviewSvg('Citizen Geo-Tagged Report', '#006A4E', `Ward ${input.wardNumber} · ${input.latitude.toFixed(4)}°N`),
+      photoUrl: input.photoUrl || (input.photoIds
+        ? undefined
+        : makeCivicPreviewSvg(
+            'Citizen Civic Report',
+            '#006A4E',
+            `Ward ${input.wardNumber}${input.latitude !== undefined ? ` · ${input.latitude.toFixed(4)}°N` : ''}`
+          )),
+      photoIds: input.photoIds,
       status: 'pending',
       priority: route.priority,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     state.complaints = [created, ...state.complaints];
-    writeState(state);
+    if (!writeState(state)) {
+      throw new Error('Unable to save the complaint to local storage.');
+    }
     return created;
   },
 
@@ -1624,7 +1654,9 @@ export const mockApi = {
       updatedAt: new Date().toISOString(),
     };
     state.complaints[idx] = updated;
-    writeState(state);
+    if (!writeState(state)) {
+      throw new Error('Unable to save the complaint update to local storage.');
+    }
     return updated;
   },
 
@@ -1674,7 +1706,12 @@ export const mockApi = {
   async getGisMarkers(): Promise<GisMarker[]> {
     await delay(100);
     const { complaints } = readState();
-    const complaintMarkers: GisMarker[] = complaints.map((c) => {
+    const complaintMarkers: GisMarker[] = complaints
+      .filter(
+        (c): c is Complaint & { latitude: number; longitude: number } =>
+          c.latitude != null && c.longitude != null
+      )
+      .map((c) => {
       const ward = INITIAL_WARDS.find((w) => w.wardNumber === c.wardNumber);
       const offsetX = ((c.longitude - 90.35) * 400) % 12;
       const offsetY = ((23.82 - c.latitude) * 400) % 12;
@@ -1700,7 +1737,7 @@ export const mockApi = {
         detailsEn: `${c.departmentEn} · ${c.locationLabel}`,
         detailsBn: `${c.departmentBn} · ${c.locationLabel}`,
       };
-    });
+      });
     return [...BASE_GIS_MARKERS, ...complaintMarkers];
   },
 
@@ -1862,6 +1899,43 @@ export const mockApi = {
     } catch {
       // ignore
     }
+  },
+
+  async updateCitizenAccount(
+    userId: string,
+    profile: Pick<AuthUser, 'nameEn' | 'nameBn' | 'phone' | 'email' | 'wardNumber'>
+  ): Promise<AuthUser | null> {
+    const accounts = readAuthAccounts();
+    const index = accounts.findIndex((account) => account.id === userId && account.role === 'citizen');
+    if (index < 0) return null;
+
+    const updated = { ...accounts[index], ...profile };
+    accounts[index] = updated;
+    if (!writeAuthAccounts(accounts)) {
+      throw new Error('Unable to save the citizen profile.');
+    }
+
+    const safeUser = stripPassword(updated);
+    this.saveSession(safeUser);
+    return safeUser;
+  },
+
+  async changeCitizenPassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<boolean> {
+    const accounts = readAuthAccounts();
+    const index = accounts.findIndex(
+      (account) => account.id === userId && account.role === 'citizen'
+    );
+    if (index < 0 || accounts[index].password !== currentPassword) return false;
+
+    accounts[index] = { ...accounts[index], password: newPassword };
+    if (!writeAuthAccounts(accounts)) {
+      throw new Error('Unable to save the updated password.');
+    }
+    return true;
   },
 
   async loginCitizen(phoneInput: string, password: string): Promise<AuthResponse> {

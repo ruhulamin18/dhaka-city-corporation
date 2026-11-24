@@ -187,24 +187,26 @@ function OfficerDashboardContent() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPreviewComplaintId(previewComplaintId === c.id ? null : c.id)
-                    }
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#006A4E] bg-[#ECFDF5] border border-emerald-200 hover:bg-[#006A4E] hover:text-white rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Satellite className="w-3.5 h-3.5" />
-                    <span>
-                      {previewComplaintId === c.id
-                        ? language === 'bn'
-                          ? 'ম্যাপ লুকান'
-                          : 'Hide Map'
-                        : language === 'bn'
-                          ? 'স্যাটেলাইট ম্যাপ'
-                          : 'Satellite View'}
-                    </span>
-                  </button>
+                  {c.latitude != null && c.longitude != null && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPreviewComplaintId(previewComplaintId === c.id ? null : c.id)
+                      }
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#006A4E] bg-[#ECFDF5] border border-emerald-200 hover:bg-[#006A4E] hover:text-white rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Satellite className="w-3.5 h-3.5" />
+                      <span>
+                        {previewComplaintId === c.id
+                          ? language === 'bn'
+                            ? 'ম্যাপ লুকান'
+                            : 'Hide Map'
+                          : language === 'bn'
+                            ? 'স্যাটেলাইট ম্যাপ'
+                            : 'Satellite View'}
+                      </span>
+                    </button>
+                  )}
                   <label
                     htmlFor={`assign-staff-${c.id}`}
                     className="text-xs font-semibold text-[#4B5563] whitespace-nowrap"
@@ -227,7 +229,7 @@ function OfficerDashboardContent() {
                 </div>
               </div>
 
-              {previewComplaintId === c.id && (
+              {previewComplaintId === c.id && c.latitude != null && c.longitude != null && (
                 <SatellitePinMap
                   lat={c.latitude}
                   lng={c.longitude}

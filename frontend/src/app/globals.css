@@ -339,6 +339,55 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
   }
 }
 
+.citizen-portal .citizen-interactive-card {
+  transition-property: background-color, border-color, transform, box-shadow;
+  transition-duration: 300ms;
+  transition-timing-function: ease;
+}
+
+.citizen-portal .citizen-interactive-card:hover {
+  background-color: #ecfdf5;
+  border-color: #006a4e;
+  transform: translateY(-0.125rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .citizen-portal *,
+  .citizen-portal *::before,
+  .citizen-portal *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .citizen-portal .citizen-interactive-card:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  html.print-certificate-mode body * {
+    visibility: hidden !important;
+  }
+
+  .print-certificate,
+  .print-certificate * {
+    visibility: visible !important;
+  }
+
+  .print-certificate {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border-color: #006a4e !important;
+  }
+}
+
 /* ==========================================================================
    Print Stylesheet
    ========================================================================== */

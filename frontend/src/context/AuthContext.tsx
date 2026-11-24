@@ -23,6 +23,9 @@ interface AuthContextValue {
     role: OfficialRole
   ) => Promise<AuthResponse>;
   registerCitizen: (payload: CitizenRegistrationPayload) => Promise<AuthResponse>;
+  updateCitizenAccount: (
+    profile: Pick<AuthUser, 'nameEn' | 'nameBn' | 'phone' | 'email' | 'wardNumber'>
+  ) => Promise<boolean>;
   logout: () => void;
   getDashboardPath: (role?: AuthRole) => string;
 }
@@ -75,6 +78,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return res;
   };
 
+  const updateCitizenAccount = async (
+    profile: Pick<AuthUser, 'nameEn' | 'nameBn' | 'phone' | 'email' | 'wardNumber'>
+  ): Promise<boolean> => {
+    if (!user || user.role !== 'citizen') return false;
+    const updated = await mockApi.updateCitizenAccount(user.id, profile);
+    if (!updated) return false;
+    setUser(updated);
+    return true;
+  };
+
   const logout = () => {
     showPreloader('logout');
     mockApi.clearSession();
@@ -93,6 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loginCitizen,
     loginOfficial,
     registerCitizen,
+    updateCitizenAccount,
     logout,
     getDashboardPath,
   };

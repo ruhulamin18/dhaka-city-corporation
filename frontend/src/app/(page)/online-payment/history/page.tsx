@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { PaymentLayout } from '@/components/payments/PaymentLayout';
 import { PaymentHistoryTable } from '@/components/payments/PaymentHistoryTable';
-import { PaymentTransaction } from '@/types/payment';
 import { PaymentService } from '@/services/payment/payment-service';
 import {
   History,
@@ -20,15 +19,12 @@ import {
 export default function PaymentHistoryPage() {
   const { language } = useApp();
   const { user } = useAuth();
-  const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
-
-  useEffect(() => {
-    // Load persisted transaction records
-    queueMicrotask(() => {
-      const all = PaymentService.getAllTransactions();
-      setTransactions(all);
-    });
-  }, []);
+  const transactions = useMemo(
+    () => user
+      ? PaymentService.getAllTransactions().filter((transaction) => transaction.userId === user.id)
+      : [],
+    [user]
+  );
 
   const totalSuccessAmount = transactions
     .filter((t) => t.status === 'SUCCESS')

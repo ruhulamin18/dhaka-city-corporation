@@ -350,7 +350,7 @@ function ComplaintsContent() {
                   className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
                 >
                   {(
-                    ['road_damage', 'drainage', 'waste', 'street_light', 'mosquito'] as ComplaintCategory[]
+                    ['road_damage', 'drainage', 'waste', 'street_light', 'mosquito', 'other'] as ComplaintCategory[]
                   ).map((cat) => (
                     <option key={cat} value={cat}>
                       {t.complaintsPage.categories[cat]}
@@ -618,21 +618,29 @@ function ComplaintsContent() {
 
                 <div className="text-sm text-slate-700 space-y-3">
                   <p>{trackedComplaint.description}</p>
-                  <p className="text-xs font-mono text-slate-500 tabular-nums">
-                    GPS: {trackedComplaint.latitude.toFixed(4)}°N, {trackedComplaint.longitude.toFixed(4)}°E
-                    {trackedComplaint.assignedStaffName
-                      ? ` · Assigned Staff: ${trackedComplaint.assignedStaffName}`
-                      : ''}
-                  </p>
-                  <SatellitePinMap
-                    lat={trackedComplaint.latitude}
-                    lng={trackedComplaint.longitude}
-                    zoom={16}
-                    label={`${trackedComplaint.trackingId} · Ward ${trackedComplaint.wardNumber}`}
-                    subtitle={trackedComplaint.locationLabel}
-                    heightClassName="h-52"
-                    pinColor={trackedComplaint.status === 'resolved' ? 'teal' : 'rose'}
-                  />
+                  {trackedComplaint.latitude !== undefined && trackedComplaint.longitude !== undefined ? (
+                    <>
+                      <p className="text-xs font-mono text-slate-500 tabular-nums">
+                        GPS: {trackedComplaint.latitude.toFixed(4)}°N, {trackedComplaint.longitude.toFixed(4)}°E
+                        {trackedComplaint.assignedStaffName
+                          ? ` · Assigned Staff: ${trackedComplaint.assignedStaffName}`
+                          : ''}
+                      </p>
+                      <SatellitePinMap
+                        lat={trackedComplaint.latitude}
+                        lng={trackedComplaint.longitude}
+                        zoom={16}
+                        label={`${trackedComplaint.trackingId} · Ward ${trackedComplaint.wardNumber}`}
+                        subtitle={trackedComplaint.locationLabel}
+                        heightClassName="h-52"
+                        pinColor={trackedComplaint.status === 'resolved' ? 'teal' : 'rose'}
+                      />
+                    </>
+                  ) : (
+                    <p className="text-xs text-slate-500">
+                      {language === 'bn' ? 'এই রিপোর্টে জিপিএস স্থানাঙ্ক দেওয়া হয়নি।' : 'No GPS coordinates were provided for this report.'}
+                    </p>
+                  )}
                 </div>
 
                 {/* Before / Field Proof Photos */}

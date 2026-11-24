@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -52,6 +53,8 @@ export default function CitizenPortalLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isInitialized && (!isAuthenticated || user?.role !== 'citizen')) {
@@ -74,7 +77,28 @@ export default function CitizenPortalLayout({
   }, [mobileOpen]);
 
   useEffect(() => {
-    queueMicrotask(() => setMobileOpen(false));
+    if (!profileMenuOpen) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!profileMenuRef.current?.contains(event.target as Node)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setProfileMenuOpen(false);
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [profileMenuOpen]);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      setMobileOpen(false);
+      setProfileMenuOpen(false);
+    });
   }, [pathname]);
 
   if (!isInitialized || !isAuthenticated || user?.role !== 'citizen') {
@@ -94,6 +118,17 @@ export default function CitizenPortalLayout({
     ? user?.nameBn || user?.nameEn || 'নাগরিক'
     : user?.nameEn || 'Citizen';
   const citizenWard = user?.wardNumber || 27;
+  const handleLogout = () => {
+    const confirmed = window.confirm(
+      language === 'bn'
+        ? 'আপনি কি নাগরিক পোর্টাল থেকে লগআউট করতে চান?'
+        : 'Are you sure you want to log out of the Citizen Portal?'
+    );
+    if (!confirmed) return;
+    setProfileMenuOpen(false);
+    setMobileOpen(false);
+    logout();
+  };
 
   const NAV_SECTIONS: CitizenNavSection[] = [
     {
@@ -216,18 +251,70 @@ export default function CitizenPortalLayout({
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setMobileOpen((open) => !open)}
-          aria-label={mobileOpen
-            ? language === 'bn' ? 'মেনু বন্ধ করুন' : 'Close navigation menu'
-            : language === 'bn' ? 'মেনু খুলুন' : 'Open navigation menu'}
-          aria-expanded={mobileOpen}
-          aria-controls="citizen-sidebar"
-          className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="relative" ref={profileMenuRef}>
+            <button
+              type="button"
+              onClick={() => setProfileMenuOpen((open) => !open)}
+              aria-label={
+                language === 'bn'
+                  ? `${citizenName} এর প্রোফাইল মেনু`
+                  : `Profile menu for ${citizenName}`
+              }
+              aria-haspopup="menu"
+              aria-expanded={profileMenuOpen}
+              aria-controls="citizen-profile-menu"
+              className="w-10 h-10 overflow-hidden rounded-full border-2 border-white/80 bg-white/15 text-white flex items-center justify-center font-bold text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {user.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                Array.from(citizenName.trim())[0]?.toLocaleUpperCase() || 'U'
+              )}
+            </button>
+            {profileMenuOpen && (
+              <div
+                id="citizen-profile-menu"
+                role="menu"
+                className="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl"
+              >
+                <div className="px-3 py-2">
+                  <p className="truncate text-sm font-bold">{citizenName}</p>
+                  <p className="text-xs text-slate-500">
+                    {language === 'bn' ? `ওয়ার্ড নং ${citizenWard}` : `Ward ${citizenWard}`}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-rose-600"
+                >
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
+                  <span>{language === 'bn' ? 'লগআউট' : 'Log out'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-label={mobileOpen
+              ? language === 'bn' ? 'মেনু বন্ধ করুন' : 'Close navigation menu'
+              : language === 'bn' ? 'মেনু খুলুন' : 'Open navigation menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="citizen-sidebar"
+            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar Navigation */}
@@ -327,7 +414,7 @@ export default function CitizenPortalLayout({
           </div>
           <button
             type="button"
-            onClick={logout}
+            onClick={handleLogout}
             className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />

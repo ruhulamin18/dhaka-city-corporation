@@ -106,22 +106,19 @@ export function CivicPreloader({
       aria-busy={!exiting}
     >
       <div className="flex w-full max-w-lg flex-col items-center text-center">
-        <div className="relative mb-8 flex h-40 w-40 items-center justify-center">
-          <div className="civic-preloader-ring absolute inset-0 rounded-full border border-[#006A4E]/20 bg-[#ECFDF5]/60" />
-          <div className="relative flex h-32 w-32 items-center justify-center rounded-full border border-[#006A4E]/10 bg-white">
-            <Image
-              src="/images/Dhaka_City_logo.png"
-              width={128}
-              height={128}
-              alt={
-                language === 'bn'
-                  ? 'ঢাকা সিটি কর্পোরেশনের লোগো'
-                  : 'Dhaka City Corporation logo'
-              }
-              className="h-32 w-32 object-contain"
-              priority
-            />
-          </div>
+        <div className="relative mb-8 h-40 w-40 overflow-hidden rounded-full">
+          <Image
+            src="/images/Dhaka_City_logo.png"
+            width={160}
+            height={160}
+            alt={
+              language === 'bn'
+                ? 'ঢাকা সিটি কর্পোরেশনের লোগো'
+                : 'Dhaka City Corporation logo'
+            }
+            className="civic-preloader-logo h-full w-full rounded-full object-cover"
+            priority
+          />
         </div>
 
         <div className="space-y-3">

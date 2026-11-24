@@ -283,16 +283,14 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
 
 @keyframes civic-preloader-breathe {
   0%, 100% {
-    opacity: 0.72;
-    transform: scale(0.98);
+    transform: scale(1);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.02);
+    transform: scale(1.025);
   }
 }
 
-.civic-preloader-ring {
+.civic-preloader-logo {
   animation: civic-preloader-breathe 2.4s ease-in-out infinite;
 }
 
@@ -302,7 +300,7 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .civic-preloader-ring {
+  .civic-preloader-logo {
     animation: none;
   }
   .civic-preloader-progress {

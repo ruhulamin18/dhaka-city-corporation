@@ -13,7 +13,6 @@ import {
   EyeOff,
   Landmark,
   ShieldCheck,
-  Sparkles,
   User,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -312,7 +311,6 @@ function CitizenLoginForm() {
                   aria-haspopup="true"
                   aria-expanded={isDemoMenuOpen}
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
                   <span>{language === 'bn' ? 'ডেমো অ্যাকাউন্ট' : 'Demo Accounts'}</span>
                   <ChevronDown
                     className={`w-3 h-3 transition-transform duration-200 ${

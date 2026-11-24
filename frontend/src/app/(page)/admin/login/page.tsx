@@ -13,7 +13,6 @@ import {
   EyeOff,
   Landmark,
   ShieldCheck,
-  Sparkles,
   User,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -439,7 +438,6 @@ function AdminLoginForm() {
                   aria-haspopup="true"
                   aria-expanded={isDemoMenuOpen}
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                   <span>{language === 'bn' ? 'ডেমো অ্যাকাউন্ট' : 'Demo Roles'}</span>
                   <ChevronDown className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${isDemoMenuOpen ? 'rotate-180' : 'opacity-70'}`} />
                 </button>

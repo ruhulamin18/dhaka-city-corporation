@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { useDialogA11y } from '@/hooks/useDialogA11y';
 
 const STORAGE_KEY = 'dscc_a11y_settings_v1';
 
@@ -141,15 +142,7 @@ export function AccessibilityWidget() {
     };
   }, [settings.readingGuide]);
 
-  // Close drawer on Escape key
-  useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open]);
+  useDialogA11y(open, () => setOpen(false));
 
   const increaseFont = () => {
     setSettings((prev) => ({
@@ -259,6 +252,7 @@ export function AccessibilityWidget() {
               exit={{ x: 300, opacity: 0.4 }}
               transition={{ type: 'spring', stiffness: 360, damping: 32 }}
               role="dialog"
+              aria-modal="true"
               aria-label={language === 'bn' ? 'এক্সেসিবিলিটি প্যানেল' : 'Accessibility Controls'}
               className="w-72 bg-white rounded-l-2xl shadow-2xl border border-r-0 border-[#E2E8F0] overflow-hidden"
             >
@@ -281,7 +275,7 @@ export function AccessibilityWidget() {
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label={language === 'bn' ? 'বন্ধ করুন' : 'Close accessibility panel'}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                  className="min-h-[44px] min-w-[44px] rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>

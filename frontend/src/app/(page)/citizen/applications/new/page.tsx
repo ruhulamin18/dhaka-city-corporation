@@ -253,39 +253,42 @@ export default function NewApplicationPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="applicant-name" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'আবেদনকারীর পূর্ণ নাম *' : 'Applicant Full Name *'}
                 </label>
                 <input
+                  id="applicant-name"
                   type="text"
                   value={applicantName}
                   onChange={(e) => setApplicantName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="applicant-phone" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'যোগাযোগ মোবাইল নম্বর *' : 'Contact Mobile Number *'}
                 </label>
                 <input
+                  id="applicant-phone"
                   type="tel"
                   value={applicantPhone}
                   onChange={(e) => setApplicantPhone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="applicant-ward" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'ওয়ার্ড নম্বর *' : 'Ward Number *'}
                 </label>
                 <select
+                  id="applicant-ward"
                   value={wardNumber}
                   onChange={(e) => setWardNumber(Number(e.target.value))}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                 >
                   {Array.from({ length: 54 }, (_, i) => i + 1).map((w) => (
                     <option key={w} value={w}>
@@ -296,14 +299,15 @@ export default function NewApplicationPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="property-address" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'সম্পত্তি বা প্রতিষ্ঠানের ঠিকানা *' : 'Property / Establishment Address *'}
                 </label>
                 <input
+                  id="property-address"
                   type="text"
                   value={propertyAddress}
                   onChange={(e) => setPropertyAddress(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                   required
                 />
               </div>
@@ -316,7 +320,7 @@ export default function NewApplicationPage() {
                   id="application-payment-method"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                 >
                   <option value="bkash">bKash</option>
                   <option value="nagad">Nagad</option>
@@ -326,10 +330,11 @@ export default function NewApplicationPage() {
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="additional-notes" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'বিশেষ মন্তব্য বা আবেদন বিবরণী' : 'Additional Notes / Case Specifics'}
                 </label>
                 <textarea
+                  id="additional-notes"
                   rows={2}
                   value={additionalNotes}
                   onChange={(e) => setAdditionalNotes(e.target.value)}
@@ -340,7 +345,7 @@ export default function NewApplicationPage() {
             </div>
 
             {/* Declaration */}
-            <div className="pt-2">
+            <div className="pt-4 mt-2 border-t border-slate-100">
               <label className="flex items-start gap-2 text-xs text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"

@@ -57,6 +57,7 @@ function CitizenLoginForm() {
   const [demoNotice, setDemoNotice] = useState(false);
   const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
   const demoMenuRef = useRef<HTMLDivElement>(null);
+  const isRedirectingRef = useRef(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,7 +74,9 @@ function CitizenLoginForm() {
 
   // Redirect if already authenticated
   useEffect(() => {
+    if (isRedirectingRef.current) return;
     if (isAuthenticated && user) {
+      isRedirectingRef.current = true;
       if (redirectParam && isRedirectAllowedForRole(redirectParam, user.role)) {
         router.replace(redirectParam);
       } else {
@@ -116,7 +119,6 @@ function CitizenLoginForm() {
           ? 'সঠিক ১১ ডিজিটের বাংলাদেশি মোবাইল নম্বর লিখুন (যেমন: 017XXXXXXXX)।'
           : 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 017XXXXXXXX).'
       );
-      triggerCodeRegeneration();
       return;
     }
 
@@ -125,7 +127,6 @@ function CitizenLoginForm() {
       setFormError(
         language === 'bn' ? 'অনুগ্রহ করে পাসওয়ার্ড লিখুন।' : 'Please enter your password.'
       );
-      triggerCodeRegeneration();
       return;
     }
 
@@ -151,19 +152,30 @@ function CitizenLoginForm() {
             : res.errorEn || 'Authentication failed.'
         );
         triggerCodeRegeneration();
+        setSubmitting(false);
         return;
       }
 
+      isRedirectingRef.current = true;
       const target =
         redirectParam && isRedirectAllowedForRole(redirectParam, res.user.role)
           ? redirectParam
           : getDashboardPathForRole(res.user.role);
       showPreloader('citizen');
       router.replace(target);
-    } finally {
+    } catch {
+      setFormError(
+        language === 'bn'
+          ? 'লগইন সম্পন্ন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।'
+          : 'Unable to sign in right now. Please try again.'
+      );
       setSubmitting(false);
     }
   };
+
+  if (isAuthenticated && user) {
+    return null;
+  }
 
   return (
     <div className="w-full max-w-md mx-auto animate-in fade-in slide-in-from-bottom-3 duration-300">
@@ -278,7 +290,7 @@ function CitizenLoginForm() {
               </div>
             </div>
 
-            {/* 6-Digit Security Code (Captcha) */}
+            {/* 4-Digit Security Code (Captcha) */}
             <div className="pt-1">
               <SecurityCodeField
                 value={enteredCode}

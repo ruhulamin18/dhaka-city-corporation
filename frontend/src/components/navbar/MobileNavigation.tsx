@@ -113,7 +113,7 @@ function MobileMenuAccordion({
                           setOpenSubGroupId(subOpen ? null : col.id)
                         }
                         aria-expanded={subOpen}
-                        className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-xs font-bold text-[#111827] hover:text-[#006A4E] cursor-pointer"
+                        className="w-full min-h-[44px] flex items-center justify-between gap-2 px-3 py-2.5 text-xs font-bold text-[#111827] hover:text-[#006A4E] cursor-pointer"
                       >
                         <span className="flex items-center gap-2 min-w-0">
                           <ColIcon
@@ -143,7 +143,7 @@ function MobileMenuAccordion({
                                 <Link
                                   href={resolveServiceHref(item.href, item.serviceKey)}
                                   onClick={onCloseDrawer}
-                                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium text-[#4B5563] hover:text-[#006A4E] hover:bg-[#ECFDF5] transition-colors"
+                                  className="min-h-[44px] flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] font-medium text-[#4B5563] hover:text-[#006A4E] hover:bg-[#ECFDF5] transition-colors"
                                 >
                                   <Icon
                                     className="w-3.5 h-3.5 text-[#006A4E]/80 shrink-0"
@@ -185,7 +185,7 @@ function MobileMenuAccordion({
                   const resolvedHref = resolveServiceHref(item.href, item.serviceKey);
                   const isItemActive = !item.action && pathname === resolvedHref;
 
-                  const cls = `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-colors text-left ${
+                  const cls = `w-full min-h-[44px] flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] transition-colors text-left ${
                     isCrimson
                       ? 'font-medium text-[#C81E1E] hover:bg-[#FEF2F2]'
                       : isItemActive

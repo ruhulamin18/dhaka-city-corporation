@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
+  AlertCircle,
   ArrowRight,
   Camera,
   CheckCircle2,
@@ -64,6 +65,7 @@ function ComplaintsContent() {
   }>({ x: 38, y: 52, lat: 23.7461, lng: 90.3742 });
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   // Tracker State
   const [trackId, setTrackId] = useState(trackParam || 'CMP-2026-8492');
@@ -139,8 +141,16 @@ function ComplaintsContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setSubmitError(
+        language === 'bn'
+          ? 'অনুগ্রহ করে সমস্যার একটি সংক্ষিপ্ত শিরোনাম লিখুন। আপনার বাকি তথ্য অক্ষুণ্ণ রয়েছে।'
+          : 'Please enter a short issue headline. Your other entered details have been preserved.'
+      );
+      return;
+    }
     setSubmitting(true);
+    setSubmitError('');
     try {
       const created = await mockApi.submitComplaint({
         citizenName,
@@ -161,6 +171,14 @@ function ComplaintsContent() {
       setTitle('');
       setDescription('');
       setPhotoPreview('');
+    } catch (err: unknown) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : language === 'bn'
+            ? 'অভিযোগটি জমা দেওয়া যায়নি। আপনার লেখা তথ্য ও ছবি অক্ষুণ্ণ রয়েছে—অনুগ্রহ করে আবার চেষ্টা করুন।'
+            : 'Unable to submit your complaint right now. Your details and photo are preserved—please try again.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -313,41 +331,44 @@ function ComplaintsContent() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="complaint-citizen-name" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'অভিযোগকারীর নাম' : 'Your Name'}
                 </label>
                 <input
+                  id="complaint-citizen-name"
                   type="text"
                   required
                   value={citizenName}
                   onChange={(e) => setCitizenName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="w-full min-h-[44px] px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="complaint-phone" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'মোবাইল নম্বর' : 'Mobile Number'}
                 </label>
                 <input
-                  type="text"
+                  id="complaint-phone"
+                  type="tel"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3 py-2 text-sm font-mono border border-slate-300 rounded-lg"
+                  className="w-full min-h-[44px] px-3 py-2 text-sm font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="complaint-category" className="block text-xs font-semibold text-slate-700 mb-1">
                   {language === 'bn' ? 'সমস্যার ধরন' : 'Issue Category'}
                 </label>
                 <select
+                  id="complaint-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value as ComplaintCategory)}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="w-full min-h-[44px] px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                 >
                   {(
                     ['road_damage', 'drainage', 'waste', 'street_light', 'mosquito', 'other'] as ComplaintCategory[]
@@ -360,13 +381,14 @@ function ComplaintsContent() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="complaint-ward" className="block text-xs font-semibold text-slate-700 mb-1">
                   {t.common.ward}
                 </label>
                 <select
+                  id="complaint-ward"
                   value={wardNumber}
                   onChange={(e) => setWardNumber(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="w-full min-h-[44px] px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
                 >
                   {wards.map((w) => (
                     <option key={w.wardNumber} value={w.wardNumber}>
@@ -378,28 +400,33 @@ function ComplaintsContent() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="complaint-title" className="block text-xs font-semibold text-slate-700 mb-1">
                 {language === 'bn' ? 'সমস্যার সংক্ষিপ্ত শিরোনাম' : 'Issue Headline'}
               </label>
               <input
+                id="complaint-title"
                 type="text"
                 required
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (submitError) setSubmitError('');
+                }}
                 placeholder={
                   language === 'bn'
                     ? 'যেমন: মিরপুর ১০ নম্বর মেইন রোডে বড় গর্ত'
                     : 'e.g. Broken storm drain cover near School Gate'
                 }
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                className="w-full min-h-[44px] px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="complaint-description" className="block text-xs font-semibold text-slate-700 mb-1">
                 {language === 'bn' ? 'বিস্তারিত বিবরণ' : 'Detailed Description'}
               </label>
               <textarea
+                id="complaint-description"
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -408,25 +435,30 @@ function ComplaintsContent() {
                     ? 'সমস্যার অবস্থান ও বিস্তারিত লিখুন...'
                     : 'Describe exact landmark and severity...'
                 }
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
               />
             </div>
 
-            {/* Live AI Auto-Routing Preview */}
+            {/* Simulated Rule-Based Auto-Routing Preview */}
             <div className="bg-[#ECFDF5] border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
               <div className="w-9 h-9 rounded-lg bg-[#006A4E] text-white flex items-center justify-center shrink-0">
-                <Cpu className="w-4 h-4" />
+                <Cpu className="w-4 h-4" aria-hidden="true" />
               </div>
               <div className="text-xs space-y-1">
                 <p className="font-bold text-[#111827]">{t.complaintsPage.autoRouteLabel}</p>
                 <p className="text-[#4B5563]">
-                  Assigned Department:{' '}
+                  {language === 'bn' ? 'প্রস্তাবিত বিভাগ:' : 'Suggested Department:'}{' '}
                   <strong className="text-[#006A4E]">
                     {language === 'bn' ? aiRoute.departmentBn : aiRoute.departmentEn}
                   </strong>
                 </p>
                 <p className="text-[#4B5563] tabular-nums">
                   Target SLA: {aiRoute.slaHours}h · Priority: {aiRoute.priority.toUpperCase()}
+                </p>
+                <p className="text-[11px] text-slate-600 pt-0.5">
+                  {language === 'bn'
+                    ? 'নোট: এটি নিয়ম-ভিত্তিক স্বয়ংক্রিয় নির্দেশনা। সঠিক বিভাগ নিশ্চিত করতে প্রয়োজনে উপরের "সমস্যার ধরন" পরিবর্তন করুন।'
+                    : 'Note: Rule-based routing preview. If unsure, adjust "Issue Category" above or choose "Other".'}
                 </p>
               </div>
             </div>
@@ -467,10 +499,20 @@ function ComplaintsContent() {
               )}
             </div>
 
+            {submitError && (
+              <div
+                role="alert"
+                className="flex items-start gap-2.5 rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800"
+              >
+                <AlertCircle className="w-4 h-4 text-[#C81E1E] shrink-0 mt-0.5" aria-hidden="true" />
+                <span>{submitError}</span>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 bg-[#006A4E] hover:bg-[#00523C] text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+              className="w-full min-h-[44px] py-3 bg-[#006A4E] hover:bg-[#00523C] disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
             >
               {submitting ? t.common.loading : t.complaintsPage.submitButton}
             </button>

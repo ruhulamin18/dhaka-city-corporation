@@ -143,7 +143,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setLanguage(language === 'bn' ? 'en' : 'bn')}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#CBD5E1] bg-slate-50 hover:bg-[#ECFDF5] hover:border-[#006A4E] text-xs font-bold text-[#111827] hover:text-[#006A4E] transition-all cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-[#006A4E]"
+              className="inline-flex items-center gap-1.5 min-h-[44px] sm:min-h-[38px] px-3 py-1.5 rounded-lg border border-[#CBD5E1] bg-slate-50 hover:bg-[#ECFDF5] hover:border-[#006A4E] text-xs font-bold text-[#111827] hover:text-[#006A4E] transition-all cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-[#006A4E]"
               title={
                 language === 'bn'
                   ? 'ইংরেজিতে পরিবর্তন করুন (Switch to English)'
@@ -176,7 +176,7 @@ export function Navbar() {
                   ? 'নেভিগেশন মেনু খুলুন'
                   : 'Toggle navigation menu'
               }
-              className="md:hidden inline-flex items-center gap-1.5 p-2 rounded-lg border border-[#E2E8F0] text-[#111827] hover:bg-[#ECFDF5] hover:text-[#006A4E] hover:border-emerald-200 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E]"
+              className="md:hidden inline-flex items-center justify-center min-h-[44px] min-w-[44px] gap-1.5 p-2 rounded-lg border border-[#E2E8F0] text-[#111827] hover:bg-[#ECFDF5] hover:text-[#006A4E] hover:border-emerald-200 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006A4E]"
             >
               {mobileOpen ? (
                 <X className="w-5 h-5" aria-hidden="true" />

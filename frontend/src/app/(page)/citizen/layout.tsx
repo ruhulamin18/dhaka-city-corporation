@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 
 interface CitizenNavItem {
   href: string;
@@ -50,20 +51,22 @@ export default function CitizenPortalLayout({
   children: React.ReactNode;
 }) {
   const { language, setLanguage } = useApp();
-  const { user, isAuthenticated, isInitialized, logout } = useAuth();
+  const { user, isAuthenticated, isInitialized, isLoggingOut, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const mobileProfileMenuRef = useRef<HTMLDivElement>(null);
   const desktopProfileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (isLoggingOut) return;
     if (isInitialized && (!isAuthenticated || user?.role !== 'citizen')) {
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [isInitialized, isAuthenticated, user, router, pathname]);
+  }, [isInitialized, isAuthenticated, isLoggingOut, user, router, pathname]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -107,6 +110,14 @@ export default function CitizenPortalLayout({
     });
   }, [pathname]);
 
+  if (isLoggingOut) {
+    return null;
+  }
+
+  if (isLoggingOut) {
+    return null;
+  }
+
   if (!isInitialized || !isAuthenticated || user?.role !== 'citizen') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -125,12 +136,11 @@ export default function CitizenPortalLayout({
     : user?.nameEn || 'Citizen';
   const citizenWard = user?.wardNumber || 27;
   const handleLogout = () => {
-    const confirmed = window.confirm(
-      language === 'bn'
-        ? 'আপনি কি নাগরিক পোর্টাল থেকে লগআউট করতে চান?'
-        : 'Are you sure you want to log out of the Citizen Portal?'
-    );
-    if (!confirmed) return;
+    setLogoutConfirmOpen(true);
+  };
+
+  const confirmLogout = () => {
+    setLogoutConfirmOpen(false);
     setProfileMenuOpen(false);
     setMobileOpen(false);
     logout();
@@ -574,6 +584,20 @@ export default function CitizenPortalLayout({
         {/* Subpage Content View */}
         <main className="p-4 sm:p-6 lg:p-8 flex-1">{children}</main>
       </div>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        title={language === 'bn' ? 'লগআউট নিশ্চিত করুন' : 'Confirm Log Out'}
+        description={
+          language === 'bn'
+            ? 'আপনি কি নাগরিক পোর্টাল থেকে লগআউট করতে চান?'
+            : 'Are you sure you want to log out of the Citizen Portal?'
+        }
+        confirmLabel={language === 'bn' ? 'হ্যাঁ, লগআউট' : 'Log Out'}
+        cancelLabel={language === 'bn' ? 'বাতিল' : 'Cancel'}
+        onConfirm={confirmLogout}
+        onCancel={() => setLogoutConfirmOpen(false)}
+      />
     </div>
   );
 }

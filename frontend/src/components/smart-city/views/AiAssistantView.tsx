@@ -92,6 +92,22 @@ export function AiAssistantView() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, botMsg]);
+    } catch {
+      seqRef.current += 1;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `b-${seqRef.current}`,
+          sender: 'bot',
+          text:
+            language === 'bn'
+              ? 'দুঃখিত, এই মুহূর্তে এআই সহায়কের উত্তর পাওয়া যায়নি। নাগরিক সেবা নির্দেশিকা দেখুন অথবা ১৬১০৬ হেল্পলাইনে যোগাযোগ করুন।'
+              : 'Sorry, the AI assistant could not process your request right now. Please check Citizen Services or call 16106 for assistance.',
+          actionHref: '/citizen-services',
+          actionLabel: language === 'bn' ? 'নাগরিক সেবা নির্দেশিকা' : 'Open Citizen Services',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
     } finally {
       setLoading(false);
       setTimeout(() => {
@@ -134,7 +150,11 @@ export function AiAssistantView() {
         </div>
 
         {/* Messages Scroll Area */}
-        <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+        <div
+          aria-live="polite"
+          aria-relevant="additions"
+          className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/50"
+        >
           {messages.map((msg) => {
             const isBot = msg.sender === 'bot';
             return (
@@ -204,7 +224,7 @@ export function AiAssistantView() {
               key={i}
               type="button"
               onClick={() => handleSendQuery(language === 'bn' ? p.bn : p.en)}
-              className="px-3 py-1 rounded-full text-xs bg-slate-100 hover:bg-[#ECFDF5] hover:text-[#006A4E] text-[#111827] transition-colors whitespace-nowrap border border-slate-200/80 shrink-0 cursor-pointer"
+              className="min-h-[44px] sm:min-h-[36px] px-3.5 py-1.5 rounded-full text-xs bg-slate-100 hover:bg-[#ECFDF5] hover:text-[#006A4E] text-[#111827] transition-colors whitespace-nowrap border border-slate-200/80 shrink-0 cursor-pointer"
             >
               {language === 'bn' ? p.bn : p.en}
             </button>

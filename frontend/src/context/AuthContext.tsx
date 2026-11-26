@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { getDashboardPathForRole, mockApi } from '@/services/mockApi';
 import { usePreloader } from '@/context/PreloaderContext';
 import {
@@ -16,6 +16,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isInitialized: boolean;
+  isLoggingOut: boolean;
   loginCitizen: (phone: string, password: string) => Promise<AuthResponse>;
   loginOfficial: (
     identifier: string,
@@ -34,9 +35,11 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { showPreloader } = usePreloader();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -48,7 +51,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  useEffect(() => {
+    if (isLoggingOut && pathname === '/') {
+      queueMicrotask(() => setIsLoggingOut(false));
+    }
+  }, [isLoggingOut, pathname]);
+
   const loginCitizen = async (phone: string, password: string): Promise<AuthResponse> => {
+    setIsLoggingOut(false);
     const res = await mockApi.loginCitizen(phone, password);
     if (res.success && res.user) {
       setUser(res.user);
@@ -61,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     role: OfficialRole
   ): Promise<AuthResponse> => {
+    setIsLoggingOut(false);
     const res = await mockApi.loginOfficial(identifier, password, role);
     if (res.success && res.user) {
       setUser(res.user);
@@ -71,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const registerCitizen = async (
     payload: CitizenRegistrationPayload
   ): Promise<AuthResponse> => {
+    setIsLoggingOut(false);
     const res = await mockApi.registerCitizen(payload);
     if (res.success && res.user) {
       setUser(res.user);
@@ -89,10 +101,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    setIsLoggingOut(true);
     showPreloader('logout');
     mockApi.clearSession();
     setUser(null);
-    router.push('/');
+    router.replace('/');
   };
 
   const getDashboardPath = (role?: AuthRole) => {
@@ -103,6 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     isAuthenticated: Boolean(user),
     isInitialized,
+    isLoggingOut,
     loginCitizen,
     loginOfficial,
     registerCitizen,

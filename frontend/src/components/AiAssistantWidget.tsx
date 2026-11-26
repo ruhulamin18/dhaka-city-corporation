@@ -3,8 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowRight, ArrowUp, MessageSquareText, Send, X } from 'lucide-react';
+import { AlertCircle, ArrowRight, ArrowUp, MessageSquareText, Send, X } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { useDialogA11y } from '@/hooks/useDialogA11y';
 import { mockApi } from '@/services/mockApi';
 
 interface ChatMessage {
@@ -25,6 +26,8 @@ export function AiAssistantWidget() {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const seqRef = useRef(0);
+
+  useDialogA11y(open, () => setOpen(false));
 
   useEffect(() => {
     const onScroll = () => {
@@ -90,6 +93,21 @@ export function AiAssistantWidget() {
         actionLabel: reply.actionLabel,
       };
       setMessages((prev) => [...prev, botMsg]);
+    } catch {
+      seqRef.current += 1;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `b-${seqRef.current}`,
+          sender: 'bot',
+          text:
+            language === 'bn'
+              ? 'দুঃখিত, এই মুহূর্তে স্বয়ংক্রিয় সহায়তা পাওয়া যাচ্ছে না। নাগরিক সেবা নির্দেশিকা দেখুন অথবা হেল্পলাইন ১৬১০৬-এ কল করুন।'
+              : 'Sorry, automated guidance is temporarily unavailable. Please browse the Citizen Services directory or call Helpline 16106.',
+          actionHref: '/citizen-services',
+          actionLabel: language === 'bn' ? 'নাগরিক সেবা নির্দেশিকা' : 'Browse Citizen Services',
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -104,10 +122,13 @@ export function AiAssistantWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.96 }}
             transition={{ duration: 0.18 }}
-            className="mb-1 w-[340px] sm:w-[380px] bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[520px]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.assistant.title}
+            className="mb-1 w-[340px] sm:w-[380px] bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[540px]"
           >
             {/* Header */}
-            <div className="bg-[#006A4E] text-white px-4 py-3.5 flex items-center justify-between">
+            <div className="bg-[#006A4E] text-white px-4 py-3 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold">{t.assistant.title}</h3>
                 <p className="text-[11px] text-emerald-100">{t.assistant.subtitle}</p>
@@ -115,15 +136,29 @@ export function AiAssistantWidget() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="p-1.5 rounded-lg text-emerald-100 hover:text-white hover:bg-white/10 cursor-pointer"
+                className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-lg text-emerald-100 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
                 aria-label={t.common.close}
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
+            {/* Simulated AI Transparency Disclosure */}
+            <div className="px-4 py-2 bg-[#ECFDF5] border-b border-emerald-200/80 text-[11px] text-[#006A4E] flex items-center gap-2">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span>
+                {language === 'bn'
+                  ? 'সিটিজেন চার্টার-ভিত্তিক স্বয়ংক্রিয় সহায়তা · জরুরি প্রয়োজনে ১৬১০৬'
+                  : 'Simulated charter guidance · Call 16106 for live support'}
+              </span>
+            </div>
+
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8FAFC]">
+            <div
+              aria-live="polite"
+              aria-relevant="additions"
+              className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8FAFC]"
+            >
               {activeMessages.map((msg) => (
                 <div
                   key={msg.id}
@@ -158,13 +193,13 @@ export function AiAssistantWidget() {
             </div>
 
             {/* Quick Suggestion Chips */}
-            <div className="px-3 py-2 bg-white border-t border-[#E2E8F0] flex flex-wrap gap-1.5">
+            <div className="px-3.5 py-2.5 bg-white border-t border-[#E2E8F0] flex flex-wrap gap-2">
               {t.assistant.suggestions.map((chip) => (
                 <button
                   key={chip}
                   type="button"
                   onClick={() => sendQuery(chip)}
-                  className="text-[11px] px-2.5 py-1 rounded-md bg-[#F8FAFC] hover:bg-[#ECFDF5] text-[#4B5563] hover:text-[#006A4E] border border-[#E2E8F0] transition-colors cursor-pointer text-left"
+                  className="min-h-[36px] text-[11px] px-3 py-1.5 rounded-lg bg-[#F8FAFC] hover:bg-[#ECFDF5] text-[#4B5563] hover:text-[#006A4E] border border-[#E2E8F0] transition-colors cursor-pointer text-left"
                 >
                   {chip}
                 </button>
@@ -183,16 +218,17 @@ export function AiAssistantWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                aria-label={t.assistant.placeholder}
                 placeholder={t.assistant.placeholder}
-                className="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
+                className="flex-1 min-h-[44px] text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="p-2 bg-[#006A4E] hover:bg-[#00523C] disabled:opacity-50 text-white rounded-lg transition-colors cursor-pointer"
-                aria-label="Send message"
+                className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 bg-[#006A4E] hover:bg-[#00523C] disabled:opacity-50 text-white rounded-lg transition-colors cursor-pointer"
+                aria-label={language === 'bn' ? 'বার্তা পাঠান' : 'Send message'}
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" aria-hidden="true" />
               </button>
             </form>
           </motion.div>

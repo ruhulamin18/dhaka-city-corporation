@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 
 interface AdminNavItem {
   href: string;
@@ -47,12 +48,13 @@ export default function AdminPortalLayout({
   children: React.ReactNode;
 }) {
   const { language, setLanguage } = useApp();
-  const { user, isAuthenticated, isInitialized, logout } = useAuth();
+  const { user, isAuthenticated, isInitialized, isLoggingOut, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const isLoginPage = Boolean(pathname && pathname.startsWith('/admin/login'));
@@ -80,14 +82,18 @@ export default function AdminPortalLayout({
   }, [profileMenuOpen]);
 
   useEffect(() => {
-    if (isLoginPage) return;
+    if (isLoginPage || isLoggingOut) return;
     if (isInitialized && (!isAuthenticated || user?.role === 'citizen')) {
       router.replace(`/admin/login?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [isInitialized, isAuthenticated, user, router, pathname, isLoginPage]);
+  }, [isInitialized, isAuthenticated, isLoggingOut, user, router, pathname, isLoginPage]);
 
   if (isLoginPage) {
     return <>{children}</>;
+  }
+
+  if (isLoggingOut) {
+    return null;
   }
 
   if (!isInitialized || !isAuthenticated || user?.role === 'citizen') {
@@ -111,16 +117,14 @@ export default function AdminPortalLayout({
       : { bn: 'বিভাগীয় কর্মকর্তা (রাজস্ব ও প্রকৌশল)', en: 'Department Officer (Revenue & Eng.)' };
 
   const handleLogout = () => {
-    const confirmed = window.confirm(
-      language === 'bn'
-        ? 'আপনি কি প্রশাসনিক পোর্টাল থেকে লগআউট করতে চান?'
-        : 'Are you sure you want to log out of the Admin Portal?'
-    );
-    if (!confirmed) return;
+    setLogoutConfirmOpen(true);
+  };
+
+  const confirmLogout = () => {
+    setLogoutConfirmOpen(false);
     setProfileMenuOpen(false);
     setMobileOpen(false);
     logout();
-    router.push('/admin/login');
   };
 
   const ADMIN_SECTIONS: AdminNavSection[] = [
@@ -517,6 +521,20 @@ export default function AdminPortalLayout({
           <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        title={language === 'bn' ? 'লগআউট নিশ্চিত করুন' : 'Confirm Log Out'}
+        description={
+          language === 'bn'
+            ? 'আপনি কি প্রশাসনিক পোর্টাল থেকে লগআউট করতে চান?'
+            : 'Are you sure you want to log out of the Admin Portal?'
+        }
+        confirmLabel={language === 'bn' ? 'হ্যাঁ, লগআউট' : 'Log Out'}
+        cancelLabel={language === 'bn' ? 'বাতিল' : 'Cancel'}
+        onConfirm={confirmLogout}
+        onCancel={() => setLogoutConfirmOpen(false)}
+      />
     </div>
   );
 }

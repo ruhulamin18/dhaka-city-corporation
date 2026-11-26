@@ -12,8 +12,8 @@ interface SecurityCodeFieldProps {
   error?: string;
 }
 
-export function generateRandomSixDigitCode(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
+export function generateRandomFourDigitCode(): string {
+  return String(Math.floor(1000 + Math.random() * 9000));
 }
 
 export function SecurityCodeField({
@@ -30,7 +30,7 @@ export function SecurityCodeField({
   // SSR/Hydration safe: only generate random code strictly inside useEffect on mount or refreshNonce updates
   useEffect(() => {
     queueMicrotask(() => {
-      const next = generateRandomSixDigitCode();
+      const next = generateRandomFourDigitCode();
       setCode(next);
       onCodeChange(next);
     });
@@ -38,7 +38,7 @@ export function SecurityCodeField({
 
   const handleManualRefresh = () => {
     setIsSpinning(true);
-    const next = generateRandomSixDigitCode();
+    const next = generateRandomFourDigitCode();
     setCode(next);
     onCodeChange(next);
     onChange('');
@@ -57,8 +57,8 @@ export function SecurityCodeField({
           <ShieldCheck className="w-3.5 h-3.5 text-[#006A4E]" aria-hidden="true" />
           <span>
             {language === 'bn'
-              ? '৬ ডিজিটের নিরাপত্তা কোডটি লিখুন'
-              : 'Enter 6-Digit Security Code'}
+              ? '৪ ডিজিটের নিরাপত্তা কোডটি লিখুন'
+              : 'Enter 4-Digit Security Code'}
           </span>
         </label>
         <span className="text-[11px] text-[#4B5563]">
@@ -97,7 +97,7 @@ export function SecurityCodeField({
           </svg>
 
           <span className="relative z-10 font-mono text-xl font-bold tracking-[0.38em] text-[#006A4E] pl-[0.38em] tabular-nums select-none">
-            {code || '••••••'}
+            {code || '••••'}
           </span>
         </div>
 
@@ -123,10 +123,10 @@ export function SecurityCodeField({
         type="text"
         inputMode="numeric"
         autoComplete="off"
-        maxLength={6}
+        maxLength={4}
         value={value}
-        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
-        placeholder={language === 'bn' ? 'উপরের ৬ ডিজিটের কোডটি লিখুন' : 'Enter the 6 digits shown above'}
+        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 4))}
+        placeholder={language === 'bn' ? 'উপরের ৪ ডিজিটের কোডটি লিখুন' : 'Enter the 4 digits shown above'}
         className={`w-full px-3.5 py-2.5 text-sm font-mono tracking-[0.25em] border rounded-xl focus:outline-none focus:ring-2 tabular-nums transition-all ${
           error
             ? 'border-[#C81E1E] bg-[#FEF2F2]/60 focus:ring-[#C81E1E]'

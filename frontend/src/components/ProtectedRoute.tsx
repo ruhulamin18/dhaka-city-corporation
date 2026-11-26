@@ -23,11 +23,11 @@ const ROLE_LABELS: Record<AuthRole, { en: string; bn: string }> = {
 export function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, isInitialized, getDashboardPath } = useAuth();
+  const { user, isAuthenticated, isInitialized, isLoggingOut, getDashboardPath } = useAuth();
   const { language } = useApp();
 
   useEffect(() => {
-    if (!isInitialized) return;
+    if (!isInitialized || isLoggingOut) return;
     if (!isAuthenticated) {
       const fullPath =
         typeof window !== 'undefined'
@@ -35,7 +35,11 @@ export function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) 
           : pathname;
       router.replace(`/login?redirect=${encodeURIComponent(fullPath)}`);
     }
-  }, [isInitialized, isAuthenticated, pathname, router]);
+  }, [isInitialized, isAuthenticated, isLoggingOut, pathname, router]);
+
+  if (isLoggingOut) {
+    return null;
+  }
 
   if (!isInitialized) {
     return (

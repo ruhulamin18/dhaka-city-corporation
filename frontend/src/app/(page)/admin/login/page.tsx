@@ -117,6 +117,7 @@ function AdminLoginForm() {
   // Demo menu popover
   const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
   const demoMenuRef = useRef<HTMLDivElement>(null);
+  const isRedirectingRef = useRef(false);
   const visibleOfficialProfiles = OFFICIAL_PROFILES.filter(
     (profile) => profile.key === selectedRoleKey
   );
@@ -138,7 +139,9 @@ function AdminLoginForm() {
 
   // Redirect if already authenticated as official/admin
   useEffect(() => {
+    if (isRedirectingRef.current) return;
     if (isAuthenticated && user && (user.role === 'admin' || user.role === 'officer')) {
+      isRedirectingRef.current = true;
       if (redirectParam && isRedirectAllowedForRole(redirectParam, user.role)) {
         router.replace(redirectParam);
       } else {
@@ -194,7 +197,6 @@ function AdminLoginForm() {
           ? 'অনুগ্রহ করে অফিশিয়াল এমপ্লয়ি আইডি অথবা প্রাতিষ্ঠানিক ইমেইল লিখুন।'
           : 'Please enter your Official Employee ID or municipal email.'
       );
-      triggerCodeRegeneration();
       return;
     }
 
@@ -203,7 +205,6 @@ function AdminLoginForm() {
       setFormError(
         language === 'bn' ? 'অনুগ্রহ করে পাসওয়ার্ড লিখুন।' : 'Please enter your password.'
       );
-      triggerCodeRegeneration();
       return;
     }
 
@@ -231,19 +232,30 @@ function AdminLoginForm() {
             : res.errorEn || 'Administrative authentication failed. Please verify credentials.'
         );
         triggerCodeRegeneration();
+        setSubmitting(false);
         return;
       }
 
+      isRedirectingRef.current = true;
       const target =
         redirectParam && isRedirectAllowedForRole(redirectParam, res.user.role)
           ? redirectParam
           : getDashboardPathForRole(res.user.role);
       showPreloader('admin');
       router.replace(target);
-    } finally {
+    } catch {
+      setFormError(
+        language === 'bn'
+          ? 'প্রশাসনিক লগইন সম্পন্ন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।'
+          : 'Unable to complete administrative sign-in. Please try again.'
+      );
       setSubmitting(false);
     }
   };
+
+  if (isAuthenticated && user && (user.role === 'admin' || user.role === 'officer')) {
+    return null;
+  }
 
   return (
     <div className="w-full max-w-md mx-auto animate-in fade-in slide-in-from-bottom-3 duration-300">
@@ -404,7 +416,7 @@ function AdminLoginForm() {
               </div>
             </div>
 
-            {/* 6-Digit Security Code (Captcha) */}
+            {/* 4-Digit Security Code (Captcha) */}
             <div className="pt-1">
               <SecurityCodeField
                 value={enteredCode}

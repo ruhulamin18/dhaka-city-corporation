@@ -71,13 +71,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="relative min-h-screen flex flex-col antialiased bg-[#F8FAFC] text-[#111827] selection:bg-[#006A4E]/15 selection:text-[#006A4E]" suppressHydrationWarning>
+        <a href="#main-content" className="civic-skip-link no-print">
+          মূল বিষয়বস্তুতে যান / Skip to main content
+        </a>
         <CivicPortalBackdrop />
         <AppProvider>
           <PreloaderProvider>
             <AuthProvider>
               <GoogleMapsProvider initialApiKey={mapsApiKey}>
                 <Navbar />
-                <main className="relative z-10 flex-1">{children}</main>
+                <main id="main-content" tabIndex={-1} className="relative z-10 flex-1 focus:outline-none">
+                  {children}
+                </main>
                 <CivicSkylineBand />
                 <Footer />
                 <AiAssistantWidget />

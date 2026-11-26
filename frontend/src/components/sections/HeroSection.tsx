@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useReducedMotion } from 'motion/react';
 import { ArrowRight, PlayCircle, Search, X } from 'lucide-react';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useDialogA11y } from '@/hooks/useDialogA11y';
 import { Language, NoticeItem, WardInfo } from '@/types';
 import { HERO_STATS, HOW_IT_WORKS_STEPS, POPULAR_SERVICES } from '@/data/homeData';
 
@@ -35,51 +38,40 @@ const HERO_IMAGES = [
 
 export function HeroSection({ language, wards, notices }: HeroSectionProps) {
   const router = useRouter();
+  const prefersReducedMotion = useReducedMotion();
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 200);
   const [searchFocused, setSearchFocused] = useState(false);
   const [howItWorksOpen, setHowItWorksOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // 5-second auto-transition timer
-  const startTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    timerRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 5000);
-  }, []);
+  const isSliderPaused = Boolean(prefersReducedMotion) || howItWorksOpen;
 
   useEffect(() => {
-    startTimer();
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (isSliderPaused) return;
+    timerRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 4000);
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     };
-  }, [startTimer]);
+  }, [isSliderPaused]);
 
   const handleDotClick = (index: number) => {
     setCurrentSlide(index);
-    startTimer(); // Reset the 5-second timer on manual dot click
   };
 
-  // Close "How It Works" modal on Escape key
-  useEffect(() => {
-    if (!howItWorksOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setHowItWorksOpen(false);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [howItWorksOpen]);
+  useDialogA11y(howItWorksOpen, () => setHowItWorksOpen(false));
 
   const smartSearchResults = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    const q = debouncedSearchQuery.trim().toLowerCase();
     if (!q) return [];
     const results: { id: string; label: string; meta: string; href: string }[] = [];
 
@@ -130,23 +122,23 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
     if (q.startsWith('cmp-')) {
       results.push({
         id: 'track-cmp',
-        label: `Track Complaint ${searchQuery.toUpperCase()}`,
+        label: `Track Complaint ${debouncedSearchQuery.toUpperCase()}`,
         meta: 'Public Status Tracker',
-        href: `/track?id=${encodeURIComponent(searchQuery.toUpperCase())}`,
+        href: `/track?id=${encodeURIComponent(debouncedSearchQuery.toUpperCase())}`,
       });
     }
 
     if (q.startsWith('dscc-')) {
       results.push({
         id: 'verify-dscc',
-        label: `Verify Document ${searchQuery.toUpperCase()}`,
+        label: `Verify Document ${debouncedSearchQuery.toUpperCase()}`,
         meta: 'Public QR Verification',
-        href: `/verify?id=${encodeURIComponent(searchQuery.toUpperCase())}`,
+        href: `/verify?id=${encodeURIComponent(debouncedSearchQuery.toUpperCase())}`,
       });
     }
 
     return results.slice(0, 6);
-  }, [searchQuery, wards, notices, language]);
+  }, [debouncedSearchQuery, wards, notices, language]);
 
   const handleHeroSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -271,8 +263,8 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                     <button
                       type="button"
                       onClick={() => setSearchQuery('')}
-                      className="p-1 mr-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors"
-                      aria-label="Clear search"
+                      className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center mr-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors"
+                      aria-label={language === 'bn' ? 'অনুসন্ধান মুছুন' : 'Clear search'}
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -280,7 +272,7 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
                 </div>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#006A4E] hover:bg-[#00523C] text-white font-medium text-sm rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+                  className="min-h-[44px] px-5 py-2 bg-[#006A4E] hover:bg-[#00523C] text-white font-medium text-sm rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
                 >
                   {language === 'bn' ? 'খুঁজুন' : 'Search'}
                 </button>
@@ -345,12 +337,16 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
               onClick={() => handleDotClick(idx)}
               aria-label={`Go to slide ${idx + 1}`}
               aria-current={idx === currentSlide ? 'true' : undefined}
-              className={`transition-all duration-200 rounded-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                idx === currentSlide
-                  ? 'w-6 h-1.5 bg-emerald-400'
-                  : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-              }`}
-            />
+              className={`min-h-[44px] px-1.5 inline-flex items-center justify-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-full`}
+            >
+              <span
+                className={`block transition-all duration-200 rounded-full ${
+                  idx === currentSlide
+                    ? 'w-6 h-1.5 bg-emerald-400'
+                    : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
+                }`}
+              />
+            </button>
           ))}
         </div>
       </section>
@@ -383,8 +379,8 @@ export function HeroSection({ language, wards, notices }: HeroSectionProps) {
               <button
                 type="button"
                 onClick={() => setHowItWorksOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-white/15 cursor-pointer"
-                aria-label="Close modal"
+                className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-lg hover:bg-white/15 cursor-pointer transition-colors"
+                aria-label={language === 'bn' ? 'মোডাল বন্ধ করুন' : 'Close modal'}
               >
                 <X className="w-5 h-5" aria-hidden="true" />
               </button>

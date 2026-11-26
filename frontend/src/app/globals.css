@@ -37,10 +37,52 @@
     --civic-border: #e2e8f0;
     --civic-heading: #111827;
     --civic-body: #4b5563;
+    --civic-focus-ring: #006a4e;
+    --civic-radius-sm: 0.5rem;
+    --civic-radius-md: 0.75rem;
+    --civic-radius-lg: 1rem;
+    --civic-space-control: 0.625rem;
+    --civic-transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
     --font-inter: var(--font-body);
     --font-bengali: var(--font-bengali);
     --font-heading: var(--font-heading);
     --font-body: var(--font-body);
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [role='button']:focus-visible,
+  [tabindex]:not([tabindex='-1']):focus-visible {
+    outline: 2px solid var(--civic-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .civic-skip-link {
+    position: fixed;
+    top: -100%;
+    left: 1rem;
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.625rem 1rem;
+    border-radius: var(--civic-radius-sm);
+    background-color: var(--civic-primary);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    transition: top var(--civic-transition-fast);
+  }
+
+  .civic-skip-link:focus {
+    top: 1rem;
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
   }
 
   html {
@@ -202,30 +244,54 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
   font-weight: 600;
-  border-radius: 0.5rem;
-  background-color: #006a4e;
+  border-radius: var(--civic-radius-sm);
+  background-color: var(--civic-primary);
   color: #ffffff;
-  transition: background-color 0.15s ease-in-out;
+  transition: background-color var(--civic-transition-fast), transform var(--civic-transition-fast);
 }
-.civic-btn-primary:hover {
-  background-color: #00523c;
+.civic-btn-primary:hover:not(:disabled) {
+  background-color: var(--civic-primary-hover);
+}
+.civic-btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.civic-btn-primary:focus-visible {
+  outline: 2px solid var(--civic-focus-ring);
+  outline-offset: 2px;
+}
+.civic-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .civic-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
   font-weight: 600;
-  border-radius: 0.5rem;
-  background-color: #ffffff;
-  color: #006a4e;
+  border-radius: var(--civic-radius-sm);
+  background-color: var(--civic-surface);
+  color: var(--civic-primary);
   border: 1px solid #cbd5e1;
-  transition: all 0.15s ease-in-out;
+  transition: background-color var(--civic-transition-fast), border-color var(--civic-transition-fast), transform var(--civic-transition-fast);
 }
-.civic-btn-secondary:hover {
+.civic-btn-secondary:hover:not(:disabled) {
   background-color: #f1f5f9;
-  border-color: #006a4e;
+  border-color: var(--civic-primary);
+}
+.civic-btn-secondary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.civic-btn-secondary:focus-visible {
+  outline: 2px solid var(--civic-focus-ring);
+  outline-offset: 2px;
+}
+.civic-btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .civic-badge {

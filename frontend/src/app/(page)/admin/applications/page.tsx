@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
+import { useDebounce } from '@/hooks/useDebounce';
 import { mockApi } from '@/services/mockApi';
 import { ServiceApplication, ApplicationStatus } from '@/types';
 
@@ -32,22 +33,30 @@ export default function AdminApplicationsPage() {
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 200);
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Inspection modal
+  // Inspection modal & error feedback
   const [selectedApp, setSelectedApp] = useState<ServiceApplication | null>(null);
   const [actionRemarks, setActionRemarks] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState('');
+  const [actionError, setActionError] = useState('');
 
   const loadData = async () => {
     setLoading(true);
+    setLoadError('');
     try {
       const apps = await mockApi.getApplications();
       setApplications(apps);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setLoadError(
+        language === 'bn'
+          ? 'আবেদনের তালিকা লোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।'
+          : 'Unable to load applications right now. Please retry.'
+      );
     } finally {
       setLoading(false);
     }
@@ -55,22 +64,35 @@ export default function AdminApplicationsPage() {
 
   useEffect(() => {
     let active = true;
-    mockApi.getApplications().then((apps) => {
-      if (!active) return;
-      setApplications(apps);
-      setLoading(false);
-    });
+    mockApi
+      .getApplications()
+      .then((apps) => {
+        if (!active) return;
+        setApplications(apps);
+        setLoadError('');
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setLoadError(
+          language === 'bn'
+            ? 'আবেদনের তালিকা লোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।'
+            : 'Unable to load applications right now. Please retry.'
+        );
+        setLoading(false);
+      });
     return () => {
       active = false;
     };
-  }, []);
+  }, [language]);
 
   const filteredApps = applications.filter((app) => {
+    const q = debouncedSearchQuery.toLowerCase();
     const matchesSearch =
-      app.referenceId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.applicantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.nid.includes(searchQuery) ||
-      (app.businessName && app.businessName.toLowerCase().includes(searchQuery.toLowerCase()));
+      app.referenceId.toLowerCase().includes(q) ||
+      app.applicantName.toLowerCase().includes(q) ||
+      app.nid.includes(debouncedSearchQuery) ||
+      (app.businessName && app.businessName.toLowerCase().includes(q));
 
     const matchesType = typeFilter === 'all' || app.type === typeFilter;
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
@@ -81,6 +103,8 @@ export default function AdminApplicationsPage() {
   const handleUpdateStatus = async (status: ApplicationStatus) => {
     if (!selectedApp) return;
     setIsUpdating(true);
+    setActionError('');
+    setActionSuccess(null);
     try {
       const reviewer = user?.nameEn || 'Authorized Scrutiny Officer';
       const updated = await mockApi.updateApplicationStatus(selectedApp.id, status, reviewer);
@@ -93,8 +117,12 @@ export default function AdminApplicationsPage() {
             : `Application updated to ${status}`
         );
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setActionError(
+        language === 'bn'
+          ? 'আবেদনের অবস্থা পরিবর্তন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।'
+          : 'Unable to update application status. Please try again.'
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -184,6 +212,27 @@ export default function AdminApplicationsPage() {
           <strong className="text-slate-800">{filteredApps.length}</strong>
         </div>
       </div>
+
+      {(loadError || actionError) && (
+        <div
+          role="alert"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800"
+        >
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-[#C81E1E] shrink-0" aria-hidden="true" />
+            <span>{loadError || actionError}</span>
+          </div>
+          {loadError && (
+            <button
+              type="button"
+              onClick={loadData}
+              className="min-h-[44px] px-3 py-1.5 rounded-lg bg-white border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-900 cursor-pointer transition-colors"
+            >
+              {language === 'bn' ? 'আবার চেষ্টা করুন' : 'Retry'}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Applications Table */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

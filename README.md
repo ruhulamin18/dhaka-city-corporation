@@ -2,148 +2,168 @@
 
 ## Digital Citizen Service Platform
 
-A bilingual (**বাংলা / English**) civic technology web application for exploring municipal services, submitting and tracking requests, and accessing city information. The application is built with Next.js App Router and includes public pages, citizen and administrative workspaces, GIS features, and a browser-backed demonstration data layer.
+A bilingual (**বাংলা / English**, defaulting to Bangla) civic-technology web platform for the **Dhaka Smart City Corporation (DSCC)**. Built with Next.js 15 App Router, React 19, TypeScript, and Tailwind CSS v4, the platform unifies public municipal information, online citizen e-services, geo-tagged grievance reporting, QR certificate verification, interactive GIS city mapping, and role-based administrative command operations.
 
-> **Project status:** This repository currently provides a front-end demonstration. Authentication and most civic workflows use seeded or browser-local data; they are not connected to a production municipal backend.
+> **Project Status:** This repository provides a full-featured front-end application backed by a browser-persisted demonstration data layer (`localStorage` and `IndexedDB`). It is not yet connected to a live production municipal backend.
 
-## Features
+---
 
-- **Bilingual experience:** Bengali and English interface, with language preference saved in the browser.
-- **Municipal service directory:** Searchable service catalog across registration and certificates, business licensing, tax and revenue, and infrastructure and public services.
-- **Citizen workspace:** Applications, certificates, service requests, photo-based civic reports, tracking, notifications, profile, settings, and support.
-- **Official workspaces:** Administrative and officer tools for reviewing applications, complaints, citizens, payments, services, wards, reports, fees, and audit records; a field-staff dashboard is also available.
-- **Public civic tools:** Holding-tax calculator, complaint and application tracking, document verification, notices, projects and budget information, and ward resources.
-- **Smart-city views:** GIS city map and feature pages for civic and infrastructure information.
-- **Accessible, responsive UI:** Shared navigation, keyboard-friendly controls, accessibility options, reduced-motion support, and mobile layouts.
-- **Reusable civic UI:** Shared status pages, service components, translations, and centralized service availability configuration.
+## Key Features
 
-## Technology
+### 1. Bilingual Experience (`bn` / `en`)
+- Defaults to **Bangla (`bn`)** across public pages, the Citizen Portal, and the Admin Command Portal, with instant **English (`en`)** switching persisted in `localStorage`.
+- Typography calibrated with `Noto Sans Bengali` for Bangla and `Manrope` / `Inter` / `JetBrains Mono` for English and tabular figures.
+
+### 2. Public Civic Portal & Tools
+- **Smart Hero & Debounced Global Search:** Auto-advancing 4-second civic showcase with debounced search across services, wards, notices, complaint IDs (`CMP-*`), and verification codes (`DSCC-*`).
+- **Citizen Service Directory (`/citizen-services`):** Searchable catalog covering registration and certificates, business licensing, holding tax and revenue, and infrastructure permits.
+- **Public Tools:** Holding tax calculator (`/tax-calculator`), live application & complaint tracker (`/track`, `/complaints`), QR document verification (`/verify`), public notice board (`/notices`), open budget & development projects (`/projects`, `/transparency`), and ward directory (`/about/wards`).
+- **Smart City & GIS Map (`/city-map`, `/smart-city`):** Interactive Google Maps (`@vis.gl/react-google-maps`) integration with facility markers, ward boundaries, and smart-city monitoring views.
+
+### 3. Citizen Portal (`/citizen`)
+- Protected citizen workspace with sidebar navigation, application submission (`/citizen/applications/new`), certificate downloads, payment history, geo-tagged complaint filing with photo attachments, notifications, and profile/settings management.
+- Accessible 4-digit security code verification on sign-in (`/login`) and immediate redirect to `/` on sign-out.
+
+### 4. Administrative & Officer Command Portal (`/admin`)
+- Protected executive workspace for Super Admins, Ward Officers, and Department Officers (`/admin/login`).
+- **Collapsible Persistent Sidebar:** Minimizes to icon-only mode (`w-20`) and persists preference in `localStorage`.
+- **Operations & Scrutiny:** Application scrutiny & digital approval (`/admin/applications`), civic grievance dispatch & resolution proof (`/admin/complaints`), fee & document rule engine (`/admin/fees`), citizen registry (`/admin/citizens`), payment ledger (`/admin/payments`), SLA analytics (`/admin/reports`), ward management (`/admin/wards`), service catalog (`/admin/services`), and audit logs (`/admin/audit-logs`).
+
+### 5. Accessibility, UI/UX & AI Transparency
+- **WCAG & Keyboard Accessibility:** Skip-to-content link (`#main-content`), global `:focus-visible` outlines, `role="dialog"` + `aria-modal="true"` + Escape/focus-restoration (`useDialogA11y`), `aria-live="polite"` status feeds, `min-h-[44px]` mobile touch targets, and a floating Accessibility Drawer (`AccessibilityWidget`) with font scaling, monochrome/invert filters, big cursor, link/heading highlights, and reading guide.
+- **Non-Blocking UX & Error Recovery:** Custom accessible `ConfirmDialog` (replacing native `window.confirm`), debounced search (`useDebounce`), and plain-language `role="alert"` error banners that preserve user-entered form data.
+- **AI Guidance & Fallbacks:** Simulated charter-based AI assistant (`AiAssistantWidget` and `/smart-city/ai-assistant`) with explicit simulation disclosures and graceful fallback links to `/citizen-services` and Helpline `16106`.
+
+---
+
+## Technology Stack
 
 | Area | Technologies |
 | --- | --- |
-| Framework | Next.js 15 App Router |
-| UI | React 19, TypeScript 5.9 |
-| Styling | Tailwind CSS v4, PostCSS |
-| Icons and motion | Lucide React, Motion |
-| Data visualization | Recharts |
-| Maps | Google Maps JavaScript API via `@vis.gl/react-google-maps` |
-| QR codes | `qrcode.react` |
-| Quality tools | ESLint 9, TypeScript |
+| Framework | Next.js 15 (App Router) |
+| Language & UI | React 19, TypeScript 5.9 |
+| Styling | Tailwind CSS v4, `@tailwindcss/typography`, PostCSS |
+| Icons & Animation | `lucide-react`, `motion` |
+| Data Visualization | `recharts` |
+| Maps | Google Maps JavaScript API (`@vis.gl/react-google-maps`) |
+| QR Verification | `qrcode.react` |
+| Code Quality | ESLint 9, TypeScript (`tsc --noEmit`), custom CSS verifier |
 
-## Repository Layout
+---
+
+## Repository Structure
 
 ```text
 .
 ├── frontend/
-│   ├── public/images/              # Logos, civic imagery, and status illustrations
+│   ├── public/images/              # Institutional logos, hero imagery, and illustrations
 │   └── src/
-│       ├── app/                    # App Router pages, layouts, and API route
-│       ├── components/             # Shared navigation, service, portal, and UI components
-│       ├── config/                 # Service status and feature configuration
-│       ├── context/                # Language, authentication, and preloader providers
-│       ├── data/                   # Bilingual service catalog and civic reference data
-│       ├── services/               # Demo data/API layer, translations, payment helpers
-│       └── types/                  # Shared TypeScript domain types
-├── scripts/                        # CSS verification and development helpers
+│       ├── app/                    # App Router pages, layouts, error boundaries, and API routes
+│       │   ├── (page)/             # Public, Citizen (/citizen/*), Admin (/admin/*), and Dashboard routes
+│       │   ├── globals.css         # Design tokens, typography rules, focus-visible, and civic utilities
+│       │   └── layout.tsx          # Root layout, fonts, skip-link, and global providers
+│       ├── components/             # Navbar, Footer, PaymentModal, SecurityCodeField, Widgets
+│       │   ├── common/             # ConfirmDialog, EmptyState, CivicPreloader, Cards
+│       │   ├── navbar/             # UtilityBar, DesktopNavigation, MegaMenu, MobileNavigation
+│       │   └── smart-city/         # SmartCityLayout, SmartCityMap, and monitoring views
+│       ├── config/                 # Payment, QR, and service status configuration
+│       ├── context/                # AppContext (i18n/a11y), AuthContext, PreloaderContext
+│       ├── data/                   # Bilingual service catalog, ward directory, and civic datasets
+│       ├── hooks/                  # useDebounce, useDialogA11y, useHydrated
+│       ├── services/               # mockApi, translations, payment helpers, IndexedDB photo store
+│       └── types/                  # Shared TypeScript interfaces and domain types
+├── backend/                        # Reserved directory for future backend service integration
+├── scripts/                        # CSS health check (verify-css.mjs), font patcher, route checks
 ├── .env.example                    # Environment variable template
-├── package.json                    # Dependencies and project scripts
+├── package.json                    # Workspace dependencies and root npm scripts
 └── README.md
 ```
 
-The Next.js application is in `frontend/`; install dependencies and run the npm scripts from the repository root. There is no implemented application backend in this repository. The current Next.js API route is `GET /api/maps-config`, used to provide Google Maps configuration to the front end.
+---
 
 ## Main Routes
 
-| Route group | Examples |
+| Route Group | Paths |
 | --- | --- |
-| Public home and institutional information | `/`, `/about`, `/about/wards`, `/about/departments`, `/about/contact` |
-| Citizen services | `/citizen-services`, `/citizen-services/[category]`, `/citizen-services/[category]/[service]` |
-| Public tools and information | `/city-map`, `/complaints`, `/track`, `/verify`, `/tax-calculator`, `/notices`, `/projects`, `/transparency`, `/accessibility`, `/privacy-policy` |
-| Smart-city features | `/smart-city`, `/smart-city/[feature]` |
-| Sign-in and registration | `/login`, `/admin/login`, `/register`, `/reset-password` |
-| Citizen workspace | `/citizen` and `/citizen/*` |
-| Administrative workspace | `/admin` and `/admin/*` |
-| Role dashboards | `/dashboard/citizen`, `/dashboard/officer`, `/dashboard/staff`, `/dashboard/admin` |
-| Service status pages | `/coming-soon`, `/maintenance`, `/unavailable`, `/connection-problem` |
+| Public & Institutional | `/`, `/about`, `/about/wards`, `/about/departments`, `/about/councillors`, `/about/contact` |
+| Citizen Services | `/citizen-services`, `/citizen-services/[category]`, `/citizen-services/[category]/[service]` |
+| Public Civic Tools | `/city-map`, `/complaints`, `/track`, `/verify`, `/tax-calculator`, `/notices`, `/projects`, `/transparency`, `/accessibility`, `/privacy-policy` |
+| Smart City | `/smart-city`, `/smart-city/[feature]` |
+| Authentication | `/login`, `/admin/login`, `/register`, `/reset-password` |
+| Citizen Portal | `/citizen`, `/citizen/applications`, `/citizen/applications/new`, `/citizen/certificates`, `/citizen/complaints`, `/citizen/tracking`, `/citizen/notifications`, `/citizen/profile`, `/citizen/settings`, `/citizen/support` |
+| Admin & Officer Portal | `/admin`, `/admin/applications`, `/admin/complaints`, `/admin/citizens`, `/admin/payments`, `/admin/fees`, `/admin/services`, `/admin/wards`, `/admin/reports`, `/admin/audit-logs` |
+| Role Dashboards | `/dashboard/citizen`, `/dashboard/officer`, `/dashboard/staff`, `/dashboard/admin` |
+| Service Status | `/coming-soon`, `/maintenance`, `/unavailable`, `/connection-problem` |
+
+---
 
 ## Getting Started
 
-### Requirements
+### Prerequisites
+- **Node.js** 20 or later
+- **npm**
 
-- Node.js 20 or later
-- npm
+### Installation & Local Development
 
-### Install and run
+1. Install dependencies from the repository root:
+   ```bash
+   npm install
+   ```
 
-From the repository root:
+2. Create a local environment file from the template:
+   - **PowerShell:**
+     ```powershell
+     Copy-Item .env.example .env.local
+     ```
+   - **Bash:**
+     ```bash
+     cp .env.example .env.local
+     ```
 
-```bash
-npm install
-```
+3. *(Optional)* Add a restricted Google Maps JavaScript API key in `.env.local` if you want live Google Maps rendering on `/city-map` and the location picker.
 
-Create a local environment file if one does not already exist. In PowerShell:
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   The application runs at `http://localhost:3000`.
 
-```powershell
-Copy-Item .env.example .env.local
-```
-
-In Bash:
-
-```bash
-cp .env.example .env.local
-```
-
-Add a restricted Google Maps API key if you need the interactive map, then start the development server:
-
-```bash
-npm run dev
-```
-
-The application is served at `http://localhost:3000` by default.
+---
 
 ## Environment Variables
 
-See [`.env.example`](./.env.example) for the template.
+See [`.env.example`](./.env.example) for the full template.
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps JavaScript API key used by the browser-side map provider. |
-| `GOOGLE_MAPS_API_KEY` | Fallback Maps key read by the layout and `/api/maps-config`; it may also be sent to the browser. |
-| `APP_URL` | Example canonical application URL. It is included in the template but is not currently read by the front-end runtime. |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps JavaScript API key exposed to the browser map provider. |
+| `GOOGLE_MAPS_API_KEY` | Fallback Maps key read by the root layout and `GET /api/maps-config`. |
+| `APP_URL` | Canonical application URL placeholder for deployment environments. |
 
-**Maps key safety:** Treat either Maps key as public because the application passes it to browser code. Restrict it in Google Cloud by allowed website referrers and enabled APIs. Do not put server secrets in a `NEXT_PUBLIC_` variable. Keep `.env.local` out of version control.
+> **Security Note:** Restrict any Google Maps API key in Google Cloud Console by HTTP referrer and enabled APIs. Never place server-only secrets inside `NEXT_PUBLIC_` variables, and keep `.env.local` out of version control.
 
-## Available Commands
+---
 
-Run these commands from the repository root:
+## Available Scripts
+
+Run all commands from the **repository root**:
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Start the Next.js development server. |
-| `npm run build` | Create a production build; the `prebuild` hook cleans build output and verifies CSS first. |
-| `npm run start` | Serve the existing production build. |
-| `npm run lint` | Run ESLint on `frontend/` and the CSS architecture check. |
-| `npm run verify:css` | Compile and verify the global Tailwind/CSS setup. |
-| `npx tsc --noEmit -p frontend/tsconfig.json` | Run the TypeScript check without emitting files. |
-| `npm run clean` | Remove the root and frontend Next.js build directories. |
+| `npm run dev` | Cleans stale `.next` artifacts, patches font loader, and starts Next.js dev server. |
+| `npm run build` | Runs `prebuild` (clean + font patch + CSS verification) and creates a production build. |
+| `npm run start` | Serves the production build from `frontend/.next`. |
+| `npm run lint` | Runs ESLint on `frontend/` and executes `verify:css`. |
+| `npm run verify:css` | Compiles and validates Tailwind v4 CSS output and core civic tokens. |
+| `npx tsc --noEmit -p frontend/tsconfig.json` | Runs strict TypeScript typechecking across `frontend/`. |
+| `npm run clean` | Removes `.next` and `frontend/.next` build directories. |
 
-### Next.js output directory
+> **Important:** `npm run dev` and `npm run build` share `frontend/.next`. Always stop any running dev server before running `npm run build` or `npm run clean` to avoid chunk mismatches (`ChunkLoadError`).
 
-The development and production commands share `frontend/.next`. The `predev` and `prebuild` hooks clean this directory, and `npm run clean` removes it. Run only one Next.js process for this repository at a time; stop the current server before starting another server or building. Concurrent dev/build processes can remove each other's CSS and JavaScript assets.
+---
 
-## Demo Data and Production Readiness
+## Demo Data & Production Notes
 
-The `mockApi` service provides seeded accounts and sample municipal records for the interface. Demo sessions and much of the application state use browser `localStorage`; civic-report photos are stored in browser `IndexedDB`. This data stays in that browser and is not synchronized to a server. The login and client-side role checks are for demonstration only and do not provide production-grade authentication or authorization.
-
-Do not use real citizen personal information or rely on this application for official transactions. A production deployment requires a secured backend, server-enforced authentication and authorization, durable storage, privacy and retention controls, and verified payment, identity, and municipal-service integrations.
-
-## Key Source Files
-
-- [`frontend/src/app/layout.tsx`](./frontend/src/app/layout.tsx) — global metadata, fonts, providers, navigation, and shared layout.
-- [`frontend/src/context/AppContext.tsx`](./frontend/src/context/AppContext.tsx) — language and accessibility-related preferences.
-- [`frontend/src/context/AuthContext.tsx`](./frontend/src/context/AuthContext.tsx) — client-side demo authentication state.
-- [`frontend/src/services/mockApi.ts`](./frontend/src/services/mockApi.ts) — seeded demo accounts and browser-backed civic data operations.
-- [`frontend/src/services/translations.ts`](./frontend/src/services/translations.ts) — shared Bengali and English UI translations.
-- [`frontend/src/data/services/index.ts`](./frontend/src/data/services/index.ts) — service categories and catalog helpers.
-- [`frontend/src/config/status-config.ts`](./frontend/src/config/status-config.ts) — service availability and status-page configuration.
-- [`scripts/verify-css.mjs`](./scripts/verify-css.mjs) — CSS/Tailwind architecture verification.
+- **Seeded Demonstration Data:** `frontend/src/services/mockApi.ts` provides seeded citizen, officer, and admin accounts along with sample applications, complaints, wards, and payment records.
+- **Browser Persistence:** Sessions and updates are stored in browser `localStorage`, and uploaded civic-report photos are stored in `IndexedDB`.
+- **Production Readiness:** Before deploying to production, replace `mockApi` with a secured backend API (`backend/`), server-enforced authentication and RBAC, encrypted database persistence, and live payment/NID integrations.

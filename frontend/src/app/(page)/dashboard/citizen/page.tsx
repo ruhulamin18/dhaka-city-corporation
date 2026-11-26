@@ -12,6 +12,7 @@ import {
   FileCheck2,
   LayoutDashboard,
   QrCode,
+  Star,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
@@ -309,8 +310,8 @@ function CitizenPortalContent() {
       {/* Portal Upgrade Banner */}
       <div className="p-4 bg-[#006A4E] text-white rounded-xl flex items-center justify-between shadow-sm mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-white/20 text-white flex items-center justify-center font-bold">
-            ★
+          <div className="w-9 h-9 rounded-lg bg-white/20 text-white flex items-center justify-center">
+            <Star className="w-4 h-4" aria-hidden="true" />
           </div>
           <div>
             <div className="font-bold text-sm">

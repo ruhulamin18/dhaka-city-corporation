@@ -164,9 +164,7 @@ export const ABOUT_NAV_ITEMS: AboutNavItem[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 1. OVERVIEW DATA                                                           */
-/* -------------------------------------------------------------------------- */
 
 export const OVERVIEW_STATS: OverviewStatItem[] = [
   {
@@ -264,9 +262,7 @@ export const OVERVIEW_CORE_FUNCTIONS: CivicInfoItem[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 2. HISTORY & BACKGROUND DATA                                               */
-/* -------------------------------------------------------------------------- */
 
 export const HISTORY_INTRO = {
   lead: {
@@ -352,9 +348,7 @@ export const HISTORY_MILESTONES: HistoryMilestone[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 3. MISSION & VISION DATA                                                   */
-/* -------------------------------------------------------------------------- */
 
 export const VISION_STATEMENT = {
   kicker: { bn: 'রূপকল্প (VISION)', en: 'VISION' },
@@ -437,9 +431,7 @@ export const STRATEGIC_VALUES: CivicInfoItem[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 4. MAYOR / ADMINISTRATOR DATA                                              */
-/* -------------------------------------------------------------------------- */
 
 export const MAYOR_PROFILE: MayorProfile = {
   name: {
@@ -542,9 +534,7 @@ export const MAYOR_PROFILE: MayorProfile = {
   ],
 };
 
-/* -------------------------------------------------------------------------- */
 /* 5. COUNCILLORS DATA                                                        */
-/* -------------------------------------------------------------------------- */
 
 export const COUNCILLOR_ZONES = [
   { id: 'all', label: { bn: 'সকল জোন (১–৫)', en: 'All Zones (1–5)' } },
@@ -698,9 +688,7 @@ export const COUNCILLORS_LIST: PersonProfile[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 6. WARD DIRECTORY DATA                                                     */
-/* -------------------------------------------------------------------------- */
 
 export const WARD_DIRECTORY_LIST: WardDirectoryItem[] = [
   {
@@ -824,9 +812,7 @@ export const WARD_DIRECTORY_LIST: WardDirectoryItem[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 7. ORGANIZATIONAL STRUCTURE DATA                                           */
-/* -------------------------------------------------------------------------- */
 
 export const ORG_DIVISIONS: OrgDivision[] = [
   {
@@ -921,9 +907,7 @@ export const ORG_DIVISIONS: OrgDivision[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 8. DEPARTMENTS & OFFICIALS DATA                                            */
-/* -------------------------------------------------------------------------- */
 
 export const DEPARTMENTS_LIST: DepartmentInfo[] = [
   {
@@ -1156,9 +1140,7 @@ export const DEPARTMENT_OFFICIALS: PersonProfile[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 9. CITIZEN CHARTER DATA                                                    */
-/* -------------------------------------------------------------------------- */
 
 export const CITIZEN_CHARTER_ITEMS: CitizenCharterItem[] = [
   {
@@ -1275,9 +1257,7 @@ export const CITIZEN_CHARTER_ITEMS: CitizenCharterItem[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 10. OFFICE LOCATIONS DATA                                                  */
-/* -------------------------------------------------------------------------- */
 
 export const HEADQUARTERS_OFFICE = {
   title: { bn: 'নগর ভবন (প্রধান কার্যালয়)', en: 'Nagar Bhaban (Headquarters)' },
@@ -1383,9 +1363,7 @@ export const ZONAL_OFFICES: ZonalOfficeItem[] = [
   },
 ];
 
-/* -------------------------------------------------------------------------- */
 /* 11. CONTACT DIRECTORY & EMERGENCY HELPLINES DATA                           */
-/* -------------------------------------------------------------------------- */
 
 export const EMERGENCY_HELPLINES: EmergencyHelplineItem[] = [
   {

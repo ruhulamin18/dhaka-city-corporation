@@ -356,8 +356,9 @@ function VerifyContent() {
                 <div className="mt-3 w-full text-left bg-slate-900 text-slate-200 p-3 rounded-xl text-[11px] font-mono leading-relaxed overflow-x-auto select-all">
                   <pre className="whitespace-pre-wrap">{dynamicQrPayload}</pre>
                   {QR_CONFIG.ENABLE_LIVE_URL && (
-                    <div className="mt-2 pt-2 border-t border-slate-700 text-[10px] text-emerald-400">
-                      ✓ Live URL Verification link active
+                    <div className="mt-2 pt-2 border-t border-slate-700 text-[10px] text-emerald-400 inline-flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      <span>Live URL Verification link active</span>
                     </div>
                   )}
                 </div>

@@ -3,7 +3,6 @@
 @source "../../src/**/*.{js,ts,jsx,tsx,mdx}";
 @plugin "@tailwindcss/typography";
 
-/* ==========================================================================
    Dhaka City Corporation — Central Design Tokens & Theme Configuration (Tailwind v4)
    ========================================================================== */
 @theme {
@@ -220,7 +219,6 @@
   }
 }
 
-/* ==========================================================================
    Civic Reusable Component Classes (Guaranteed Baseline Styling)
    ========================================================================== */
 .civic-card {
@@ -304,7 +302,6 @@
   border-radius: 9999px;
 }
 
-/* ==========================================================================
    Accessibility Drawer: Enlarged High-Visibility Custom SVG Cursor
    ========================================================================== */
 html.a11y-big-cursor,
@@ -374,7 +371,6 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
   }
 }
 
-/* ==========================================================================
    Continuous Right-to-Left Notice Ticker Styles
    ========================================================================== */
 @keyframes marquee {
@@ -452,7 +448,6 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
   }
 }
 
-/* ==========================================================================
    Print Stylesheet
    ========================================================================== */
 @media print {

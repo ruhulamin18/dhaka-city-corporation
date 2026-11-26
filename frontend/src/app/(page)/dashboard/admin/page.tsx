@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Plus } from 'lucide-react';
+import { Plus, Star } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -92,8 +92,8 @@ function AdminDashboardContent() {
       {/* Portal Upgrade Banner */}
       <div className="p-4 bg-slate-900 text-white rounded-xl flex items-center justify-between border border-slate-800 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#006A4E] text-white flex items-center justify-center font-bold">
-            ★
+          <div className="w-9 h-9 rounded-lg bg-[#006A4E] text-white flex items-center justify-center">
+            <Star className="w-4 h-4" aria-hidden="true" />
           </div>
           <div>
             <div className="font-bold text-sm">

@@ -110,9 +110,7 @@ export function LoginButton({
     };
   }, [isOpen]);
 
-  // ==========================================
   // MOBILE VARIANT (Inside Drawer)
-  // ==========================================
   if (variant === 'mobile') {
     if (isAuthenticated && user && roleBadge) {
       return (
@@ -214,9 +212,7 @@ export function LoginButton({
     );
   }
 
-  // ==========================================
   // DESKTOP VARIANT (Circular Profile Menu)
-  // ==========================================
   return (
     <div className="relative" ref={menuRef}>
       {/* Profile / Avatar Trigger Button */}

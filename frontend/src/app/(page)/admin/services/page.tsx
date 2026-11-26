@@ -235,11 +235,11 @@ export default function AdminServicesPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল বিভাগ' : 'All Departments'}</option>
-              <option value="Revenue Wing">Revenue Wing</option>
-              <option value="Commercial & Licensing Wing">Commercial & Licensing</option>
-              <option value="Civil Registry & Secretariat">Civil Registry</option>
-              <option value="Civil Engineering & Roads">Civil Engineering</option>
-              <option value="Waste & Conservancy Dept.">Waste & Conservancy</option>
+              <option value="Revenue Wing">{language === 'bn' ? 'রাজস্ব শাখা' : 'Revenue Wing'}</option>
+              <option value="Commercial & Licensing Wing">{language === 'bn' ? 'বাণিজ্য ও লাইসেন্স শাখা' : 'Commercial & Licensing'}</option>
+              <option value="Civil Registry & Secretariat">{language === 'bn' ? 'নাগরিক নিবন্ধন ও সচিবালয়' : 'Civil Registry'}</option>
+              <option value="Civil Engineering & Roads">{language === 'bn' ? 'পুরকৌশল ও সড়ক বিভাগ' : 'Civil Engineering'}</option>
+              <option value="Waste & Conservancy Dept.">{language === 'bn' ? 'বর্জ্য ব্যবস্থাপনা বিভাগ' : 'Waste & Conservancy'}</option>
             </select>
           </div>
         </div>

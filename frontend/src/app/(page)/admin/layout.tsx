@@ -53,6 +53,29 @@ export default function AdminPortalLayout({
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem('dscc_admin_sidebar_collapsed');
+      if (saved === 'true') {
+        queueMicrotask(() => setSidebarCollapsed(true));
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, []);
+
+  const toggleSidebarCollapsed = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem('dscc_admin_sidebar_collapsed', String(next));
+      } catch {
+        // Ignore storage errors
+      }
+      return next;
+    });
+  };
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -222,7 +245,7 @@ export default function AdminPortalLayout({
 
             <button
               type="button"
-              onClick={() => setSidebarCollapsed((collapsed) => !collapsed)}
+              onClick={toggleSidebarCollapsed}
               aria-label={
                 language === 'bn'
                   ? sidebarCollapsed ? 'সাইডবার বড় করুন' : 'সাইডবার ছোট করুন'
@@ -400,7 +423,7 @@ export default function AdminPortalLayout({
                           ? language === 'bn' ? item.label.bn : item.label.en
                           : undefined
                       }
-                      className={`flex items-center ${
+                      className={`min-h-[44px] flex items-center ${
                         sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-3'
                       } py-2 rounded-lg text-sm font-medium transition ${
                           isActive
@@ -437,8 +460,39 @@ export default function AdminPortalLayout({
             ))}
           </div>
 
+          <div className="border-t border-slate-800 p-2">
+            <button
+              type="button"
+              onClick={toggleSidebarCollapsed}
+              aria-expanded={!sidebarCollapsed}
+              aria-controls="admin-desktop-sidebar"
+              aria-label={
+                language === 'bn'
+                  ? sidebarCollapsed ? 'সাইডবার বড় করুন' : 'সাইডবার মিনিমাইজ করুন'
+                  : sidebarCollapsed ? 'Expand sidebar' : 'Minimize sidebar'
+              }
+              title={
+                language === 'bn'
+                  ? sidebarCollapsed ? 'সাইডবার বড় করুন' : 'সাইডবার মিনিমাইজ করুন'
+                  : sidebarCollapsed ? 'Expand sidebar' : 'Minimize sidebar'
+              }
+              className={`w-full min-h-[44px] flex items-center ${
+                sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-3'
+              } rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer`}
+            >
+              {!sidebarCollapsed && (
+                <span>{language === 'bn' ? 'সাইডবার মিনিমাইজ করুন' : 'Minimize Sidebar'}</span>
+              )}
+              {sidebarCollapsed ? (
+                <ChevronRight className="w-4 h-4 shrink-0" aria-hidden="true" />
+              ) : (
+                <ChevronLeft className="w-4 h-4 shrink-0" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+
           <div className={`border-t border-slate-800 text-xs text-slate-400 ${
-            sidebarCollapsed ? 'px-2 py-4 text-center' : 'p-4'
+            sidebarCollapsed ? 'px-2 py-3 text-center' : 'px-4 py-3'
           }`}>
             {sidebarCollapsed ? (
               <span title="Digital Dhaka Governance">DSCC</span>

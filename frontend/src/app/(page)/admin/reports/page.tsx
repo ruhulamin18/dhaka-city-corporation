@@ -49,9 +49,9 @@ export default function AdminReportsPage() {
               onChange={(e) => setTimeframe(e.target.value)}
               className="px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg bg-white"
             >
-              <option value="Current Month">Current Month (Nov 2026)</option>
-              <option value="Q2 FY 2025-26">Q2 (Oct - Dec 2026)</option>
-              <option value="FY 2025-2026">Full Fiscal Year 2025-2026</option>
+              <option value="Current Month">{language === 'bn' ? 'চলতি মাস (নভেম্বর ২০২৬)' : 'Current Month (Nov 2026)'}</option>
+              <option value="Q2 FY 2025-26">{language === 'bn' ? '২য় প্রান্তিক (অক্টো - ডিসে ২০২৬)' : 'Q2 (Oct - Dec 2026)'}</option>
+              <option value="FY 2025-2026">{language === 'bn' ? 'পূর্ণ অর্থবছর ২০২৫-২০২৬' : 'Full Fiscal Year 2025-2026'}</option>
             </select>
 
             <button
@@ -118,17 +118,19 @@ export default function AdminReportsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3">Department</th>
-                <th className="p-3">Applications Received</th>
-                <th className="p-3">Processed</th>
-                <th className="p-3">Average SLA</th>
-                <th className="p-3">Citizen Satisfaction</th>
-                <th className="p-3">Status</th>
+                <th className="p-3">{language === 'bn' ? 'বিভাগ' : 'Department'}</th>
+                <th className="p-3">{language === 'bn' ? 'প্রাপ্ত আবেদন' : 'Applications Received'}</th>
+                <th className="p-3">{language === 'bn' ? 'নিষ্পত্তিকৃত' : 'Processed'}</th>
+                <th className="p-3">{language === 'bn' ? 'গড় সময় (SLA)' : 'Average SLA'}</th>
+                <th className="p-3">{language === 'bn' ? 'নাগরিক সন্তুষ্টি' : 'Citizen Satisfaction'}</th>
+                <th className="p-3">{language === 'bn' ? 'অবস্থা' : 'Status'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               <tr>
-                <td className="p-3 font-semibold text-slate-800">Revenue & Holding Tax Wing</td>
+                <td className="p-3 font-semibold text-slate-800">
+                  {language === 'bn' ? 'রাজস্ব ও হোল্ডিং ট্যাক্স শাখা' : 'Revenue & Holding Tax Wing'}
+                </td>
                 <td className="p-3 font-mono">3,850</td>
                 <td className="p-3 font-mono text-emerald-700 font-bold">3,790 (98.4%)</td>
                 <td className="p-3">1.2 Days</td>
@@ -140,7 +142,9 @@ export default function AdminReportsPage() {
                 </td>
               </tr>
               <tr>
-                <td className="p-3 font-semibold text-slate-800">Commercial & Trade Licensing</td>
+                <td className="p-3 font-semibold text-slate-800">
+                  {language === 'bn' ? 'বাণিজ্য ও ট্রেড লাইসেন্স' : 'Commercial & Trade Licensing'}
+                </td>
                 <td className="p-3 font-mono">2,120</td>
                 <td className="p-3 font-mono text-emerald-700 font-bold">2,050 (96.7%)</td>
                 <td className="p-3">2.8 Days</td>
@@ -152,7 +156,9 @@ export default function AdminReportsPage() {
                 </td>
               </tr>
               <tr>
-                <td className="p-3 font-semibold text-slate-800">Civil Registry & Certificates</td>
+                <td className="p-3 font-semibold text-slate-800">
+                  {language === 'bn' ? 'নাগরিক নিবন্ধন ও সনদ' : 'Civil Registry & Certificates'}
+                </td>
                 <td className="p-3 font-mono">1,890</td>
                 <td className="p-3 font-mono text-emerald-700 font-bold">1,870 (98.9%)</td>
                 <td className="p-3">0.8 Days</td>
@@ -164,7 +170,9 @@ export default function AdminReportsPage() {
                 </td>
               </tr>
               <tr>
-                <td className="p-3 font-semibold text-slate-800">Civil Engineering & Roads</td>
+                <td className="p-3 font-semibold text-slate-800">
+                  {language === 'bn' ? 'পুরকৌশল ও সড়ক বিভাগ' : 'Civil Engineering & Roads'}
+                </td>
                 <td className="p-3 font-mono">560</td>
                 <td className="p-3 font-mono text-amber-700 font-bold">490 (87.5%)</td>
                 <td className="p-3">5.9 Days</td>

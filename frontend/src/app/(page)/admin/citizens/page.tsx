@@ -164,10 +164,10 @@ export default function AdminCitizensPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল ওয়ার্ড' : 'All Wards'}</option>
-              <option value="12">Ward 12</option>
-              <option value="19">Ward 19</option>
-              <option value="24">Ward 24</option>
-              <option value="27">Ward 27</option>
+              <option value="12">{language === 'bn' ? 'ওয়ার্ড ১২' : 'Ward 12'}</option>
+              <option value="19">{language === 'bn' ? 'ওয়ার্ড ১৯' : 'Ward 19'}</option>
+              <option value="24">{language === 'bn' ? 'ওয়ার্ড ২৪' : 'Ward 24'}</option>
+              <option value="27">{language === 'bn' ? 'ওয়ার্ড ২৭' : 'Ward 27'}</option>
             </select>
           </div>
         </div>
@@ -179,13 +179,13 @@ export default function AdminCitizensPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3.5">Citizen / NID</th>
-                <th className="p-3.5">Contact Details</th>
-                <th className="p-3.5">Ward & Holding</th>
-                <th className="p-3.5">Verification</th>
-                <th className="p-3.5">Tax Clearance</th>
-                <th className="p-3.5">Applications</th>
-                <th className="p-3.5 text-right">Profile</th>
+                <th className="p-3.5">{language === 'bn' ? 'নাগরিক / এনআইডি' : 'Citizen / NID'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'যোগাযোগের তথ্য' : 'Contact Details'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'ওয়ার্ড ও হোল্ডিং' : 'Ward & Holding'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'যাচাই অবস্থা' : 'Verification'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'কর পরিশোধ' : 'Tax Clearance'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'আবেদনসমূহ' : 'Applications'}</th>
+                <th className="p-3.5 text-right">{language === 'bn' ? 'প্রোফাইল' : 'Profile'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -277,31 +277,33 @@ export default function AdminCitizensPage() {
 
             <div className="space-y-3 text-sm">
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">National ID</span>
+                <span className="text-slate-500">{language === 'bn' ? 'জাতীয় পরিচয়পত্র' : 'National ID'}</span>
                 <span className="font-mono font-bold text-slate-800">{selectedCitizen.nid}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Mobile Phone</span>
+                <span className="text-slate-500">{language === 'bn' ? 'মোবাইল নম্বর' : 'Mobile Phone'}</span>
                 <span className="font-mono text-slate-800">{selectedCitizen.phone}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Ward Number</span>
-                <span className="font-semibold text-slate-800">Ward {selectedCitizen.wardNumber}</span>
+                <span className="text-slate-500">{language === 'bn' ? 'ওয়ার্ড নম্বর' : 'Ward Number'}</span>
+                <span className="font-semibold text-slate-800">
+                  {language === 'bn' ? `ওয়ার্ড ${selectedCitizen.wardNumber}` : `Ward ${selectedCitizen.wardNumber}`}
+                </span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Holding Number</span>
+                <span className="text-slate-500">{language === 'bn' ? 'হোল্ডিং নম্বর' : 'Holding Number'}</span>
                 <span className="font-mono text-slate-800">{selectedCitizen.holdingNumber}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Applications Filed</span>
+                <span className="text-slate-500">{language === 'bn' ? 'দাখিলকৃত আবেদন' : 'Applications Filed'}</span>
                 <span className="font-bold text-emerald-700">{selectedCitizen.totalApplications}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Civic Grievances</span>
+                <span className="text-slate-500">{language === 'bn' ? 'নাগরিক অভিযোগ' : 'Civic Grievances'}</span>
                 <span className="font-bold text-slate-800">{selectedCitizen.totalComplaints}</span>
               </div>
               <div className="flex justify-between py-1.5">
-                <span className="text-slate-500">Holding Tax Status</span>
+                <span className="text-slate-500">{language === 'bn' ? 'হোল্ডিং ট্যাক্স অবস্থা' : 'Holding Tax Status'}</span>
                 <span className="font-bold text-emerald-700 uppercase">{selectedCitizen.taxClearance}</span>
               </div>
             </div>

@@ -185,10 +185,10 @@ export default function AdminApplicationsPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল সেবার ধরন' : 'All Service Types'}</option>
-              <option value="trade_license">Trade License</option>
-              <option value="citizen_certificate">Citizenship Certificate</option>
-              <option value="birth_certificate">Birth Registration</option>
-              <option value="road_digging">Road Digging Permit</option>
+              <option value="trade_license">{language === 'bn' ? 'ট্রেড লাইসেন্স' : 'Trade License'}</option>
+              <option value="citizen_certificate">{language === 'bn' ? 'নাগরিকত্ব সনদ' : 'Citizenship Certificate'}</option>
+              <option value="birth_certificate">{language === 'bn' ? 'জন্ম নিবন্ধন' : 'Birth Registration'}</option>
+              <option value="road_digging">{language === 'bn' ? 'সড়ক খনন অনুমতি' : 'Road Digging Permit'}</option>
             </select>
           </div>
 
@@ -240,13 +240,13 @@ export default function AdminApplicationsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3.5">Reference ID</th>
-                <th className="p-3.5">Applicant / Business</th>
-                <th className="p-3.5">Service Type</th>
-                <th className="p-3.5">Fee & Payment</th>
-                <th className="p-3.5">Status</th>
-                <th className="p-3.5">Submitted Date</th>
-                <th className="p-3.5 text-right">Action</th>
+                <th className="p-3.5">{language === 'bn' ? 'রেফারেন্স আইডি' : 'Reference ID'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'আবেদনকারী / প্রতিষ্ঠান' : 'Applicant / Business'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'সেবার ধরন' : 'Service Type'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'ফি ও পেমেন্ট' : 'Fee & Payment'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'অবস্থা' : 'Status'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'দাখিলের তারিখ' : 'Submitted Date'}</th>
+                <th className="p-3.5 text-right">{language === 'bn' ? 'কার্যক্রম' : 'Action'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -266,7 +266,7 @@ export default function AdminApplicationsPage() {
                         {app.referenceId}
                       </div>
                       <span className="text-[10px] text-slate-500 font-mono">
-                        NID: {app.nid}
+                        {language === 'bn' ? 'এনআইডি:' : 'NID:'} {app.nid}
                       </span>
                     </td>
                     <td className="p-3.5">
@@ -278,11 +278,21 @@ export default function AdminApplicationsPage() {
                           {app.businessName}
                         </div>
                       )}
-                      <div className="text-[11px] text-slate-400">Ward {app.wardNumber}</div>
+                      <div className="text-[11px] text-slate-400">
+                        {language === 'bn' ? `ওয়ার্ড ${app.wardNumber}` : `Ward ${app.wardNumber}`}
+                      </div>
                     </td>
                     <td className="p-3.5">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 capitalize">
-                        {app.type.replace('_', ' ')}
+                        {language === 'bn'
+                          ? app.type === 'trade_license'
+                            ? 'ট্রেড লাইসেন্স'
+                            : app.type === 'citizen_certificate'
+                              ? 'নাগরিকত্ব সনদ'
+                              : app.type === 'birth_certificate'
+                                ? 'জন্ম নিবন্ধন'
+                                : 'সড়ক খনন অনুমতি'
+                          : app.type.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="p-3.5">
@@ -290,7 +300,9 @@ export default function AdminApplicationsPage() {
                         ৳ {app.feeBdt.toLocaleString('en-US')}
                       </div>
                       <span className="text-[10px] font-semibold text-emerald-700 uppercase">
-                        {app.paymentStatus}
+                        {language === 'bn'
+                          ? app.paymentStatus === 'paid' ? 'পরিশোধিত' : 'অপেক্ষমাণ'
+                          : app.paymentStatus}
                       </span>
                     </td>
                     <td className="p-3.5">
@@ -303,7 +315,15 @@ export default function AdminApplicationsPage() {
                             : 'bg-amber-50 text-amber-700 border border-amber-200'
                         }`}
                       >
-                        {app.status.replace('_', ' ')}
+                        {language === 'bn'
+                          ? app.status === 'approved'
+                            ? 'অনুমোদিত'
+                            : app.status === 'rejected'
+                              ? 'বাতিল'
+                              : app.status === 'under_review'
+                                ? 'যাচাইাধীন'
+                                : 'অপেক্ষমাণ'
+                          : app.status.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="p-3.5 text-xs text-slate-500 font-mono">
@@ -339,7 +359,17 @@ export default function AdminApplicationsPage() {
                   {selectedApp.referenceId}
                 </span>
                 <h2 className="text-xl font-bold text-slate-900 mt-1 capitalize">
-                  {selectedApp.type.replace('_', ' ')} Application
+                  {language === 'bn'
+                    ? `${
+                        selectedApp.type === 'trade_license'
+                          ? 'ট্রেড লাইসেন্স'
+                          : selectedApp.type === 'citizen_certificate'
+                            ? 'নাগরিকত্ব সনদ'
+                            : selectedApp.type === 'birth_certificate'
+                              ? 'জন্ম নিবন্ধন'
+                              : 'সড়ক খনন অনুমতি'
+                      } আবেদন`
+                    : `${selectedApp.type.replace('_', ' ')} Application`}
                 </h2>
               </div>
               <button
@@ -364,18 +394,26 @@ export default function AdminApplicationsPage() {
                   {language === 'bn' ? 'আবেদনকারী' : 'Applicant Name'}
                 </div>
                 <div className="font-semibold text-slate-900">{selectedApp.applicantName}</div>
-                <div className="text-xs text-slate-500 font-mono mt-1">NID: {selectedApp.nid}</div>
-                <div className="text-xs text-slate-500 font-mono">Phone: {selectedApp.phone}</div>
+                <div className="text-xs text-slate-500 font-mono mt-1">
+                  {language === 'bn' ? 'এনআইডি:' : 'NID:'} {selectedApp.nid}
+                </div>
+                <div className="text-xs text-slate-500 font-mono">
+                  {language === 'bn' ? 'ফোন:' : 'Phone:'} {selectedApp.phone}
+                </div>
               </div>
 
               <div>
                 <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                   {language === 'bn' ? 'ঠিকানা ও ওয়ার্ড' : 'Address & Ward'}
                 </div>
-                <div className="font-semibold text-slate-900">Ward {selectedApp.wardNumber}</div>
+                <div className="font-semibold text-slate-900">
+                  {language === 'bn' ? `ওয়ার্ড ${selectedApp.wardNumber}` : `Ward ${selectedApp.wardNumber}`}
+                </div>
                 <div className="text-xs text-slate-600 mt-1">{selectedApp.address}</div>
                 <div className="text-xs text-emerald-700 font-bold mt-1">
-                  Statutory Fee: ৳ {selectedApp.feeBdt} (Paid)
+                  {language === 'bn'
+                    ? `নির্ধারিত ফি: ৳ ${selectedApp.feeBdt} (পরিশোধিত)`
+                    : `Statutory Fee: ৳ ${selectedApp.feeBdt} (Paid)`}
                 </div>
               </div>
             </div>
@@ -389,24 +427,42 @@ export default function AdminApplicationsPage() {
                 <div className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white text-xs">
                   <div className="flex items-center gap-2 font-medium text-slate-800">
                     <CheckCircle2 className="w-4 h-4 text-[#006A4E]" />
-                    <span>National ID Card Copy (Front & Back)</span>
+                    <span>
+                      {language === 'bn'
+                        ? 'জাতীয় পরিচয়পত্রের কপি (উভয় পৃষ্ঠা)'
+                        : 'National ID Card Copy (Front & Back)'}
+                    </span>
                   </div>
-                  <span className="text-emerald-700 font-semibold">Verified NID Gate</span>
+                  <span className="text-emerald-700 font-semibold">
+                    {language === 'bn' ? 'যাচাইকৃত এনআইডি' : 'Verified NID Gate'}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white text-xs">
                   <div className="flex items-center gap-2 font-medium text-slate-800">
                     <CheckCircle2 className="w-4 h-4 text-[#006A4E]" />
-                    <span>Ward Residency / Holding Tax Receipt</span>
+                    <span>
+                      {language === 'bn'
+                        ? 'ওয়ার্ড নাগরিকত্ব / হোল্ডিং ট্যাক্স রসিদ'
+                        : 'Ward Residency / Holding Tax Receipt'}
+                    </span>
                   </div>
-                  <span className="text-emerald-700 font-semibold">Attached</span>
+                  <span className="text-emerald-700 font-semibold">
+                    {language === 'bn' ? 'সংযুক্ত' : 'Attached'}
+                  </span>
                 </div>
                 {selectedApp.businessName && (
                   <div className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white text-xs">
                     <div className="flex items-center gap-2 font-medium text-slate-800">
                       <CheckCircle2 className="w-4 h-4 text-[#006A4E]" />
-                      <span>Rent Agreement / Commercial Tenancy Deed</span>
+                      <span>
+                        {language === 'bn'
+                          ? 'দোকান ভাড়ার চুক্তিপত্র / দলিল'
+                          : 'Rent Agreement / Commercial Tenancy Deed'}
+                      </span>
                     </div>
-                    <span className="text-emerald-700 font-semibold">Attached</span>
+                    <span className="text-emerald-700 font-semibold">
+                      {language === 'bn' ? 'সংযুক্ত' : 'Attached'}
+                    </span>
                   </div>
                 )}
               </div>

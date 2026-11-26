@@ -23,6 +23,7 @@ import {
   Trees,
   Wind,
   Wrench,
+  X,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useGoogleMapsContext } from '@/components/GoogleMapsProvider';
@@ -409,9 +410,10 @@ export function SmartCityMap({
                   <button
                     type="button"
                     onClick={() => setShowMatrixOverlay(false)}
-                    className="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300"
+                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 cursor-pointer"
                   >
-                    ✕ {language === 'bn' ? 'বন্ধ করুন' : 'Close'}
+                    <X className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>{language === 'bn' ? 'বন্ধ করুন' : 'Close'}</span>
                   </button>
                 </div>
 
@@ -497,9 +499,10 @@ export function SmartCityMap({
             <button
               type="button"
               onClick={handleClosePoint}
-              className="text-slate-400 hover:text-slate-600 p-1 rounded-md text-xs font-bold"
+              aria-label={language === 'bn' ? 'বন্ধ করুন' : 'Close'}
+              className="text-slate-400 hover:text-slate-600 p-1 rounded-md cursor-pointer"
             >
-              ✕
+              <X className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
 

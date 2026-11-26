@@ -17,6 +17,7 @@ import {
   Construction,
   Cross,
   CheckCircle2,
+  X,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { mockApi } from '@/services/mockApi';
@@ -210,9 +211,10 @@ function CityMapContent() {
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-bold"
+                aria-label={language === 'bn' ? 'অনুসন্ধান মুছুন' : 'Clear search'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded cursor-pointer"
               >
-                ✕
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             )}
           </div>

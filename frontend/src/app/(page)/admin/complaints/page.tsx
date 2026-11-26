@@ -206,12 +206,12 @@ export default function AdminComplaintsPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল ওয়ার্ড' : 'All Wards'}</option>
-              <option value="1">Ward 01 (Uttara)</option>
-              <option value="12">Ward 12 (Mirpur)</option>
-              <option value="19">Ward 19 (Gulshan / Banani)</option>
-              <option value="24">Ward 24 (Tejgaon)</option>
-              <option value="27">Ward 27 (Dhanmondi / Farmgate)</option>
-              <option value="32">Ward 32 (Lalbagh / Old Dhaka)</option>
+              <option value="1">{language === 'bn' ? 'ওয়ার্ড ০১ (উত্তরা)' : 'Ward 01 (Uttara)'}</option>
+              <option value="12">{language === 'bn' ? 'ওয়ার্ড ১২ (মিরপুর)' : 'Ward 12 (Mirpur)'}</option>
+              <option value="19">{language === 'bn' ? 'ওয়ার্ড ১৯ (গুলশান / বনানী)' : 'Ward 19 (Gulshan / Banani)'}</option>
+              <option value="24">{language === 'bn' ? 'ওয়ার্ড ২৪ (তেজগাঁও)' : 'Ward 24 (Tejgaon)'}</option>
+              <option value="27">{language === 'bn' ? 'ওয়ার্ড ২৭ (ধানমন্ডি / ফার্মগেট)' : 'Ward 27 (Dhanmondi / Farmgate)'}</option>
+              <option value="32">{language === 'bn' ? 'ওয়ার্ড ৩২ (লালবাগ / পুরান ঢাকা)' : 'Ward 32 (Lalbagh / Old Dhaka)'}</option>
             </select>
           </div>
 
@@ -274,13 +274,13 @@ export default function AdminComplaintsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3.5">ID / Ward</th>
-                <th className="p-3.5">Title & Location</th>
-                <th className="p-3.5">Category</th>
-                <th className="p-3.5">Citizen Details</th>
-                <th className="p-3.5">Status</th>
-                <th className="p-3.5">Field Officer</th>
-                <th className="p-3.5 text-right">Action</th>
+                <th className="p-3.5">{language === 'bn' ? 'আইডি / ওয়ার্ড' : 'ID / Ward'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'শিরোনাম ও অবস্থান' : 'Title & Location'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'বিভাগ' : 'Category'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'নাগরিকের তথ্য' : 'Citizen Details'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'অবস্থা' : 'Status'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'মাঠ কর্মকর্তা' : 'Field Officer'}</th>
+                <th className="p-3.5 text-right">{language === 'bn' ? 'কার্যক্রম' : 'Action'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -300,7 +300,7 @@ export default function AdminComplaintsPage() {
                         {c.trackingId}
                       </div>
                       <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
-                        Ward {c.wardNumber}
+                        {language === 'bn' ? `ওয়ার্ড ${c.wardNumber}` : `Ward ${c.wardNumber}`}
                       </span>
                     </td>
                     <td className="p-3.5 max-w-xs">
@@ -337,7 +337,15 @@ export default function AdminComplaintsPage() {
                             : 'bg-amber-50 text-amber-700 border border-amber-200'
                         }`}
                       >
-                        {c.status.replace('_', ' ')}
+                        {language === 'bn'
+                          ? c.status === 'resolved'
+                            ? 'নিষ্পন্ন'
+                            : c.status === 'in_progress'
+                              ? 'চলমান'
+                              : c.status === 'assigned'
+                                ? 'দায়িত্বপ্রাপ্ত'
+                                : 'অপেক্ষমাণ'
+                          : c.status.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="p-3.5 text-xs text-slate-700">
@@ -346,7 +354,9 @@ export default function AdminComplaintsPage() {
                           {c.assignedStaffName}
                         </span>
                       ) : (
-                        <span className="text-amber-700 italic">Unassigned</span>
+                        <span className="text-amber-700 italic">
+                          {language === 'bn' ? 'দায়িত্ব দেওয়া হয়নি' : 'Unassigned'}
+                        </span>
                       )}
                     </td>
                     <td className="p-3.5 text-right">
@@ -481,7 +491,9 @@ export default function AdminComplaintsPage() {
                       className="w-full h-44 object-cover"
                     />
                   ) : (
-                    <span className="text-xs text-slate-400">No image attached</span>
+                    <span className="text-xs text-slate-400">
+                      {language === 'bn' ? 'কোনো ছবি সংযুক্ত নেই' : 'No image attached'}
+                    </span>
                   )}
                 </div>
               </div>
@@ -502,7 +514,9 @@ export default function AdminComplaintsPage() {
                   ) : (
                     <div className="text-center p-4">
                       <Camera className="w-8 h-8 text-slate-400 mx-auto mb-1" />
-                      <p className="text-xs text-slate-500 mb-2">No resolution proof uploaded yet</p>
+                      <p className="text-xs text-slate-500 mb-2">
+                      {language === 'bn' ? 'সমাধানের কোনো প্রমাণ এখনো আপলোড করা হয়নি' : 'No resolution proof uploaded yet'}
+                    </p>
                       <button
                         type="button"
                         onClick={handleSimulateProofPhoto}

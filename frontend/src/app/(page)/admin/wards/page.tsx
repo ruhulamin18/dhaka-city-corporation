@@ -196,19 +196,19 @@ export default function AdminWardsPage() {
 
               <div className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Ward Officer:</span>
+                  <span className="text-slate-400">{language === 'bn' ? 'ওয়ার্ড কর্মকর্তা:' : 'Ward Officer:'}</span>
                   <span className="font-semibold text-slate-800">{w.officerNameEn}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Officer Phone:</span>
+                  <span className="text-slate-400">{language === 'bn' ? 'কর্মকর্তার ফোন:' : 'Officer Phone:'}</span>
                   <span className="font-mono text-slate-700">{w.officerPhone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Ward Councillor:</span>
+                  <span className="text-slate-400">{language === 'bn' ? 'ওয়ার্ড কাউন্সিলর:' : 'Ward Councillor:'}</span>
                   <span className="font-medium text-slate-800">{w.councillorNameEn}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Population:</span>
+                  <span className="text-slate-400">{language === 'bn' ? 'জনসংখ্যা:' : 'Population:'}</span>
                   <span className="font-mono text-slate-800">
                     {w.populationEstimate.toLocaleString('en-US')}
                   </span>
@@ -218,7 +218,7 @@ export default function AdminWardsPage() {
               {/* Revenue Target Progress */}
               <div className="pt-2 border-t border-slate-100 space-y-1">
                 <div className="flex justify-between text-xs font-semibold">
-                  <span className="text-slate-500">Revenue Achievement:</span>
+                  <span className="text-slate-500">{language === 'bn' ? 'রাজস্ব অর্জন:' : 'Revenue Achievement:'}</span>
                   <span className="text-emerald-700">
                     ৳{w.revenueAchievedCrore} Cr / ৳{w.revenueTargetCrore} Cr ({revenuePercent}%)
                   </span>

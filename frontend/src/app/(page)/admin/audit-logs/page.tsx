@@ -145,11 +145,11 @@ export default function AdminAuditLogsPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল ঘটনা' : 'All Event Types'}</option>
-              <option value="fee_change">Fee Changes</option>
-              <option value="application_approval">Application Approvals</option>
-              <option value="complaint_assigned">Officer Assignments</option>
-              <option value="complaint_resolved">Grievance Resolutions</option>
-              <option value="auth_login">Auth / Login</option>
+              <option value="fee_change">{language === 'bn' ? 'ফি পরিবর্তন' : 'Fee Changes'}</option>
+              <option value="application_approval">{language === 'bn' ? 'আবেদন অনুমোদন' : 'Application Approvals'}</option>
+              <option value="complaint_assigned">{language === 'bn' ? 'কর্মকর্তা নিয়োগ' : 'Officer Assignments'}</option>
+              <option value="complaint_resolved">{language === 'bn' ? 'অভিযোগ সমাধান' : 'Grievance Resolutions'}</option>
+              <option value="auth_login">{language === 'bn' ? 'প্রবেশ / লগইন' : 'Auth / Login'}</option>
             </select>
           </div>
         </div>
@@ -161,12 +161,12 @@ export default function AdminAuditLogsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3.5">Audit ID</th>
-                <th className="p-3.5">Action & Event</th>
-                <th className="p-3.5">Authorized Actor</th>
-                <th className="p-3.5">IP Address</th>
-                <th className="p-3.5">Event Details</th>
-                <th className="p-3.5">Timestamp</th>
+                <th className="p-3.5">{language === 'bn' ? 'অডিট আইডি' : 'Audit ID'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'কার্যক্রম ও ঘটনা' : 'Action & Event'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'দায়িত্বপ্রাপ্ত কর্মকর্তা' : 'Authorized Actor'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'আইপি ঠিকানা' : 'IP Address'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'বিস্তারিত বিবরণ' : 'Event Details'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'সময়' : 'Timestamp'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

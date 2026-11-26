@@ -234,10 +234,10 @@ export default function AdminPaymentsPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল গেটওয়ে' : 'All Gateways'}</option>
-              <option value="bkash">bKash</option>
-              <option value="nagad">Nagad</option>
-              <option value="sonali_bank">Sonali Bank</option>
-              <option value="card">Cards / Debit / Credit</option>
+              <option value="bkash">{language === 'bn' ? 'বিকাশ' : 'bKash'}</option>
+              <option value="nagad">{language === 'bn' ? 'নগদ' : 'Nagad'}</option>
+              <option value="sonali_bank">{language === 'bn' ? 'সোনালী ব্যাংক' : 'Sonali Bank'}</option>
+              <option value="card">{language === 'bn' ? 'কার্ড (ডেবিট / ক্রেডিট)' : 'Cards / Debit / Credit'}</option>
             </select>
           </div>
 
@@ -248,9 +248,9 @@ export default function AdminPaymentsPage() {
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006A4E]"
             >
               <option value="all">{language === 'bn' ? 'সকল স্ট্যাটাস' : 'All Statuses'}</option>
-              <option value="reconciled">Reconciled</option>
-              <option value="successful">Successful</option>
-              <option value="pending">Pending</option>
+              <option value="reconciled">{language === 'bn' ? 'সমন্বিত' : 'Reconciled'}</option>
+              <option value="successful">{language === 'bn' ? 'সফল' : 'Successful'}</option>
+              <option value="pending">{language === 'bn' ? 'অপেক্ষমাণ' : 'Pending'}</option>
             </select>
           </div>
         </div>
@@ -262,14 +262,14 @@ export default function AdminPaymentsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3.5">Transaction ID</th>
-                <th className="p-3.5">Reference ID</th>
-                <th className="p-3.5">Payer / Ward</th>
-                <th className="p-3.5">Purpose</th>
-                <th className="p-3.5">Amount</th>
-                <th className="p-3.5">Gateway</th>
-                <th className="p-3.5">Status</th>
-                <th className="p-3.5">Date & Time</th>
+                <th className="p-3.5">{language === 'bn' ? 'লেনদেন আইডি' : 'Transaction ID'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'রেফারেন্স আইডি' : 'Reference ID'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'প্রদানকারী / ওয়ার্ড' : 'Payer / Ward'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'উদ্দেশ্য' : 'Purpose'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'পরিমাণ' : 'Amount'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'গেটওয়ে' : 'Gateway'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'অবস্থা' : 'Status'}</th>
+                <th className="p-3.5">{language === 'bn' ? 'তারিখ ও সময়' : 'Date & Time'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

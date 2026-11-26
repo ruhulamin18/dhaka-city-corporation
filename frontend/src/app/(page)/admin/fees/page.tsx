@@ -619,13 +619,13 @@ export default function FeeDocumentEnginePage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="p-3">Audit ID</th>
-                <th className="p-3">Service</th>
-                <th className="p-3">Field Changed</th>
-                <th className="p-3">Old Value</th>
-                <th className="p-3">New Value</th>
-                <th className="p-3">Authorized By</th>
-                <th className="p-3">Timestamp</th>
+                <th className="p-3">{language === 'bn' ? 'অডিট আইডি' : 'Audit ID'}</th>
+                <th className="p-3">{language === 'bn' ? 'সেবা' : 'Service'}</th>
+                <th className="p-3">{language === 'bn' ? 'পরিবর্তিত ক্ষেত্র' : 'Field Changed'}</th>
+                <th className="p-3">{language === 'bn' ? 'পূর্বের মান' : 'Old Value'}</th>
+                <th className="p-3">{language === 'bn' ? 'নতুন মান' : 'New Value'}</th>
+                <th className="p-3">{language === 'bn' ? 'অনুমোদনকারী' : 'Authorized By'}</th>
+                <th className="p-3">{language === 'bn' ? 'সময়' : 'Timestamp'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

@@ -200,9 +200,7 @@ function ResetPasswordForm() {
             </div>
           )}
 
-          {/* =========================================
-              STEP 1: Enter Mobile Number & Captcha
-             ========================================= */}
+          {/* STEP 1: Enter Mobile Number & Captcha */}
           {step === 'phone' && (
             <form onSubmit={handlePhoneSubmit} className="space-y-4" noValidate>
               <div>
@@ -263,9 +261,7 @@ function ResetPasswordForm() {
             </form>
           )}
 
-          {/* =========================================
-              STEP 2: Enter OTP & New Password
-             ========================================= */}
+          {/* STEP 2: Enter OTP & New Password */}
           {step === 'otp_and_password' && (
             <form onSubmit={handleOtpAndPasswordSubmit} className="space-y-4" noValidate>
               {/* 6-Digit OTP */}
@@ -396,9 +392,7 @@ function ResetPasswordForm() {
             </form>
           )}
 
-          {/* =========================================
-              STEP 3: Success State
-             ========================================= */}
+          {/* STEP 3: Success State */}
           {step === 'success' && (
             <div className="text-center py-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
               <div className="w-16 h-16 rounded-full bg-[#ECFDF5] border border-emerald-300 text-[#006A4E] flex items-center justify-center mx-auto shadow-sm">

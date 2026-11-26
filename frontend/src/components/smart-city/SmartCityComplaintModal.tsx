@@ -359,9 +359,10 @@ export function SmartCityComplaintModal({
                     <button
                       type="button"
                       onClick={() => setPhotoPreview(null)}
-                      className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full shadow-md text-xs"
+                      aria-label={language === 'bn' ? 'ছবি সরান' : 'Remove photo'}
+                      className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full shadow-md cursor-pointer"
                     >
-                      ✕
+                      <X className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 ) : (

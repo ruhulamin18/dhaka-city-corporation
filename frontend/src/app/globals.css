@@ -371,8 +371,7 @@ html.a11y-highlight-headings h4:not([data-a11y-widget='true'] h4) {
   }
 }
 
-   Continuous Right-to-Left Notice Ticker Styles
-   ========================================================================== */
+/* Continuous Right-to-Left Notice Ticker Styles */
 @keyframes marquee {
   0% {
     transform: translate3d(0, 0, 0);
